@@ -1,0 +1,5 @@
+k,M1,d,common,onesided,arm,trials,f1,f1_miss,f1_empty,f2,fail,falsepos,wrong,mean_M2,median_M2,mean_bytes,enc_ns_per_key,dec_ns_per_key,size_ns,agree_signed_standard,size_ns_cold,dec_pops,dec_cand,dec_chkrej,dec_memrej,dec_sign,dec_cellhash,dec_chkhash,size_ns_warm,proto_ns_per_trial,tab_mb_peak,cold_mb_peak
+4,16384,13286,100000,0,signed_raw_b,40,40,0,0,0,0,0,0,22054.28,22025,768781.5,29.96,205.95,3583865,40/40,10760497,2.9212,2.5408,1.5408,0.0000,1.0000,1.0000,2.5408,1528596,19328173,79.4,11.2
+4,16384,13286,100000,0,signed_rchi_b,40,40,0,0,0,0,0,0,22050.30,22021,768702.0,30.01,207.53,618,40/40,NaN,2.9212,2.5408,1.5408,0.0000,1.0000,1.0000,2.5408,NaN,15710660,NaN,NaN
+4,16384,13286,100000,0,signed_oracle,40,40,0,0,0,0,0,0,21505.00,21505,757780.0,29.93,207.80,83,40/40,NaN,2.9212,2.5408,1.5408,0.0000,1.0000,1.0000,2.5408,NaN,15682332,NaN,NaN
+4,16384,13286,100000,0,standard_chi_b,40,40,0,0,0,0,0,0,22084.55,22086,769371.0,28.73,203.37,574,40/40,NaN,2.9211,2.5406,1.5406,0.0000,0.0000,1.0000,2.5406,NaN,15039133,NaN,NaN

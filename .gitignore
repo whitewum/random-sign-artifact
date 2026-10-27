@@ -1,0 +1,10 @@
+/bin/
+/outputs/
+/.venv/
+/.cache/
+__pycache__/
+*.py[cod]
+.DS_Store
+/manuscript/random-sign/figure/*.pdf
+/manuscript/random-sign/figure/*.png
+/manuscript/random-sign/figure/fig-scale.csv

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite this software when using this research artifact. Paper and archival identifiers will be added upon release."
+type: software
+title: "Random-sign IBLT research artifact"
+authors:
+  - family-names: Wu
+    given-names: Min
+version: 0.1.0-dev
+date-released: 2026-10-21
+license: MIT
+abstract: "Simulation, sizing rules, and paired protocol experiments for random-sign IBLTs."

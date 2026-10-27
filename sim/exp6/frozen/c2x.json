@@ -1,0 +1,123 @@
+{
+ "rules": "C2 supplement (2026-10-21), frozen before sampling.\n\nTrigger: in the protocol experiment k5-M16384-d17247-bal (load 1.5, 20000 first-round failures) gave\nSkellam miss/u = 1.07 at u = 0.01, the largest value at M1 = 16384; the point is not among the 12 C2\npoints. Same design as C2: direct sampling with seeds of stage \"c2x\", stop rule as in freeze_c2.py\n(blocks in block order up to the first block at which the cumulative failure count reaches n_fail),\nPr(F) = 1 at this load. Judgments: Skellam rule, u in {0.01, 0.05}, one-sided Clopper-Pearson upper\nbound at level 0.05/2 of the conditional miss must not exceed 1.1 u.\n",
+ "stage": "c2x",
+ "J": 2,
+ "points": [
+  {
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "n_fail": 289000,
+   "pF": 1.0,
+   "trials": 332350,
+   "blocks": 8
+  }
+ ],
+ "tasks": [
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 0,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 1,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 2,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 3,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 4,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 5,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 6,
+   "trials": 41544,
+   "plant": false
+  },
+  {
+   "stage": "c2x",
+   "kind": "direct",
+   "id": "k5-M16384-d17247",
+   "k": 5,
+   "M": 16384,
+   "d": 17247,
+   "c": 134.7421875,
+   "load": 1.500004189511148,
+   "block": 7,
+   "trials": 41542,
+   "plant": false
+  }
+ ]
+}
