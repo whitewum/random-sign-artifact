@@ -1,0 +1,12 @@
+{
+ "blocks": 488,
+ "m2_formula_mismatch": 0,
+ "oracle_U_not_d": 0,
+ "oracle_rows_compared_across_u": 2166288,
+ "oracle_rows_differing_across_u": 0,
+ "problems": null,
+ "round1_failure_lines": 15370184,
+ "trial_lines": 15370184,
+ "u_pairs": 244,
+ "ub_below_abs_b": 0
+}

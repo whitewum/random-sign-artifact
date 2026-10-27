@@ -1,0 +1,88 @@
+{
+  "freeze_regenerated_exactly": true,
+  "blocks_checked_including_task_hashes": 488,
+  "protocol_rows_checked": 840,
+  "configurations": 120,
+  "trials_per_u": {
+    "0.01": 13940220,
+    "0.05": 13940220
+  },
+  "first_round_failure_range": [
+    0,
+    66839
+  ],
+  "configurations_below_19000_failures": 21,
+  "configurations_with_zero_failures": 8,
+  "capped_configurations": [
+    "k3-M1024-d796-bal",
+    "k4-M1024-d751-bal"
+  ],
+  "pilot_zero_configurations": [
+    {
+      "id": "k3-M16384-d12739-bal",
+      "trials": 100000,
+      "f1": 11
+    },
+    {
+      "id": "k3-M16384-d12739-one",
+      "trials": 100000,
+      "f1": 8
+    },
+    {
+      "id": "k3-M4096-d3185-bal",
+      "trials": 100000,
+      "f1": 34
+    },
+    {
+      "id": "k3-M4096-d3185-one",
+      "trials": 100000,
+      "f1": 50
+    },
+    {
+      "id": "k4-M1024-d751-one",
+      "trials": 100000,
+      "f1": 670
+    },
+    {
+      "id": "k4-M16384-d12020-bal",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k4-M16384-d12020-one",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k4-M4096-d3005-bal",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k4-M4096-d3005-one",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k5-M16384-d10923-bal",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k5-M16384-d10923-one",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k5-M4096-d2731-bal",
+      "trials": 100000,
+      "f1": 0
+    },
+    {
+      "id": "k5-M4096-d2731-one",
+      "trials": 100000,
+      "f1": 0
+    }
+  ],
+  "local_trial_csv_files": 0
+}

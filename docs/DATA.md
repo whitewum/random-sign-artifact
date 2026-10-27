@@ -8,7 +8,7 @@ This snapshot includes compact summaries sufficient to regenerate all fourteen p
 
 The sampler writes `manifest.json` describing configuration metadata, seeds, code version, field names, and the binary record layout. Records are little-endian four-byte fields; exact count sums are enabled by `-sumc`. Use the manifest and `sim/peelsim/peelio.py` to interpret each run rather than assuming a fixed field ordering. Replay outputs contain per-configuration groups, counts, miss counts, empty counts, and width histograms.
 
-Protocol `-trialout` records `spec,trial,arm,U,M2,ok2` for first-round failures. `U=-1` encodes an empty acceptance set. Aggregate CSVs also contain wall-clock timing fields, which vary across repeated runs.
+Protocol `-trialout` records `spec,trial,arm,U,M2,ok2` for first-round failures. `U=-1` encodes an empty acceptance set. Aggregate CSVs also contain wall-clock timing fields, which vary across repeated runs. `ana/trialcheck.json` records the per-trial check of these files against the aggregates (see `docs/AUDIT.md`).
 
 ## Required for full historical reproduction
 

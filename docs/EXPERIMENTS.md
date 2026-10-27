@@ -9,6 +9,7 @@
 | Coverage and extra capacity, `fig-coverage` | `r22replay.go`, `sim/exp6/collect.py` | `coverage.tsv` | Smoke rerun and replot |
 | Independent confirmation, `fig-confirm` | `sim/exp6/c2_report.py` | Frozen C2 tasks and `c2.tsv` | Replot; raw records pending |
 | Two-round protocol, `fig-protocol` | `sim/iblt2r/`, `collect.py` | `protocol.tsv` | Smoke rerun and replot |
+| Protocol stopping rule and per-trial audit | `freeze_main.py`, `sim/exp6/ana/trialcheck/` | `frozen/main.json`, `ana/protocol-stopping.json`, `ana/trialcheck.json` | Regenerate frozen settings from `pilot.tsv`; per-trial check needs the raw archive |
 | Table-size scaling, `fig-scale` | Figure script | Protocol, coverage, C2/C2s/C2x TSVs | Replot |
 | Sizing cost, `fig-sizing` | `r22replay.go` timing mode | `T/sizing*.json`, protocol timing CSVs | Replot; timing environment needs archival |
 | Planted vs direct, `fig-planted` | `sim/exp6/ana/v*_*.py`, `sim/exp6/ana/fullks/` | `ana/v3/`, `ana/fullks.tsv`, coverage table | Replot |

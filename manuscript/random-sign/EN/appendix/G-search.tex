@@ -1,18 +1,18 @@
 \section{Exact evaluation and search cutoffs}\label{app:search}
-This appendix describes the computation of the Skellam rule (Definition~\ref{def:skellam}): the exact evaluation of $G_n(\widetilde d)$, the statement and proof of two search cutoffs, and the numerical implementation of the exact CDF.
+We describe how to compute the Skellam rule (Definition~\ref{def:skellam}). We derive an exact expression for $G_n(\widetilde d)$, state and prove two search cutoffs, and explain the numerical implementation of the exact CDF.
 
-The guarantee of the Skellam rule does not require the accepted candidates to form an interval, and the implementation takes the largest accepted candidate as specified by the definition. The candidates have no theoretical upper bound, so an explicit cutoff is needed: the cutoff of Proposition~\ref{prop:cut11} is about $1.035$ times the observation $\widetilde d$ at $M=16384$ and $u=0.01$. The search checks candidates downward from the cutoff and returns the first accepted one, matching an unbounded scan. The number of candidates requiring an exact CDF and the length of the Poisson window are both proportional to $c$, so the cost of a single sizing is roughly proportional to $\lambda_d$. The Poisson table depends only on $(M,k)$ and the candidate $n$, and can be reused across syncs by the same receiver; measured results appear in Appendix~\ref{app:timing}.
+The Skellam rule's guarantee holds for arbitrary acceptance sets. As defined, the implementation returns the largest accepted candidate. The candidate range is unbounded, so we need an explicit cutoff. Proposition~\ref{prop:cut11} gives a cutoff of about $1.035$ times the observation $\widetilde d$ at $M=16384$ and $u=0.01$. We search downward from the cutoff and return the first accepted candidate, obtaining the same result as an unbounded scan. Both the number of candidates requiring an exact CDF and the Poisson window length are proportional to $c$. The cost of a single sizing is therefore roughly proportional to $\lambda_d$. The Poisson table depends only on $(M,k)$ and the candidate $n$, so the same receiver can reuse it across syncs. Appendix~\ref{app:timing} reports measured results.
 
 \subsection{\texorpdfstring{Computing $G_n(\widetilde d)$ with integer thresholds}{Computing G_n with integer thresholds}}
-Expanding \eqref{eq:aux} according to the two cases $\varepsilon_1\varepsilon_2=\pm1$,
+Expanding \eqref{eq:aux} over the two cases $\varepsilon_1\varepsilon_2=\pm1$, we obtain
 \begin{equation*}
 G_n(\widetilde d)=\frac12\Pr\Bigl(Z_n\le\frac k2\bigl(\widetilde d-n-2\bigr)\Bigr)+\frac12\Pr\Bigl(Z_n\le\frac k2\bigl(\widetilde d-n+2\bigr)\Bigr).
 \end{equation*}
-Let $R=\sum_vC_v^2$ (an integer), so $\widetilde d=R/k$. A random variable following $G_n$ is at most the observation if and only if $Z_n\le\frac k2(R/k-n\mp2)$, that is, $Z_n\le\lfloor(R-kn\mp2k)/2\rfloor$. Hence $G_n(\widetilde d)$ equals
+Let $R=\sum_vC_v^2$, an integer, so that $\widetilde d=R/k$. A random variable with CDF $G_n$ is at most the observation if and only if $Z_n\le\frac k2(R/k-n\mp2)$, or equivalently $Z_n\le\lfloor(R-kn\mp2k)/2\rfloor$. Thus $G_n(\widetilde d)$ equals
 \begin{equation*}
 \frac12\Pr\Bigl(Z_n\le\Bigl\lfloor\frac{R-kn-2k}2\Bigr\rfloor\Bigr)+\frac12\Pr\Bigl(Z_n\le\Bigl\lfloor\frac{R-kn+2k}2\Bigr\rfloor\Bigr),
 \end{equation*}
-where both floors are computed over integers, so floating-point arithmetic does not change the decision at lattice boundaries.
+where we compute both floors using integer arithmetic. This preserves decisions at lattice boundaries in floating-point computations.
 
 \subsection{Search cutoff from the Chernoff bound}
 \begin{proposition}[Chernoff cutoff]\label{prop:cut10}
@@ -20,21 +20,21 @@ If $e^{-9M/80}<u$, then every candidate satisfying
 \begin{equation}
 n\ge\max\Bigl\{4\Bigl(\widetilde d+2\Bigr),\ \frac M{2k},\ 4\Bigr\}\label{eq:cut10}
 \end{equation}
-is rejected. If $e^{-9M/80}\ge u$, the rule returns $+\infty$ directly.
+is rejected. If $e^{-9M/80}\ge u$, the rule immediately returns $+\infty$.
 \end{proposition}
 
-At $M=64$, $e^{-9M/80}\approx7.5\times10^{-4}$, which holds for both $u=0.01$ and $0.05$; the branch returning $+\infty$ disappears as $M\to\infty$ for any fixed $u$, and does not affect Theorem~\ref{thm:coverage}.
+At $M=64$, we have $e^{-9M/80}\approx7.5\times10^{-4}$, so the condition holds for both $u=0.01$ and $0.05$. For any fixed $u$, the branch returning $+\infty$ disappears as $M\to\infty$, leaving Theorem~\ref{thm:coverage} unchanged.
 
 \begin{proof}
-The lower tail of the null distribution is governed by the component with shift $-2$, so it suffices to show that this component satisfies $\Pr(n-2+\frac2kZ_n\le R/k)\le e^{-9M/80}$ under \eqref{eq:cut10}. From $n\ge4(R/k+2)$, $R/k-n+2\le-\frac34n$, so we need $Z_n\le-\frac{3k}{8}n$. The sum of the two Poisson parameters of $Z_n$ satisfies $2\lambda_n\le k^2n^2/(2M)$. By the moment generating function of the Skellam distribution $\E e^{-tZ_n}=\exp\{2\lambda_n(\cosh t-1)\}$ and the exponential Markov inequality (Chernoff bound), for $t>0$,
+The component with shift $-2$ bounds the lower tail of the null distribution. It therefore suffices to prove $\Pr(n-2+\frac2kZ_n\le R/k)\le e^{-9M/80}$ under \eqref{eq:cut10}. Since $n\ge4(R/k+2)$, we have $R/k-n+2\le-\frac34n$, so the event requires $Z_n\le-\frac{3k}{8}n$. The two Poisson parameters of $Z_n$ sum to $2\lambda_n\le k^2n^2/(2M)$. The Skellam moment generating function is $\E e^{-tZ_n}=\exp\{2\lambda_n(\cosh t-1)\}$. The exponential Markov inequality (Chernoff bound) then gives, for $t>0$,
 \begin{equation*}
 \Pr\Bigl(Z_n\le-\frac{3kn}8\Bigr)\le\exp\Bigl\{-\frac{3kn}8t+2\lambda_n(\cosh t-1)\Bigr\}.
 \end{equation*}
-Take $t=M/(2kn)$; since $n\ge M/(2k)$, $t\le1$. Using $\cosh t-1\le\frac35t^2$ (for $0\le t\le1$, by comparing the power series term by term with $t^2$ and using $\cosh1-1<3/5$), the exponent is at most $-\frac{3M}{16}+\frac{k^2n^2}{2M}\cdot\frac35\cdot\frac{M^2}{4k^2n^2}=-\frac{3M}{16}+\frac{3M}{40}=-\frac{9M}{80}$. The condition $n\ge4$ ensures that the expression for $\lambda_n$ is valid.
+Take $t=M/(2kn)$. Since $n\ge M/(2k)$, we have $t\le1$. We use $\cosh t-1\le\frac35t^2$ for $0\le t\le1$, which follows by comparing the power series term by term with $t^2$ and using $\cosh1-1<3/5$. The exponent is at most $-\frac{3M}{16}+\frac{k^2n^2}{2M}\cdot\frac35\cdot\frac{M^2}{4k^2n^2}=-\frac{3M}{16}+\frac{3M}{40}=-\frac{9M}{80}$. The condition $n\ge4$ ensures that the expression for $\lambda_n$ is valid.
 \end{proof}
 
 \subsection{Smaller cutoff from the Bernstein bound}
-The coefficient $4$ in Proposition~\ref{prop:cut10} makes the scan range about $3U$ candidates. The Bernstein bound for the Skellam distribution gives a smaller cutoff.
+The coefficient $4$ in Proposition~\ref{prop:cut10} gives a scan range of about $3U$ candidates. The Bernstein bound for the Skellam distribution yields a smaller cutoff.
 
 \begin{proposition}[Bernstein cutoff]\label{prop:cut11}
 If $M>4\log(1/u)$, then every candidate satisfying
@@ -44,28 +44,28 @@ n\ge\frac{\widetilde d+2+\frac{4}{3k}\log(1/u)}{1-2\sqrt{\log(1/u)/M}}\label{eq:
 is rejected.
 \end{proposition}
 
-At $M=16384$ and $u=0.01$, the coefficient of the observation $\widetilde d$ in \eqref{eq:cut11} is about $1.035$, reducing the scanned candidates from about $3U$ to one or two hundred; the number of candidates requiring an exact CDF is unchanged. The search checks downward one by one, starting from the smaller of the two cutoffs minus one.
+At $M=16384$ and $u=0.01$, the coefficient of the observation $\widetilde d$ in \eqref{eq:cut11} is about $1.035$. This reduces the scan from about $3U$ candidates to one or two hundred, with the same number of candidates requiring an exact CDF. We search downward one candidate at a time, starting one below the smaller of the two cutoffs.
 
 \begin{proof}
-For $0<t<3$, $\log\E e^{-tZ_n}=2\lambda_n(\cosh t-1)=2\lambda_n\sum_{j\ge1}t^{2j}/(2j)!\le\lambda_nt^2\sum_{j\ge0}(t/3)^{j}=\lambda_nt^2/(1-t/3)$, because $2/(2j)!\le3^{-(2j-2)}$. This shows that $-Z_n$ is a sub-gamma variable with variance factor $2\lambda_n$ and scale $1/3$; the standard Bernstein argument \cite{boucheron2013concentration} gives
+For $0<t<3$, we have $\log\E e^{-tZ_n}=2\lambda_n(\cosh t-1)=2\lambda_n\sum_{j\ge1}t^{2j}/(2j)!\le\lambda_nt^2\sum_{j\ge0}(t/3)^{j}=\lambda_nt^2/(1-t/3)$, since $2/(2j)!\le3^{-(2j-2)}$. Thus $-Z_n$ is a sub-gamma variable with variance factor $2\lambda_n$ and scale $1/3$. The standard Bernstein argument \cite{boucheron2013concentration} gives
 \begin{equation*}
 \Pr(Z_n\le-x)\le\exp\Bigl[-\frac{x^2}{4\lambda_n+2x/3}\Bigr],\qquad x>0.
 \end{equation*}
-A sufficient condition for the right side to be at most $u$ is $x\ge2\sqrt{\lambda_n\log(1/u)}+\frac23\log(1/u)$. Taking $x=\frac k2(n-R/k-2)$ and using $\lambda_n\le k^2n^2/(4M)$, the sufficient condition becomes $\frac k2(n-R/k-2)\ge kn\sqrt{\log(1/u)/M}+\frac23\log(1/u)$, which rearranges to \eqref{eq:cut11}; $M>4\log(1/u)$ ensures the denominator is positive. When $\lambda_n=0$, the lower tail is zero and the conclusion holds directly.
+A sufficient condition for the right-hand side to be at most $u$ is $x\ge2\sqrt{\lambda_n\log(1/u)}+\frac23\log(1/u)$. Taking $x=\frac k2(n-R/k-2)$ and using $\lambda_n\le k^2n^2/(4M)$, we obtain the sufficient condition $\frac k2(n-R/k-2)\ge kn\sqrt{\log(1/u)/M}+\frac23\log(1/u)$. Rearranging gives \eqref{eq:cut11}, whose denominator is positive because $M>4\log(1/u)$. For $\lambda_n=0$, the lower tail is zero, so the conclusion follows directly.
 \end{proof}
 
-Numerically, the cutoff is computed at risk $u(1-10^{-9})$, below the $u-10^{-12}$ used by the acceptance test in the implementation, and one is added after rounding up. Hence rounding errors cannot place the cutoff above a candidate that should be accepted.
+In the implementation, we compute the cutoff at risk $u(1-10^{-9})$, round up, and add one. For the experimental values $u=0.01,0.05$, this risk is below the acceptance level $u-10^{-12}$. These adjustments move the cutoff toward larger candidates. The scan starts one below the cutoff and proceeds downward, avoiding a cutoff that is too small and would skip a candidate that should be accepted.
 
 \subsection{Per-candidate Chernoff prescreening}
-For each candidate, if $j=\lfloor(R-kn+2k)/2\rfloor<0$, first compute the Chernoff bound of the Skellam lower tail, namely the exponential Markov bound of the moment generating function above at the optimal parameter $t=\operatorname{asinh}r$, where $r=-j/(2\lambda_n)$:
+For each candidate with $j=\lfloor(R-kn+2k)/2\rfloor<0$, we first compute a Chernoff bound for the Skellam lower tail. We evaluate the exponential Markov bound from the moment generating function above at the optimal parameter $t=\operatorname{asinh}r$, where $r=-j/(2\lambda_n)$:
 \begin{equation*}
 \Pr(Z_n\le j)\le\exp\Bigl\{-\Bigl[(-j)\operatorname{asinh}r-2\lambda_n\bigl(\sqrt{1+r^2}-1\bigr)\Bigr]\Bigr\}.
 \end{equation*}
-Of the two components, the one with shift $-2$ has the larger CDF; if its Chernoff bound is already at most $u(1-10^{-9})$, the average is at most $u$, and the candidate is rejected directly. Prescreening rejects only candidates already proven to be rejected, and turning prescreening off and computing exact CDFs for all candidates gives identical results one by one.
+The component with shift $-2$ has the larger CDF. If its Chernoff bound is at most $u(1-10^{-9})$, the average is at most $u$, and we reject the candidate immediately. Prescreening rejects only candidates certified for rejection by this bound. Computing exact CDFs for every candidate with prescreening disabled gives the same result for every case.
 
 \subsection{Windowed Poisson table for the exact CDF}
-$\Pr(Z_n\le j)=\sum_m\Pr(P_2=m)\Pr(P_1\le j+m)$, with $P_1,P_2$ independent $\Pois(\lambda_n)$. The implementation builds one Poisson table per candidate, containing only the window $[\lambda_n-w,\lambda_n+w]$ with $w=14\sqrt{\lambda_n}+40$: starting from the mode, the pmf is recurred outward on both sides by $p(i+1)=p(i)\lambda_n/(i+1)$, normalized within the window, and accumulated to obtain the CDF. By the Chernoff bound for the Poisson tail, the Poisson mass outside the window on each side is below $10^{-40}$, smaller than double-precision rounding; normalization also avoids the relative error of applying $\log\Gamma$ term by term at large $\lambda_n$. The initial implementation built the table from zero up to $\lambda_n+14\sqrt{\lambda_n}$; at $M_1=16384$ and load $3$, $\lambda_n$ is about $2\times10^5$ to $4\times10^5$, a single sizing taking about $1.3$ s and exhausting memory in the statistical experiments; after windowing a single sizing takes about $36$ ms, with identical results one by one.
+We use $\Pr(Z_n\le j)=\sum_m\Pr(P_2=m)\Pr(P_1\le j+m)$, where $P_1,P_2$ are independent $\Pois(\lambda_n)$ variables. For each candidate, we build a Poisson table restricted to the window $[\lambda_n-w,\lambda_n+w]$, with $w=14\sqrt{\lambda_n}+40$. Starting at the mode, we compute the pmf recursively in both directions using $p(i+1)=p(i)\lambda_n/(i+1)$, normalize within the window, and accumulate the CDF. The Poisson tail Chernoff bound places the mass beyond each end of the window below $10^{-40}$, smaller than double-precision rounding error. Normalization also avoids the relative error from evaluating $\log\Gamma$ term by term at large $\lambda_n$. The initial implementation builds the table from zero to $\lambda_n+14\sqrt{\lambda_n}$. At $M_1=16384$ and load $3$, $\lambda_n$ ranges from about $2\times10^5$ to $4\times10^5$. A single sizing takes about $1.3$ s, and the statistical experiments exhaust memory. With windowing, a single sizing takes about $36$ ms and produces the same result for every case.
 
-The Poisson table depends only on $(M,k)$ and $n$, and can be shared across syncs and risk levels. The implementation maintains a cache keyed by $(M,k)$; when full, it evicts the least recently used tables until half the capacity is free; the cache capacity is measured in entries, each entry being two float64.
+The Poisson table depends only on $(M,k)$ and $n$, so we can share it across syncs and risk levels. We maintain a cache keyed by $(M,k)$. When full, it evicts the least recently used tables until half its capacity is free. We measure capacity in entries, each containing two float64 values.
 
-The cutoffs, prescreening, and windowed table above do not change the output of the rule. We compared against a reference implementation with 70 decimal digits case by case (4536 general cases and 286 bounded-$c$ cases, covering lattice points, parity boundaries, and $+\infty$), and compared the windowed implementation with cutoffs against the full-table implementation on 9779 cases, with identical results one by one.
+The cutoffs, prescreening, and windowed tables preserve the rule's output. We verify this case by case against a reference implementation with 70 decimal digits of precision (4536 general cases and 286 bounded-$c$ cases, covering lattice points, parity boundaries, and $+\infty$). We also compare the windowed implementation with cutoffs against the full-table implementation on 9779 cases. The results agree in every case.
