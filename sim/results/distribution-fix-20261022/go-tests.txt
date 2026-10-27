@@ -1,0 +1,7 @@
+=== RUN   TestPlantedBalancedLabels
+    planted_test.go:52: balanced mean bias -0.403182 (expected -0.4), iid 0.009698 (expected 0)
+--- PASS: TestPlantedBalancedLabels (0.04s)
+=== RUN   TestSavedPlantScheme
+--- PASS: TestSavedPlantScheme (0.00s)
+PASS
+ok  	peelsim	0.320s

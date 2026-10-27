@@ -1,0 +1,80 @@
+\section{Unbiased estimation after failure and the Gaussian upper bound}\label{sec:measurement}
+This section uses the sign and mapping independence established in Section~\ref{sec:design} to analyze the statistical properties of $\widehat d$ after decoding failure and to construct an upper bound for $d$. Because the random signs of different keys cancel out on any fixed mapping, we first prove that $\widehat d$ is exactly unbiased for every fixed mapping (Proposition~\ref{prop:moments}), and hence remains unbiased for any rare failure. To further control the conditional miss rate within the target risk $u$, we also need to characterize the distribution of the fluctuation of $\widehat d$ around $d$ after failure: when $d\gg\sqrt M$, the standardized estimation error converges to the standard Gaussian distribution (Theorem~\ref{thm:clt}), from which the Gaussian rule follows directly (Definition~\ref{def:gauss}).
+
+\subsection{Conditional unbiasedness and conditional variance given the mapping}
+Expanding the sum of squares and the total sum in~\eqref{eq:dhat} by key: each differing key occupies $k$ cells and $\varepsilon_i^2=1$, so the diagonal parts of the two terms combine to give exactly the true value $d$, and the estimation error reduces to the cross terms between different keys:
+\begin{equation}
+\widehat d-d=\frac{2}{k(1-k/M)}\sum_{i<j}\varepsilon_i\varepsilon_j\Bigl(H_{ij}-\frac{k^2}{M}\Bigr).\label{eq:rs-expand}
+\end{equation}
+The right-hand side is a quadratic form in the random signs, whose coefficient $H_{ij}-k^2/M$ is the difference between the overlap and its unconditional mean, determined entirely by the mapping $\mathcal G$. In the same expansion of the standard IBLT, the sign products are replaced by the fixed $s_is_j$, so the selection of the overlap by failure translates directly into bias (Proposition~\ref{prop:projection}). Under random signs, even after fixing a mapping on which failure occurs, each $\varepsilon_i\varepsilon_j$ still takes $\pm1$ with equal probability (Proposition~\ref{prop:composition}), so the cross terms have mean zero on every mapping. Intuitively, failure can select the overlap but cannot select the signs: it keeps mappings with large overlap and only amplifies the coefficients of the cross terms, while the sign of each term is still decided with equal probability, so the center of the error remains at zero and failure changes only the scale of the error. Proposition~\ref{prop:moments} writes this intuition as the conditional mean and conditional variance given the mapping.
+
+\begin{proposition}[Conditional unbiasedness and conditional moments given the mapping]\label{prop:moments}
+For every fixed mapping $\mathcal G$,
+\begin{equation}
+\E[\widehat d\mid\mathcal G]=d,\qquad
+\Var(\widehat d\mid\mathcal G)=\frac{4}{k^2(1-k/M)^2}\sum_{i<j}\Bigl(H_{ij}-\frac{k^2}{M}\Bigr)^2\le2d(d-1).\label{eq:condmoments}
+\end{equation}
+Hence for any mapping event $\mathcal S$ of positive probability, $\E[\widehat d\mid\mathcal S]=d$. In particular, $\E[\widehat d\mid F]=d$ holds for all finite $M$, all sign compositions, and any rare failure. Averaging over the random mapping $\mathcal G$, $\E\widehat d=d$ and $\Var\widehat d=s(d)^2$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Given $\mathcal G$, $(\varepsilon_i)$ are iid uniform signs, and taking expectations term by term in~\eqref{eq:rs-expand} using $\E[\varepsilon_i\varepsilon_j\mid\mathcal G]=0$ gives the conditional unbiasedness given the mapping; the conditional variance in~\eqref{eq:condmoments} then follows because the sign products of different unordered pairs $(i,j)$ are pairwise uncorrelated, and its upper bound $2d(d-1)$ is given by the Cauchy--Schwarz inequality. The complete proof is in Appendix~\ref{app:proof-moments}.
+\end{proof}
+
+After fixing the mapping, $\widehat d$ is a Rademacher quadratic form on the Gram matrix of the centered incidence vectors: the conditional mean equals the trace, and the conditional variance comes only from the off-diagonal terms, the same identity as in the Hutchinson trace estimator\cite{hutchinson1990trace}. Proposition~\ref{prop:moments} realizes this identity on the overlap coefficients and thereby gives conditional unbiasedness for any mapping event.
+
+Figure~\ref{fig:composition} gives a numerical illustration of this unbiasedness: the post-failure bias of the standard encoding changes direction with $k$, while the mean of the random-sign encoding stays near zero. Further comparisons of conditional moments on more configurations are in Section~\ref{sec:exp-decode} and Appendix~\ref{app:dist}.
+
+\subsection{\texorpdfstring{The Gaussian limit after failure when $d\gg\sqrt M$}{The Gaussian limit after failure when d >> sqrt(M)}}
+Proposition~\ref{prop:moments} fixes the center of the estimator after failure; constructing an upper bound also requires knowing the shape of the distribution of the error around this center. Failure affects $\widehat d$ only through the mapping, and by~\eqref{eq:condmoments} the scale of the error given the mapping is determined by the sum of squared overlaps $\sum_{i<j}(H_{ij}-k^2/M)^2$; the selection of the mapping by failure changes this sum and may therefore change the distribution of the error. We standardize the error by the unconditional standard deviation $s(d)$ as
+\begin{equation}
+X=\frac{\widehat d-d}{s(d)},\label{eq:X}
+\end{equation}
+and study the conditional distribution of $X$ given $F$.
+
+Fix a mapping first. By~\eqref{eq:rs-expand}, the error is a weighted sum of the sign products $\varepsilon_i\varepsilon_j$, whose main weight comes from key pairs sharing a cell, that is, the intersecting edge pairs with $H_{ij}\ge1$ in $\mathcal G$, whose expected number is about $k^2d^2/(2M)$. The sign products of different key pairs are pairwise uncorrelated, and no few terms dominate the sum. The number of intersecting edge pairs grows with $d^2/M$ and tends to infinity when $d\gg\sqrt M$; the error is then a sum of many $\pm1$ perturbations, and its distribution tends to Gaussian. When $d$ is of the same order as $\sqrt M$, there are only finitely many intersecting edge pairs, the error consists of a few $\pm1$ terms, and the distribution remains discrete. The scale parameter that distinguishes these two regimes is written as
+\begin{equation}
+c=\frac{d}{\sqrt M}.\label{eq:c}
+\end{equation}
+The expected number of intersecting edge pairs is about $k^2c^2/2$, so $c$ plays the role of the collision scale in the birthday paradox\cite{arratia1989chen,dw}; it and the load $d/M$ are two independent parameters.
+
+What failure changes is the mapping, and this structure of the signs is preserved: given any mapping on which failure occurs, $(\varepsilon_i)$ are still iid uniform signs (Proposition~\ref{prop:composition}). As long as the mapping on which failure occurs still contains many intersecting edge pairs, the Gaussian shape is preserved. The same holds for rare failures: under a subcritical load, a typical failure is caused by a duplicate edge pair, which raises a single $H_{ij}$ to $k$ and leaves the overall structure of the intersecting edge pairs almost unchanged.
+
+\begin{theorem}[Gaussian limit after failure]\label{thm:clt}
+Fix $k\ge3$ and let $d/\sqrt M\to\infty$, with no requirement on the limit of $d/M$. Then
+\begin{equation}
+\sup_x\bigl|\Pr(X\le x\mid F)-\Phi(x)\bigr|\longrightarrow0.\label{eq:clt}
+\end{equation}
+This includes the critical window, rare failures under a fixed subcritical load, and arbitrary overload.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The proof has two steps. In the first step we fix the mapping and take randomness only over the signs: if the number of intersecting edge pairs is of the same order as $M$, and each key participates in overlaps of size at most $O(\log M)$, then the higher cumulants of the standardized quadratic form~\eqref{eq:rs-expand} tend to zero, the conditional distribution of $X$ tends to $\mathcal N(0,1)$, and the convergence is uniform over such mappings. The second step shows that after conditioning on $F$, the mapping still satisfies the conditions of the first step with probability tending to $1$, in three cases according to the limit of $d/M$. When $d/M$ has a positive finite limit, $\Pr(F)\ge\binom Mk^{-1}$, the probability of a mapping violating the conditions is superpolynomially small, and remains negligible after conditioning. When $d=o(M)$, by Proposition~\ref{prop:plant} the distribution of the mapping under failure is asymptotically the same as the planted distribution in TV distance, and the Gaussian limit holds for the latter. When $d>M$, failure occurs with certainty and the conditional distribution is the unconditional one. The complete proof is in Appendix~\ref{app:clt}.
+\end{proof}
+
+Figure~\ref{fig:encoding} compares $X$ on failure samples and all samples at a configuration with $c\approx104$ (for the standard encoding, $X$ is computed in the same way from its counts $C_v=\sum_{i:v\in S_i}s_i$): the failure samples of the random-sign encoding almost coincide with all samples, while the failure samples of the standard encoding are shifted as a whole.
+
+\subsection{The Gaussian rule and its conditional miss rate}\label{sec:gauss}
+By Theorem~\ref{thm:clt}, after failure $\widehat d$ is approximately Gaussian with mean $d$ and standard deviation $s(d)$. If $d$ were known, the probability that $\widehat d$ falls below $d+s(d)\Phi^{-1}(u)$ would be about $u$, which sets the margin accordingly. The difficulty is that the scale $s(d)$ (\eqref{eq:s}) depends on the unknown $d$. Substituting $s(\widehat d)$ directly would make the margin fluctuate together with the observation: when $\widehat d$ is low, $s(\widehat d)$ is also small, giving a smaller margin precisely on the samples that need a larger one, and the risk analysis would have to handle this additional error.
+
+Test inversion is a classical construction of confidence sets\cite{neyman1937}; it reasons in the reverse direction and tests candidate values one by one. Assuming the true value is $n$, the scale $s(n)$ is a known constant, and the probability that $\widehat d$ falls below $n+s(n)\Phi^{-1}(u)$ is about $u$. If the observation falls below this lower bound, then $n$ is too large as the true value, so we exclude $n$; the largest of the unexcluded candidates is the upper bound $U$. The risk of an upper bound constructed this way depends on a single event: $U<d$ means that the true value $d$ itself is excluded, and when the true value is $d$ the probability of this event is about $u$. Definition~\ref{def:gauss} replaces $\Phi^{-1}(u)$ with a more accurate quantile under finite $M$, and is otherwise the same as the process above.
+
+\begin{definition}[Gaussian rule]\label{def:gauss}
+Given an observation $\widehat d$ and a target risk $u\in(0,1/2)$. For each candidate integer $n\ge2$, assume the true value is $n$, in which case the scale $s(n)$ is completely known. Let $\chi^2_{M-1,u}$ denote the lower $u$ quantile of the chi-square distribution with $M-1$ degrees of freedom, and set the acceptance lower bound to
+\begin{equation}
+t(n)=n+s(n)\,\frac{\chi^2_{M-1,u}-(M-1)}{\sqrt{2(M-1)}}.\label{eq:gauss}
+\end{equation}
+Accept candidate $n$ if $\widehat d\ge t(n)$, and reject it otherwise. Let $U$ be the largest accepted candidate; if no candidate is accepted, return $+\infty$.
+\end{definition}
+
+Under deep overload, $\widehat d/d$ tends to a standardized $\chi^2(M-1)$\cite{wu2026selfsizing}, so the formula replaces $\Phi^{-1}(u)$ with the standardized chi-square quantile $(\chi^2_{M-1,u}-(M-1))/\sqrt{2(M-1)}$, which describes the skewness more accurately under finite $M$; the two agree as $M\to\infty$. In the range $M\ge64$, $u\ge0.01$ used in the experiments, $t(n)$ is strictly increasing in $n\ge2$ (Appendix~\ref{app:gauss-mono}), so $U$ can be found by monotone binary search; outside this range one checks candidates one by one by the definition. The whole rule depends only on the observation $\widehat d$ and the known parameters $(M,k,u)$.
+
+\begin{corollary}[Conditional miss rate of the Gaussian rule]\label{cor:gauss}
+Under the conditions of Theorem~\ref{thm:clt}, for any fixed $u\in(0,1/2)$, $\limsup\Pr(U<d\mid F)\le u$.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+Take $n=d$; by Theorem~\ref{thm:clt} and $(t(d)-d)/s(d)\to\Phi^{-1}(u)$, the rejection probability of the true candidate is $u+o(1)$; the conclusion follows from $\{U<d\}\subseteq\{\widehat d<t(d)\}$. The complete proof is in Appendix~\ref{app:clt}.
+\end{proof}
+
+Corollary~\ref{cor:gauss} shows that in the range $d\gg\sqrt M$ where Theorem~\ref{thm:clt} holds, the conditional miss rate of the Gaussian rule is asymptotically at most $u$, and this range includes the critical window and the overload region. Figure~\ref{fig:coverage} shows that as $c$ grows the miss/u of the Gaussian rule approaches the target level. When $d$ falls to the same order as $\sqrt M$ or below, the Gaussian approximation no longer holds and the actual conditional miss rate exceeds $u$; Section~\ref{sec:inversion} analyzes the reason and gives the Skellam rule, whose conditional miss rate is asymptotically at most $u$ uniformly over all $d\ge2$.

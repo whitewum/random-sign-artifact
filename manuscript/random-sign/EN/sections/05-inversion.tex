@@ -1,0 +1,166 @@
+\section{The Skellam rule for all loads}\label{sec:inversion}
+The guarantee of the Gaussian rule on the conditional miss rate requires $d\gg\sqrt M$. When the IBLT table size is configured according to the expected load, $d$ can be far below $\sqrt M$; although failure is then rare, once it occurs the two-round protocol still has to determine the second-round table size from the post-failure observation. In this range the conditional miss rate of the Gaussian rule can reach several times the target $u$ (Table~\ref{tab:gauss-c} in the appendix).
+
+The reason is the shape of the post-failure error under low load. Here failure has essentially a single source: two differing keys select exactly the same $k$ cells. These cells contain only these two keys, there is no pure cell in the table, and peeling cannot start. Under random signs these two keys are equally likely to have the same or opposite signs. If they were each placed in the table alone, each key would leave a count $\pm1$ in its own $k$ cells, with a total sum of squares $2k$, which divided by $k$ gives exactly the contribution $2$ that the two keys should have. When the two have opposite signs, the counts of the $k$ shared cells all cancel to $0$, this $2k$ sum of squares disappears entirely, and the estimate is $2$ below the true value; when the two have the same sign, each shared cell has count $\pm2$, whose square is $4$, the sum of squares becomes $4k$, and the estimate is $2$ above the true value. This jump is equally likely upward or downward, and its size is independent of $M$. The remaining keys occasionally share a cell too, and when they do they almost always share exactly one, each time shifting the estimate by $2/k$ with direction again equally likely; the number of such key pairs is approximately Poisson\cite{arratia1989chen,barbour1992poisson}, and is finite when $c$ is bounded. The post-failure error thus consists of one large jump of size $2$ and several small jumps of size $2/k$.
+
+The Gaussian cannot describe these two jumps. When $d$ is small relative to $\sqrt M$, the standard deviation $s(d)$ of the Gaussian rule tends to zero, while the downward jump of size $2$ stays unchanged, lying an arbitrary number of standard deviations outside the Gaussian tail, so the probability of rejecting the true value tends to one half. When $c$ is of order one, there are only finitely many small jumps, the error is still a lattice distribution, and it shows a visible deviation from the Gaussian in the lower tail where the target risk lies (Appendix~\ref{app:limit}). The null distribution in this section keeps both jumps, tends naturally to the Gaussian used by the Gaussian rule as $c$ grows (Figure~\ref{fig:aux}), and the Skellam rule built from it controls the conditional miss rate for all $d\ge2$. The complete proof and numerical implementation are in Appendices~\ref{app:inversion} and~\ref{app:search}.
+
+\subsection{The lattice-preserving test statistic \texorpdfstring{$\widetilde d$}{d~}}\label{sec:raw}
+To make the jumps above land exactly on lattice points, the test statistic itself must remain discrete. The correction term $(\sum_vC_v)^2/M$ in $\widehat d$ moves its values off the lattice; this section therefore uses the normalized sum of squares without subtracting the mean term,
+\begin{equation}
+\widetilde d=\frac1k\sum_{v=1}^M C_v^2.\label{eq:raw-energy}
+\end{equation}
+Expanding the sum of squares, the diagonal terms give $d$, and the error contains only the overlap itself:
+\begin{equation}
+\widetilde d-d=\frac2k\sum_{i<j}H_{ij}\,\varepsilon_i\varepsilon_j.\label{eq:raw-expand}
+\end{equation}
+Every term on the right-hand side is an integer multiple of $2/k$, so $\widetilde d-d$ takes only integer multiples of $2/k$. Both jumps can be read off from this expansion: for a duplicate edge pair $H_{ij}=k$, contributing exactly $2\varepsilon_i\varepsilon_j$, that is, $\pm2$ with equal probability; for an edge pair sharing a single cell $H_{ij}=1$, contributing $\pm2/k$.
+
+After removing the correction term, $\widetilde d$ is still exactly unbiased for every mapping.
+
+\begin{proposition}[Conditional unbiasedness of $\widetilde d$]\label{prop:raw-unbiased}
+For every fixed mapping $\mathcal G$, $\E[\widetilde d\mid\mathcal G]=d$. Hence for any mapping event $\mathcal S$ of positive probability, $\E[\widetilde d\mid\mathcal S]=d$; in particular, $\E[\widetilde d\mid F]=d$ holds for all finite $M$, all sign compositions, and any rare failure.
+\end{proposition}
+
+\begin{proof}
+Given $\mathcal G$, $H_{ij}$ is a constant; by Proposition~\ref{prop:composition} the signs are still iid uniform, and $\E[\varepsilon_i\varepsilon_j\mid\mathcal G]=0$ for $i\ne j$. Taking expectations term by term in~\eqref{eq:raw-expand} gives the result.
+\end{proof}
+
+This property also comes from the random signs. In the standard IBLT the sign products of the cross terms are the fixed $s_is_j$, and the same expansion gives the unconditional mean of the sum of squares as $d+\frac kM(b^2-d)$, which depends on the unknown $b$; the correction term in $\widehat d$ exists exactly to remove this term. The random signs make the cross terms have mean zero on every mapping, so the sum of squares itself is already unbiased and unbiasedness no longer relies on the correction term.
+
+$\widetilde d$ and $\widehat d$ differ only by a correction term with weight $k/M$, namely the square of the count sum; it depends only on the random signs and is the classical AMS second-moment estimator\cite{alon1999spacecomplexity} (Appendix~\ref{app:ams}). After standardization by $s(d)$ the difference between the two tends to zero, so Theorem~\ref{thm:clt} holds for $\widetilde d$ as well (Appendix~\ref{app:clt}).
+
+\subsection{Constructing the null distribution from the two jumps}\label{sec:aux}
+This section gives, for each candidate $n$, a reference distribution of $\widetilde d$ after failure when the true value is $n$, namely the null distribution; Section~\ref{sec:skellam} uses it to test candidates one by one. This section writes down the number of occurrences of the two jumps.
+
+The large jump occurs exactly once, its direction decided by the sign product of the duplicate edge pair, with contribution $2\varepsilon_1\varepsilon_2$.
+
+The small jumps come from the $n-2$ keys other than the duplicate edge pair. They form $\binom{n-2}2$ pairs, each of which shares a cell with probability about $k^2/M$ and produces a small jump. The small jumps are equally likely upward or downward, so the expected numbers of upward and downward jumps are each
+\begin{equation}
+\lambda_n=\frac12\binom{n-2}2\frac{k^2}M=\frac{k^2(n-2)(n-3)}{4M}.\label{eq:lambda}
+\end{equation}
+The key pairs sharing a cell are sparse, and the upward and downward counts are approximately two independent $\Pois(\lambda_n)$ counts (Poisson splitting\cite{kingman1993poisson}). The upward count minus the downward count is the net number of steps of the small jumps, which follows a Skellam distribution\cite{skellam1946}, denoted $Z_n\sim\Skellam(\lambda_n,\lambda_n)$; each step has size $2/k$.
+
+Adding the two jumps to the candidate $n$ gives the null distribution.
+\begin{definition}[null distribution]\label{def:null}
+For $\lambda\ge0$, let
+\begin{equation}
+J_\lambda=2\varepsilon_1\varepsilon_2+\frac2kZ,\qquad Z\sim\Skellam(\lambda,\lambda),\label{eq:J}
+\end{equation}
+where $\varepsilon_1\varepsilon_2$ is $\pm1$ with equal probability, independent of $Z$. Call $2\varepsilon_1\varepsilon_2$ the \textit{$\pm2$ term} and $\frac2kZ$ the \textit{Skellam term}. For a candidate integer $n\ge2$, take $\lambda_n$ as in~\eqref{eq:lambda}; the null distribution of candidate $n$ is the distribution of
+\begin{equation}
+n+J_{\lambda_n}=n+2\varepsilon_1\varepsilon_2+\frac2kZ_n\label{eq:aux}
+\end{equation}
+whose CDF is denoted $G_n$.
+\end{definition}
+Section~\ref{sec:uniform} proves that the distribution of $\widetilde d$ after failure does tend to $G_d$, uniformly over all $d\ge2$ (Theorems~\ref{thm:cross} and~\ref{thm:uniform}).
+
+When $n=2,3$ there are fewer than two remaining keys, $\lambda_n=0$, and the null distribution is $n\pm2$ each with probability one half. In general the mean of the null distribution is $n$; by $\Var Z_n=2\lambda_n$, its variance is $4+2(n-2)(n-3)/M$.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-aux.pdf}
+\caption{The shape of the null distribution at three values of $c=d/\sqrt M$ ($k=3$, with $\lambda_d$ taking its limit value $k^2c^2/4$). Blue and orange are the two cases of opposite and equal signs of the duplicate edge pair, and the dashed line is the Gaussian used by the Gaussian rule.}
+\label{fig:aux}
+\end{figure}
+
+First consider, from the shape, why this family of distributions can cover all loads. Figure~\ref{fig:aux} plots the null distribution as $c$ varies. When $c$ is small the Skellam term is almost zero, the distribution takes only the two points $\pm2$, and the Gaussian used by the Gaussian rule concentrates in the middle, with both points outside its tails. When $c\approx1$ the two cases of opposite and equal signs each expand into a lattice distribution with spacing $2/k$ and overlap each other, and the shape still deviates clearly from the Gaussian. As $c$ grows further, the width of the Skellam term far exceeds $2$, the $\pm2$ term occupies only a small part, and the null distribution tends to the same Gaussian used by the Gaussian rule. The same family of distributions thus connects the small-$c$ region and the region where the Gaussian rule applies. The rigorous approximation guarantee is in Section~\ref{sec:uniform}.
+
+\subsection{The null distribution approximates the post-failure distribution at all loads}\label{sec:uniform}
+The null distribution of Definition~\ref{def:null} comes from a counting intuition; before using it as the reference to test candidates, we must prove that it indeed describes the distribution of $\widetilde d$ after failure. Moreover, this description must hold for all $d$: the receiver does not know which load region $d$ falls in and cannot switch rules by load, so the same family $G_d$ must apply for both small and large $d$. This section explains this in two cases and then combines them.
+
+When $d$ is of the same order as $\sqrt M$ or smaller, the overlap is sparse. $G_d$ regards the post-failure mapping as a duplicate edge pair plus several scattered single-cell overlaps among the remaining keys. The real mapping can be more complex: the duplicate edge pair shares a cell with a remaining key, two keys share more than one cell, or one key shares cells with two other keys at the same time. These three cases are all much rarer than a single-cell overlap, and their probabilities tend to zero as $M$ grows. Removing them, the real mapping is exactly what $G_d$ envisions, so the real distribution is close to $G_d$ at every lattice point (Theorem~\ref{thm:cross}), corresponding to the first two shapes in Figure~\ref{fig:aux}.
+
+When $d\gg\sqrt M$, the intersecting key pairs are many and interwoven, the scattered structure above no longer holds, yet $G_d$ still applies because the two sides tend to the same Gaussian. The real $\widetilde d$ is a sum of many small terms with equal probabilities of each sign, tending to Gaussian by Theorem~\ref{thm:clt}; $G_d$ also tends to Gaussian, as shown by the third shape in Figure~\ref{fig:aux}, with width matching $s(d)$. The two sides differ in detail and coincide at the Gaussian limit. Theorem~\ref{thm:uniform} combines the two cases into an approximation uniform over all $d\ge2$.
+
+\begin{theorem}[Discrete limit distribution when $c$ is bounded]\label{thm:cross}
+Fix $k\ge3$ and a finite constant $C$.
+\begin{enumerate}[label=(\roman*)]
+\item On $2\le d\le C\sqrt M$, the total variation distance between the distribution of $\widetilde d$ under $F$ and the null distribution $G_d$ tends to zero uniformly, and is at most
+\begin{equation}
+O_k\Bigl(\frac dM+\frac{d^3}{M^2}\Bigr).\label{eq:tv-error}
+\end{equation}
+\item If $d/\sqrt M\to c\in(0,\infty)$, then the distribution of $\widetilde d-d$ under $F$ converges in total variation to the distribution of $J_{k^2c^2/4}$, whose variance is $4+2c^2$.
+\item The limits in (ii) satisfy at the two ends
+\begin{equation*}
+J_{k^2c^2/4}\Rightarrow2\varepsilon_1\varepsilon_2\quad(c\to0),\qquad\frac{J_{k^2c^2/4}}{\sqrt2\,c}\Rightarrow\mathcal N(0,1)\quad(c\to\infty).
+\end{equation*}
+\end{enumerate}
+\end{theorem}
+
+Figure~\ref{fig:crosscdf} shows the lower tail of this discrete limit distribution using planted samples with $c$ from 0.25 to 8, contrasted with the Gaussian approximation; Section~\ref{sec:exp-dist} also reports the distance between the empirical and limit distributions at fixed $c$ as $M$ grows.
+
+\begin{proof}[Proof sketch]
+(i) proceeds in two steps. The first step replaces the real failure with a duplicate edge pair: by Proposition~\ref{prop:plant}, the mapping under failure can be replaced by the planted distribution, with error $O_k(d/M^2+M^{1-k})$ in the range of the theorem (Lemma~\ref{lem:plant}). The second step excludes the three cases above on the planted mapping, with probabilities $O_k(d/M)$, $O_k(d^2/M^2)$, and $O_k(d^3/M^2)$. After the exclusion, the remaining structure is a duplicate edge pair plus several mutually disjoint single-cell overlaps: the duplicate edge pair gives the $\pm2$ term; the Chen--Stein local dependence bound\cite[Theorem~1]{arratia1989chen} shows that the number of overlaps is approximately $\Pois(2\lambda_d)$, and the independent signs then split it into two independent $\Pois(\lambda_d)$ counts, whose difference gives the Skellam term, so $\widetilde d-d$ is close to $J_{\lambda_d}$. The Poisson approximation has error $O_k((d^2+d^3)/M^2)$. Since $2\le d\le M$ and $k\ge3$, the quantities $d/M^2$, $d^2/M^2$, and $M^{1-k}$ do not exceed $d/M$, and $(d^2+d^3)/M^2$ does not exceed $2d^3/M^2$; combining all terms gives~\eqref{eq:tv-error}.
+(ii) By (i), it suffices to show that $J_{\lambda_d}$ converges in total variation to $J_{k^2c^2/4}$; when $d/\sqrt M\to c$ we have $\lambda_d\to k^2c^2/4$, which follows from the continuity of the Poisson parameter. Since the two terms are independent, $\Var J_\lambda=4+8\lambda/k^2$, and substituting $\lambda=k^2c^2/4$ gives $4+2c^2$.
+(iii) As $c\to0$, $\lambda\to0$, the Skellam term tends to zero in probability, and only the $\pm2$ term of $J_\lambda$ remains; as $c\to\infty$, $\Var J_{k^2c^2/4}\sim2c^2$, the Skellam term satisfies the CLT, and the $\pm2$ term divided by $\sqrt2\,c$ tends to zero. The complete argument is in Appendix~\ref{app:inversion}.
+\end{proof}
+
+\begin{theorem}[Uniform CDF approximation]\label{thm:uniform}
+Fix $k\ge3$. The Kolmogorov distance between the distribution of $\widetilde d$ under $F$ and the null distribution $G_d$ satisfies
+\begin{equation}
+\sup_{d\ge2}\ \sup_{x\in\mathbb R}\bigl|\Pr(\widetilde d\le x\mid F)-G_d(x)\bigr|\longrightarrow0
+\quad(M\to\infty).\label{eq:uniform}
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+When $d\gg\sqrt M$ there is no need to extend the matching structure to a dense intersection graph. By Theorem~\ref{thm:clt}, the conditional distribution of $\widetilde d$ standardized by $s(d)$ tends to the standard Gaussian; the null distribution is that of $d+J_{\lambda_d}$, and when $\lambda_d\to\infty$ the Skellam term of $J_{\lambda_d}$ satisfies the CLT, the ratio of $\Var J_{\lambda_d}=4+2(d-2)(d-3)/M$ to $s(d)^2$ tends to one, and the $\pm2$ term divided by $s(d)$ tends to zero. The two tend to the same continuous Gaussian CDF, so the Kolmogorov distance tends to zero. This step applies to $d=o(M)$, a positive load ratio, and unbounded overload. Uniformity is obtained by a subsequence argument: take a subsequence along which $d/\sqrt M$ converges; finite limits are handled by Theorem~\ref{thm:cross}, and infinite limits by the Gaussian argument above (Appendix~\ref{app:inversion}).
+\end{proof}
+
+Thus the same family of null distributions $G_d$ describes the distribution of $\widetilde d$ after failure for all $d\ge2$: for small $d$ it is close pointwise on the lattice, and for large $d$ it tends to the same Gaussian as the real distribution, so using it does not require knowing which load region we are in. Section~\ref{sec:skellam} builds the Skellam rule from it.
+
+\subsection{The Skellam rule controls the conditional miss rate at all loads}\label{sec:skellam}
+The Skellam rule follows the test inversion of the Gaussian rule (Section~\ref{sec:gauss}), replacing only the Gaussian lower tail with the lattice lower tail of $G_n$: when the observation falls in the lower $u$ tail of $G_n$, $n$ is too large as the true value, and candidate $n$ is rejected; $U$ is the largest candidate not rejected.
+
+\begin{definition}[Skellam rule]\label{def:skellam}
+Given an observation $\widetilde d$ and a target risk $u\in(0,1/2)$. For each candidate integer $n\ge2$, accept candidate $n$ if $G_n(\widetilde d)>u$, and reject it otherwise. Take the upper bound to be the supremum of all accepted candidates,
+\begin{equation}
+U=\sup\bigl\{n\ge2:\ G_n(\widetilde d)>u\bigr\},\label{eq:skellam-U}
+\end{equation}
+with $U=+\infty$ when the accepted candidates are unbounded.
+\end{definition}
+
+The null distribution of candidate $2$ takes only $0$ and $4$, and $\widetilde d\ge0$, so candidate $2$ is always accepted and $U\ge2$. On realistic table sizes $U$ is also finite (for $u=0.01$ it suffices that $M>18$), and it can be found exactly by a finite search, with a cost per computation roughly proportional to $\lambda_d$ (Appendix~\ref{app:search}).
+
+The behavior at the two ends of the load explains why the Skellam rule works for all loads. When $c$ is small the Skellam term is almost zero, $G_n$ puts half its mass on $n-2$ and half on $n+2$, candidate $n$ is accepted if and only if the smaller point $n-2$ does not exceed the observation, so $U\approx\widetilde d+2$: the rule adds back to the observation a possibly lost large jump. When the duplicate edge pair has opposite signs the observation is $d-2$ and $U$ equals $d$ exactly; when they have the same sign the observation is $d+2$ and $U$ is about $d+4$; neither case misses. In this region the scale $s(n)$ of the Gaussian rule tends to zero and $U$ is close to the observation itself, so when the duplicate edge pair has opposite signs it underestimates $d$, and the conditional miss rate tends to one half. When $c$ is large the Skellam term dominates, $G_n$ tends to Gaussian, and the Skellam rule returns to the Gaussian rule.
+
+Theorem~\ref{thm:coverage} is the main result of this section: when the table size is large enough, no matter which load region $d$ falls in, the probability that the Skellam rule underestimates $d$ after failure does not exceed the target risk $u$. This guarantee holds for any sign composition, and the rule uses only $\sum_vC_v^2$ of the same table and the known parameters $(M,k,u)$. The Gaussian rule has this guarantee only when $d\gg\sqrt M$ (Corollary~\ref{cor:gauss}). Section~\ref{sec:protocol} substitutes it into the risk decomposition of the two-round protocol.
+
+\begin{theorem}[Uniform asymptotic upper bound on the conditional miss rate]\label{thm:coverage}
+Fix $k\ge3$ and $u\in(0,1/2)$. For any sign composition, the Skellam rule satisfies
+\begin{equation}
+\limsup_{M\to\infty}\ \sup_{d\ge2}\ \Pr(U<d\mid F)\le u.\label{eq:coverage}
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+If the observation followed $G_n$ exactly, the event of rejecting $n$ is that the observation falls in a lower tail of total probability at most $u$, whose probability is at most $u$ by the definition of the CDF, and the same holds for discrete distributions. The rejection region is a lower set of the observation, so the difference between the rejection probabilities under the real distribution and under $G_n$ is at most their Kolmogorov distance. A miss means the true value is rejected, that is, $\{U<d\}\subseteq\{G_d(\widetilde d)\le u\}$; taking $n=d$ and applying Theorem~\ref{thm:uniform} gives~\eqref{eq:coverage}. By Proposition~\ref{prop:composition}, the joint distribution of the coding coefficients does not depend on the sign composition, so the conclusion holds for any sign composition. The complete proof is in Appendix~\ref{app:inversion}.
+\end{proof}
+
+Theorem~\ref{thm:coverage} is a statement as the table size tends to infinity; on a finite table there are two differences. First, $G_n$ is a lattice distribution, the rejection region can contain only whole lumps of probability, and the actual conditional miss rate can be strictly below $u$. Second, the null distribution omits the structure in which the duplicate edge pair shares cells with the remaining keys, whose occurrence rate is about $(d-2)k^2/M$, which can push the conditional miss rate slightly above $u$ when the table is small. Section~\ref{sec:exp-cover} checks the behavior on finite tables by experiments (Figures~\ref{fig:coverage} and~\ref{fig:confirm}): at $M=64$ the largest miss/u is 1.08, exceeding the sampling error; all configurations with $M\ge256$ meet the target within sampling error. The effect of the omitted structure decreases as $1/M$, and the extra capacity also decreases as $M$ grows. When the first round can only use a smaller table, the margin $1/(0.8\alpha_c)$ of the second-round table size already absorbs a slight underestimate (Section~\ref{sec:protocol}); when more margin is needed, one can lower the target load 0.8 to trade a larger second-round table for a lower two-round failure rate.
+
+\subsection{Combining the two rules by the first-round observation}\label{sec:switch}
+The two rules are weak in different ranges. The Gaussian rule underestimates $d$ only when $c$ is bounded, and on this range the Skellam rule is cheap to compute; the cost of the Skellam rule grows roughly with $\lambda_d$, that is, with $c^2$, while the Gaussian rule already meets the target when $c$ is large. A real system can therefore combine the two rules by the first-round observation: use the Gaussian rule when $\widetilde d$ is not below a switch point, and the Skellam rule otherwise. $\widetilde d$ is computed directly from the first-round counts, so the switching itself adds no cost.
+
+As long as the switch point grows faster than $\sqrt{M_1}$ in $M_1$, the combined rule keeps the uniform guarantee of Theorem~\ref{thm:coverage} (Appendix~\ref{app:switch}). When $d/\sqrt{M_1}$ is bounded, $\widetilde d$ falls below the switch point with probability tending to one, and the combined rule is the Skellam rule; when $d/\sqrt{M_1}\to\infty$, both rules compare an asymptotically Gaussian statistic with the same lower $u$ quantile and give asymptotically the same conclusion. For example, taking the switch point $1.5\alpha_cM_1$, that is, a first-round load of 1.5, sizing above load 1.5 needs only one monotone binary search, and the protocol time in the overload region is the same as the Gaussian rule (Section~\ref{sec:exp-cost}).
+
+\subsection{From the conditional miss rate to the failure probability of the two-round protocol}\label{sec:protocol}
+Finally, connect the post-failure conditional miss rate to the overall success rate of two-round reconciliation. The protocol runs according to the flow of Section~\ref{sec:flow}: denote the first-round failure by $F_1$ and the second-round failure by $F_2$; denote by $E$ the checksum misjudgment event, that is, a non-pure cell passes the check, a key passing the check does not belong to the set difference, or the core is nonempty while all fields are zero at termination.
+
+\begin{theorem}[Two-round risk decomposition]\label{thm:protocol}
+Under the ideal hash model, denote by $\Pr_m(F)$ the probability of a peeling failure of $d$ differing keys on a fresh table of $m$ cells. If the reserve size is at least $m(d)$, then
+\begin{equation}
+\Pr\big((F_1\cap F_2)\cup E\big)
+\le\Pr(F_1,\ U_b<d)+\Pr(F_1)\max_{m\ge m(d)}\Pr\nolimits_m(F)+\Pr(E).\label{eq:risk}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By the union bound it suffices to control $F_1\cap F_2$ and $E$ separately. $U_b$ is a function of the first-round counts and the set sizes, and the second-round mapping is independent of it; under ideal purity, $F_2$ depends only on the second-round mapping and $d$. Hence $\Pr(F_1\cap F_2)=\E[\mathbf 1_{F_1}\Pr_{m(U_b)}(F)]$. On $\{U_b<d\}$ we upper-bound the conditional failure probability by one, and on $\{U_b\ge d\}$ we have $m(U_b)\ge m(d)$; taking the supremum gives~\eqref{eq:risk}.
+\end{proof}
+
+The three terms correspond to three ways of going wrong. The first term is a sizing error: after the first-round failure the upper bound underestimates $d$, and the second-round table is allocated according to $U_b$, with insufficient capacity. This is the joint miss rate $\Pr(F_1)\Pr(U_b<d\mid F_1)$. Under the Skellam rule, by Theorem~\ref{thm:coverage}, it is asymptotically at most $u\Pr(F_1)$ uniformly over all $d\ge2$; under a one-sided difference $U_b\ge|b|=d$ and this term is zero. The conditional miss rate of the Gaussian rule can be much larger than $u$ when $c$ is bounded, but then failure itself is rare: by Proposition~\ref{prop:plant}, when $d=o(M_1)$, $\Pr(F_1)$ is asymptotically equal to the expected number of duplicate edge pairs $\binom d2/\binom{M_1}k$, which is about $2.8\times10^{-6}$ for $k=3$, $M_1=1024$, $d=\sqrt{M_1}=32$, so the joint miss rate is still small.
+
+The second term is the randomness of peeling itself: the second-round table has sufficient capacity, yet the random hypergraph can still leave a nonempty 2-core with small probability. The second-round load is at most $0.8\alpha_c$, and by Lemma~\ref{lem:propL} it tends to zero polynomially in $d$. The third term is a verification error: the checksum misjudges a non-pure cell as pure, or misjudges termination on a nonempty core, producing a wrong recovery result. Each check passes falsely with probability at most $2^{-64}$, and the number of checks does not exceed the number of cells plus $k$ times the number of deleted keys; the keySum and count of a nonempty core can cancel to zero simultaneously, and the probability that the checksums are then also all zero is likewise at most $2^{-64}$, occurring at most once per round at termination. Hence $\Pr(E)$ is of order $2(M_1+m+kd)\cdot2^{-64}$, negligible at realistic scales. When the checksum is shortened to 32 bits this term is of order $2(M_1+m+kd)\cdot2^{-32}$, which is at most $10^{-4}$ for $M_1=16384$ and load at most 3; $\widetilde d$ comes only from the count field, so the first term is unaffected by the checksum width, and at deployment one allocates the target failure probability between the sizing and checksum terms.
+
+\eqref{eq:risk} adds the three terms directly, with the first term computed as if every miss leads to a two-round failure, and is therefore conservative. The second-round table leaves a margin, so under a slight underestimate the second round still succeeds with high probability, and the actual impact of such misses is on the same level as the second term. The protocol experiments of Section~\ref{sec:exp-e2e} also show that two-round failures come almost entirely from the second term, and the two-round failure rates of the two rules are comparable to that of the oracle upper bound ($U=d$).

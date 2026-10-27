@@ -1,0 +1,70 @@
+\section{The Gaussian limit after failure and the Gaussian rule}\label{app:clt}
+This appendix proves Theorem~\ref{thm:clt} and Corollary~\ref{cor:gauss}. Write $D_v$ for the degree of cell $v$ and $l_i=\sum_{j\ne i}H_{ij}$. The structure of the proof is as follows: first prove a Gaussian limit for the quadratic form in the random signs on a deterministic good graph (Lemma~\ref{lem:cumulant}), uniformly over good graphs; then show that the good graphs still carry almost all of the probability after conditioning on failure; for the $d=o(M)$ and overload regimes use the Gaussian limit under deterministic coefficients (Lemma~\ref{lem:plantclt}), which is uniform in the coefficients and holds under both the random mapping and the planted distribution; finally branch on the limit of $d/M$ and assemble the pieces by a subsequence argument.
+
+\subsection{CLT for the random signs on a good graph}
+\begin{lemma}\label{lem:cumulant}
+Fix $k\ge3$. Let a deterministic sequence of graphs satisfy $\Omega_2/M\to\beta\in(0,\infty)$ and $\max_il_i=O(\log M)$. Then $\Omega_2^{-1/2}\sum_{i<j}H_{ij}\varepsilon_i\varepsilon_j\Rightarrow N(0,1)$, and the convergence is uniform over graphs satisfying the same set of constant bounds.
+\end{lemma}
+
+\begin{proof}
+There are at most $\Omega_2=O(M)$ nonzero summands, each bounded by $k$. Two summands are dependent only when they share a key, so the maximum degree of the dependency graph is at most $2\max_il_i=O(\log M)$. The covariance of distinct summands is zero (Appendix~\ref{app:encoding}), so the variance of the sum is exactly $\Omega_2$. For a fixed order $r\ge3$, a joint cumulant is nonzero only when the group of summands is connected in the dependency graph \cite{janson1988cumulant}; the number of connected groups is $O_r(M(\log M)^{r-1})$, and the cumulant of each group is bounded. Dividing by $\Omega_2^{r/2}\asymp M^{r/2}$ gives $O_r(M^{1-r/2}(\log M)^{r-1})\to0$. The first cumulant is zero and the second is one; the standard Gaussian is determined by its moments, and the method of moments gives convergence. These bounds depend only on the range of $\beta$ and the constant in $\max_il_i$, so they are uniform over graphs satisfying the same set of constant bounds; if the convergence of the CDF were not uniform, one could extract a deterministic good graph along which convergence fails, contradicting the argument above.
+
+The difference between $\widehat d-d$ and $\frac{2}{k(1-k/M)}$ times this sum is
+\begin{equation*}
+-\frac{k}{M(1-k/M)}\Bigl[\Bigl(\sum_i\varepsilon_i\Bigr)^2-d\Bigr],
+\end{equation*}
+which depends only on the signs and has $L^2$ norm $O(d/M)$, that is $O(M^{-1/2})$ after dividing by $s(d)\asymp d/\sqrt M$, for every graph. On the good graph of Lemma~\ref{lem:conc}, $\Omega_2$ equals its exact mean plus $O(\sqrt M(\log M)^4)$, so the ratio of $\frac{4\Omega_2}{k^2(1-k/M)^2}$ to $s(d)^2$ tends to one, and the normalization by $\sqrt{\Omega_2}$ in this lemma can be replaced by normalization by $s(d)$. Hence the standardized $X$ of $\widehat d$ has the same uniform Gaussian limit on the good graph. By \eqref{eq:raw-decomp}, the difference between $\widetilde d$ and $\widehat d$ is $\frac kM[(\sum_i\varepsilon_i)^2-\widehat d]$. Given the graph, $(\sum_i\varepsilon_i)^2-d$ has $L^2$ norm $\sqrt{2d(d-1)}$; $\widehat d$ is conditionally unbiased with conditional variance at most $(M-1)s(d)^2=2d(d-1)$. By the triangle inequality, the conditional $L^2$ norm of the difference is at most $\frac{2k}M\sqrt{2d(d-1)}$, which is at most $2k\sqrt{M-1}/M\to0$ after dividing by $s(d)$, so the same holds for $\widetilde d$.
+\end{proof}
+
+\subsection{failure conditioning at positive load ratio}
+For $d\ge2$, a specified pair of duplicate edges already forms a core, so
+\begin{equation*}
+\Pr(F)\ge\Pr(S_1=S_2)=\binom Mk^{-1}.
+\end{equation*}
+By Lemma~\ref{lem:conc}, $\Pr(\mathcal G\notin\mathcal G_M\mid F)\le\Pr(\mathcal G\notin\mathcal G_M)\binom Mk\to0$. The error of the conditional CDF is at most the uniform error on the good graph plus this conditional exceptional probability, so at positive load ratio
+\begin{equation*}
+\sup_x\bigl|\Pr(X\le x\mid F)-\Phi(x)\bigr|\to0.
+\end{equation*}
+The same argument applies to any event that depends only on the mapping and has probability at least some fixed negative power of $M$. What is divided by $\Pr(F)$ here is the superpolynomially small exceptional probability; the CLT error on the good graph is simply averaged after conditioning, so the proof does not need a CLT convergence rate strong enough to overcome a rare failure. A typical floor failure is caused by a pair of duplicate edges, which only sets one $H_{ij}$ to $k$; the change in $\Omega_2$ is $O(1)$, far smaller than the deviation allowed by Lemma~\ref{lem:conc}, so it lies inside $\mathcal G_M$.
+
+The conditional variance also tends to $s(d)^2$: on the good graph the ratio tends to one by \eqref{eq:condmoments} and Lemma~\ref{lem:conc}; on any graph the ratio is at most $M-1$, and the contribution of bad graphs is controlled by a superpolynomial probability.
+
+\subsection{Gaussian limit under deterministic coefficients}
+The following Gaussian limit holds uniformly over any deterministic coefficient vector $(s_i)\in\{\pm1\}^d$, so it applies to random-sign encoding by using it given iid coding coefficients and then averaging over the signs.
+
+\begin{lemma}[Gaussian limit under deterministic coefficients]\label{lem:plantclt}
+For deterministic coefficients $(s_i)\in\{\pm1\}^d$, let $C_v=\sum_{i:v\in S_i}s_i$, compute $\widehat d$ by \eqref{eq:dhat}, and obtain $X$ by \eqref{eq:X}. If $d/\sqrt M\to\infty$, then $X\Rightarrow N(0,1)$, with convergence uniform in the coefficients and without requiring $d/M$ to have a finite upper bound. Under the planted distribution $Q$, we likewise have $X\Rightarrow N(0,1)$, uniformly in the coefficients and the label pair.
+\end{lemma}
+
+\begin{proof}
+Write $Y=\widehat d-d$, $W_{ij}=H_{ij}-k^2/M$, and $v_i=\mathbf1_{S_i}-(k/M)\mathbf1$. Exposing the edges in the order of their labels, the martingale difference is $\Delta_j=\frac{2}{k(1-k/M)}s_jv_j^\top\sum_{i<j}s_iv_i$, with $Y=\sum_j\Delta_j$. The sum of conditional variances is
+\begin{gather*}
+\mathcal V_d=s(d)^2+\frac{8}{k(1-k/M)(M-1)}\sum_{i<\ell}(d-\ell)s_is_\ell W_{i\ell},\\
+\Var\mathcal V_d=\frac{64}{(M-1)^3}\sum_{\ell=2}^d(\ell-1)(d-\ell)^2=O\Bigl(\frac{d^4}{M^3}\Bigr).
+\end{gather*}
+Also $s(d)^4\approx4d^4/M^2$, so the variance of the normalized bracket $\mathcal V_d/s(d)^2$ is $O(1/M)$, converging to one in $L^2$. Given the first $j-1$ edges, the components of the vector $\sum_{i<j}s_iv_i$ sum to zero, so $v_j^\top\sum_{i<j}s_iv_i$ equals the sum of its components over the $k$ cells of $S_j$, whose fourth conditional moment is at most $k^3\cdot\frac kM$ times the sum of the fourth powers of all components. The component on cell $v$, $\sum_{i<j}s_i(\mathbf1\{v\in S_i\}-k/M)$, is a sum of $j-1$ independent, centered, bounded terms, each with variance at most $k/M$; by Rosenthal's inequality \cite{rosenthal1970}, its fourth moment is at most $C_k(j/M+j^2/M^2)$. Hence $\E\Delta_j^4\le C_k(j/M+j^2/M^2)$; summing over $j\le d$ and dividing by $s(d)^4$, the fourth-order Lyapunov remainder satisfies
+\begin{equation*}
+\frac{\sum_j\E\Delta_j^4}{s(d)^4}\le C_k\Bigl(\frac M{d^2}+\frac1d\Bigr)\to0,
+\end{equation*}
+and by the martingale CLT \cite{hall1980martingale}, $X\Rightarrow N(0,1)$. Both bounds depend only on $|s_i|=1$, so the convergence is uniform in the coefficients, and no boundedness of $d/M$ is needed.
+
+Under the planted distribution, the statistic is invariant under label permutation, so we may fix the duplicate edge pair as 1, 2, with $S_1=S_2$. Write $Y_{\ge3}$ for $\widehat d$ computed from the remaining $d-2$ edges alone, minus $d-2$; then
+\begin{equation*}
+Y=Y_{\ge3}+2s_1s_2+\frac{2}{k(1-k/M)}(s_1+s_2)\sum_{j\ge3}s_j\Bigl(|S_1\cap S_j|-\frac{k^2}{M}\Bigr).
+\end{equation*}
+The last term has variance $O(d/M)$. The deterministic term $2s_1s_2$ and the last term, divided by $s(d)$, have mean squares $O(M/d^2)$ and $O(1/d)$ respectively, both tending to zero; $Y_{\ge3}$ is handled by the unconditional result. Combining with the total variation bound of Lemma~\ref{lem:plant} or \ref{lem:propL} returns to the failure-conditional distribution. The $d=o(M)$ and overload branches of the next subsection use exactly this conclusion.
+\end{proof}
+
+\subsection{\texorpdfstring{Proof of Theorem~\ref{thm:clt} (the Gaussian limit after failure) and Corollary~\ref{cor:gauss}}{Proof of the Gaussian limit after failure and the Gaussian rule}}
+Assume $d/\sqrt M\to\infty$. For any subsequence, take a further subsequence along which $d/M$ converges in $[0,\infty]$.
+
+When the limit is a positive finite value, use the previous subsection.
+
+When the limit is zero, Lemma~\ref{lem:plant} gives that the TV distance between the failure-conditional distribution and the planted distribution $Q$ tends to zero, valid for all $2\le d=o(M)$; it is a purely graph-theoretic result, which still holds after adding independent signs. The conclusions of Lemma~\ref{lem:plantclt} under the random mapping and the planted distribution are both uniform in deterministic signs: the fourth-order Lyapunov remainder of the edge-exposure martingale is $O_k(M/d^2+1/d)$, and the normalized mean square of the correction term from the planted duplicate edge pair is also $O_k(M/d^2+1/d)$, both tending to zero when $d\gg\sqrt M$. Applying these uniform conclusions given iid coding coefficients and averaging over the signs yields the conditional Gaussian limit.
+
+When the limit is infinite, eventually $d>M$. Each edge deleted in the full peeling can be assigned a cell of degree one at the moment of deletion; that cell is subsequently empty and cannot serve again as a witness for a deletion, so full peeling requires $d\le M$. In this branch $F$ occurs with certainty, and we directly use the conclusion of Lemma~\ref{lem:plantclt} under the random mapping.
+
+All three branches give uniform convergence of the conditional CDF to $\Phi$, and a subsequence contradiction gives \eqref{eq:clt} for the full sequence. Corollary~\ref{cor:gauss} follows from the fact that the Gaussian quantile and the standardized chi-square quantile have the same limit, together with $\{U<d\}\subseteq\{\widehat d<t(d)\}$. \qed
+
+\subsection{\texorpdfstring{Monotonicity of the acceptance lower bound $t(n)$ in Definition~\ref{def:gauss}}{Monotonicity of the acceptance lower bound of the Gaussian rule}}\label{app:gauss-mono}
+Here $t(n)=n+q\,s(n)$ with $q=[\chi^2_{M-1,u}-(M-1)]/\sqrt{2(M-1)}$. When $q\ge0$, $t$ is clearly increasing. When $q<0$, differentiating for $n\ge2$, $\frac{d}{dn}s(n)\le\frac{\sqrt2(2n-1)}{2\sqrt{n(n-1)(M-1)}}\le\frac{3}{2\sqrt2}\cdot\frac{\sqrt2}{\sqrt{M-1}}$, so a sufficient condition is $|q|\sqrt{2/(M-1)}<\sqrt8/3$. The Chernoff bound for the chi-square lower tail \cite[Lemma~1]{laurent2000adaptive} gives $|q|\le\sqrt{2\log(1/u)}\le3.035$ (for $u\ge0.01$), and the condition holds when $M\ge64$. \qed

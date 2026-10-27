@@ -1,119 +1,90 @@
-"""C1: distance from the failure-conditional law of d̂-d to its two limits (run on the server).
+"""Full CDF distances from exact integer records.
 
-usage: python3 limit_ks.py ROOT OUTDIR
-
-For every C1 / c1x configuration, all blocks of out/{c1,c1x}/c1-<kind>-k<k>-M<M>-d<d>-b*/s/cfg_000/chunk_*.bin
-are pooled (failed records only). With d̂ = (S2 - S1^2/M) / (k (1 - k/M)) and s(d) = sqrt(2 d (d-1) / (M-1)):
-
-  ks_gauss   sup |F_n - Phi(./s(d))|, theorem clt
-  ks_cross   sup |F_n - G|, G the compound Poisson law of theorem cross (cp_law below); only where the
-             Poisson mean of the Skellam term is at most 3000, i.e. c bounded
-  dq*_gauss, dq*_cross   empirical minus limit quantile at 1% and 5%, in units of s(d)
-
-Both distances are taken at lattice midpoints (spacing 2/(k(1-k/M))), as in sim/peelsim/exp4_report.ks,
-so the O(d/M) offset of the atoms does not enter.
-
-limit_ks.tsv  one row per configuration.
+python limit_ks.py CAMPAIGN_ROOT OUTDIR [--figure-root OLD_CAMPAIGN_ROOT]
+ks_cross and cross quantiles use tilde d against the manuscript G_d.
+ks_gauss and Gaussian quantiles use hat d, the CLT statistic.
+All failure records are pooled over c1/c1x blocks; no midpoint sampling or histogram rounding.
 """
-import glob
+import argparse
+import csv
 import json
 import math
-import os
 import re
 import sys
-
+from pathlib import Path
 import numpy as np
-from scipy.stats import norm, skellam
-
-QS = (0.01, 0.05)
-
-
-def cp_law(k, M, d):
-    """Support and probabilities of d̂-d under the theorem cross law; copy of sim/peelsim/exp4_report.cp_law."""
-    l1 = math.comb(max(d - 2, 0), 2) * k * k / M
-    l2 = max(d - 2, 0) * k * k / M
-    scale = 1 / (1 - k / M)
-
-    def signed_sum_pmf(lam, step):
-        h = lam / 2
-        r = int(h + 12 * math.sqrt(h) + 20) if lam > 0 else 0
-        js = np.arange(-r, r + 1)
-        p = skellam.pmf(js, h, h) if lam > 0 else (js == 0).astype(float)
-        return {int(step * j): float(q) for j, q in zip(js, p) if q > 1e-15}
-
-    s1 = signed_sum_pmf(l1, 1)
-    s2 = signed_sum_pmf(l2, 2)
-    out = {}
-    for a, pa, with_pair in ((k, 0.5, True), (-k, 0.5, False)):
-        for v1, p1 in s1.items():
-            if not with_pair:
-                out[a + v1] = out.get(a + v1, 0) + pa * p1
-                continue
-            for v2, p2 in s2.items():
-                out[a + v1 + v2] = out.get(a + v1 + v2, 0) + pa * p1 * p2
-    xs = np.array(sorted(out)) * (2 / k) * scale
-    ps = np.array([out[v] for v in sorted(out)])
-    return xs, ps
+from scipy.stats import norm
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'peelsim'))
+from distribution import gd_lattice, discrete_ks, continuous_ks, quantile
 
 
-def read(run):
-    man = json.load(open(os.path.join(run, "s", "manifest.json")))
-    names = man["fields"]
-    nf = man["record_bytes"] // 4
-    parts = [np.fromfile(p, dtype="<u4").reshape(-1, nf)
-             for p in sorted(glob.glob(os.path.join(run, "s", "cfg_000", "chunk_*.bin")))]
-    a = np.concatenate(parts)
-    col = lambda n: a[:, names.index(n)].view("<i4").astype(np.int64)  # noqa: E731
-    fail = col("failed") == 1
-    return col("S1_rand")[fail], col("S2_rand")[fail]
+def read(path, index=0):
+    man = json.load(open(path/'manifest.json'))
+    names, nf = man['fields'], man['record_bytes']//4
+    for part in sorted((path/f'cfg_{index:03d}').glob('chunk_*.bin')):
+        a = np.fromfile(part, dtype='<i4').reshape(-1, nf)
+        a = a[a[:, names.index('failed')] == 1]
+        yield a[:, names.index('S1_rand')].astype(np.int64), a[:, names.index('S2_rand')].astype(np.int64)
 
 
-def ks(xe, pe, cdf, step):
-    grid = np.arange(math.floor(xe.min() / step) - 1, math.ceil(xe.max() / step) + 2) * step + step / 2
-    Fe = np.concatenate([[0.0], np.cumsum(pe)])
-    return float(np.max(np.abs(Fe[np.searchsorted(xe, grid, side="right")] - cdf(grid))))
+def hist(paths, k, M, d):
+    raw, hat = {}, {}
+    for path, index in paths:
+        for s1, s2 in read(path, index):
+            if np.any((s2-k*d) % 2):
+                raise ValueError('S2 parity inconsistent with k*d')
+            for target, vals in ((raw, (s2-k*d)//2), (hat, M*(s2-k*d)-s1*s1+d*k*k)):
+                x, n = np.unique(vals, return_counts=True)
+                for v, count in zip(x, n):
+                    target[int(v)] = target.get(int(v), 0)+int(count)
+    def unpack(h):
+        x = np.array(sorted(h), dtype=np.int64)
+        n = np.array([h[int(v)] for v in x], dtype=np.int64)
+        return x, n
+    return (*unpack(raw), *unpack(hat))
 
 
-def quant(xs, ps, p):
-    return xs[min(int(np.searchsorted(np.cumsum(ps), p)), len(xs) - 1)]
-
-
-def main(root, out):
-    os.makedirs(out, exist_ok=True)
+def main(root, out, figure_root=None):
+    out.mkdir(parents=True, exist_ok=True)
     runs = {}
-    for r in glob.glob(os.path.join(root, "out", "c1", "c1-*")) + glob.glob(os.path.join(root, "out", "c1x", "c1*-*")):
-        m = re.search(r"-(direct|plant)-k(\d+)-M(\d+)-d(\d+)-b\d+$", r)
-        if m:
-            runs.setdefault((m[1], int(m[2]), int(m[3]), int(m[4])), []).append(r)
-    f = open(os.path.join(out, "limit_ks.tsv"), "w")
-    f.write("kind\tk\tM\td\tc\tload_d_over_M\tn\tks_gauss\tks_cross\t"
-            + "\t".join(f"dq{q:g}_{t}" for t in ("gauss", "cross") for q in QS) + "\n")
-    for (kind, k, M, d), rs in sorted(runs.items(), key=lambda x: (x[0][1], x[0][2], x[0][3], x[0][0])):
-        S1, S2 = map(np.concatenate, zip(*[read(r) for r in sorted(rs)]))
-        if len(S1) < 1000:
-            continue
-        # M (S2 - d k) - S1^2 is an exact integer; d̂-d is it over k(M-k).
-        num = M * (S2 - d * k) - S1 * S1 + d * k * k
-        vals, cnt = np.unique(num, return_counts=True)
-        xe = vals / (k * (M - k))
-        pe = cnt / cnt.sum()
-        s = math.sqrt(2 * d * (d - 1) / (M - 1))
-        step = 2 / (k * (1 - k / M))
-        row = [kind, k, M, d, f"{d / math.sqrt(M):.3f}", f"{d / M:.4f}", len(S1)]
-        row.append(f"{ks(xe, pe, lambda x: norm.cdf(x / s), step):.4f}")
-        cross = math.comb(max(d - 2, 0), 2) * k * k / M <= 3000
-        if cross:
-            xc, pc = cp_law(k, M, d)
-            Fc = np.concatenate([[0.0], np.cumsum(pc)])
-            row.append(f"{ks(xe, pe, lambda x: Fc[np.searchsorted(xc, x, side='right')], step):.4f}")
-        else:
-            row.append("")
-        row += [f"{(quant(xe, pe, q) - s * norm.ppf(q)) / s:+.4f}" for q in QS]
-        row += [f"{(quant(xe, pe, q) - quant(xc, pc, q)) / s:+.4f}" if cross else "" for q in QS]
-        f.write("\t".join(map(str, row)) + "\n")
-        f.flush()
-    f.close()
+    for stage in ('c1', 'c1x'):
+        for r in sorted((root/'out'/stage).glob('*')):
+            m = re.search(r'-(direct|plant)-k(\d+)-M(\d+)-d(\d+)-b\d+$', r.name)
+            if m and not r.name.startswith('.'):
+                runs.setdefault((m[1], *map(int, m.groups()[1:])), []).append((r/'s', 0))
+    fields = ['kind','k','M','d','c','load_d_over_M','n','ks_gauss','ks_cross','ks_tilde_gauss',
+              'dq0.01_gauss','dq0.05_gauss','dq0.01_cross','dq0.05_cross']
+    with open(out/'limit_ks.tsv', 'w') as f:
+        w = csv.DictWriter(f, fields, delimiter='\t'); w.writeheader()
+        for (kind,k,M,d), paths in sorted(runs.items()):
+            x,n,h,hn = hist(paths,k,M,d)
+            if n.sum() < 1000: continue
+            p,hp = n/n.sum(), hn/hn.sum()
+            s = math.sqrt(2*d*(d-1)/(M-1)); hx = h/(k*(M-k))
+            row = dict(kind=kind,k=k,M=M,d=d,c=d/math.sqrt(M),load_d_over_M=d/M,n=int(n.sum()),
+                       ks_gauss=continuous_ks(hx,hp,lambda v: norm.cdf(v/s)),
+                       ks_tilde_gauss=continuous_ks(x*2/k,p,lambda v: norm.cdf(v/s)))
+            for u in (0.01,0.05): row[f'dq{u:g}_gauss'] = (quantile(hx,hp,u)-s*norm.ppf(u))/s
+            if math.comb(max(d-2,0),2)*k*k/M <= 3000:
+                y,q = gd_lattice(k,M,d)
+                row['ks_cross'] = discrete_ks(x,p,y,q)
+                for u in (0.01,0.05): row[f'dq{u:g}_cross'] = (quantile(x,p,u)-quantile(y,q,u))*2/k/s
+            w.writerow(row); f.flush()
+    if figure_root:
+        rows=[]
+        for run, ds in (('confirm_plant',(32,64,1024)), ('conv_plant',(128,256,512))):
+            path=figure_root/run; man=json.load(open(path/'manifest.json'))
+            for m in man['configs']:
+                k,M,d=m['k'],m['M'],m['d']
+                if k!=3 or M!=16384 or d not in ds: continue
+                x,n,_,_=hist([(path,m['index'])],k,M,d)
+                rows.append(dict(k=k,M=M,d=d,n=int(n.sum()),lattice=x.tolist(),counts=n.tolist(),
+                                 source=run,index=m['index'],code_version=man['code_version'],seed=man['run_seed']))
+        if len(rows)!=6: raise ValueError('Expected all six figure configurations')
+        (out/'crossover_hist.json').write_text(json.dumps(sorted(rows,key=lambda r:r['d']),indent=2)+'\n')
 
-
-if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+if __name__=='__main__':
+    ap=argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('root',type=Path); ap.add_argument('out',type=Path)
+    ap.add_argument('--figure-root',type=Path)
+    a=ap.parse_args(); main(a.root,a.out,a.figure_root)

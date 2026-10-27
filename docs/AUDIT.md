@@ -9,10 +9,8 @@ The implementations and frozen settings are preserved from the research workspac
 1. **Protocol stopping rule.** The manuscript describes stopping at 20,000 first-round failures. `freeze_main.py` instead freezes trial counts from a pilot, with caps, and uses those fixed counts for the P campaign. Compare the original run records with the final manuscript and document the rule actually used. The artifact preserves the frozen settings.
 2. **Gaussian comparator.** Historical `rchi` arms use the standardized chi-square quantiles in `qtable.json`, while the paper calls the comparator the Gaussian rule. The table also contains standard Gaussian quantiles. Confirm whether the final paper intends this finite-size correction or a normal quantile. No substitution is made in this snapshot.
 3. **Configuration count.** The original C1 grid has 184 configurations; the paper's 189 includes the five C1x configurations with M >= 256. C1x also has one M = 64 configuration, giving 42 boundary configurations together with the original 41. Use both stages when auditing the main figure.
-4. **Distribution overlays.** `fig-crossover-cdf.py` imports `cp_law`, which includes finite-size overlap corrections involving the planted pair. Confirm the final caption's description of this curve against the exact analytic limit in the manuscript.
-5. **Pending decoder experiment.** The rejected-candidate implementation is included, but the new experiment's output directory was absent at snapshot time. Its figure is excluded from the reproducible figure target.
-6. **Historical provenance.** Collect original executable hashes, raw data archives, machine metadata, and source versions before certifying full historical reproduction. Current source hashes alone establish snapshot integrity.
-7. **Publication metadata.** Add the final paper title, full author list, repository URL, paper identifier, artifact DOI, and verified baseline citation when available. Initial software attribution follows the source repository's author name.
+4. **Historical provenance.** Collect original executable hashes, raw data archives, machine metadata, and source versions before certifying full historical reproduction. Current source hashes alone establish snapshot integrity.
+5. **Publication metadata.** Add the final paper title, full author list, repository URL, paper identifier, artifact DOI, and verified baseline citation when available. Initial software attribution follows the source repository's author name.
 
 ## Numerical and experimental conventions
 

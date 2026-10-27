@@ -8,3 +8,6 @@ __pycache__/
 /manuscript/random-sign/figure/*.pdf
 /manuscript/random-sign/figure/*.png
 /manuscript/random-sign/figure/fig-scale.csv
+/manuscript/random-sign/figure/*.aux
+/manuscript/random-sign/figure/*.log
+/manuscript/random-sign/EN/build/

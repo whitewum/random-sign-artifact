@@ -1,0 +1,357 @@
+\section{Experimental Setup and Supplementary Results}\label{app:exp}
+This appendix first states the validation goal and how each experiment is run, then gives the setup and supplementary results item by item in the order of Table~\ref{tab:exp-grid}.
+
+\subsection{Validation Goals and Experiment Overview}\label{app:exp-overview}
+The experiments of Section~\ref{sec:exp} verify the following conclusions. The lower-tail shape of the post-failure statistic (Theorems~\ref{thm:cross} and~\ref{thm:clt}) and the conditional miss rate and extra capacity of the two rules at finite size (Theorem~\ref{thm:coverage} and Corollary~\ref{cor:gauss}) are measured by the statistical experiments (\exptag{STAT}). For some configurations of the statistical experiments, sampling draws from the planted distribution in place of the failure-conditioned distribution, and the planted sampling control (\exptag{PLANT}) tests the finite-size error of this substitution (Lemma~\ref{lem:plant}). Random-sign encoding does not change decoding (Proposition~\ref{prop:decode}), verified by the decoding-equivalence test (\exptag{DEC}) on the full IBLT; the post-failure estimate is conditionally unbiased given the mapping for every sign composition (Propositions~\ref{prop:moments} and~\ref{prop:composition}), verified by the conditional-unbiasedness test (\exptag{UNB}). The conditional miss rate of the Skellam rule, beyond the statistical experiments, is tested on independent samples by the worst-configuration test (\exptag{WORST}) on the configurations closest to the risk upper bound. The reliability and communication cost of the two-round protocol (Theorem~\ref{thm:protocol}) are measured by the protocol experiments (\exptag{PROTO}), and the time and memory of sizing and decoding are given by the computation-cost measurement (\exptag{COST}).
+
+\begin{table}[!htbp]
+\centering
+\caption{Experimental setup. Tags are referenced by the main text and appendix; the last column lists the main-text and appendix subsections where the results appear.}
+\label{tab:exp-grid}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{.11\linewidth}>{\raggedright\arraybackslash}p{.17\linewidth}>{\raggedright\arraybackslash}p{.30\linewidth}>{\raggedright\arraybackslash}p{.24\linewidth}>{\raggedright\arraybackslash}p{.11\linewidth}@{}}
+\toprule
+Experiment & Goal & Parameter range & Samples and stopping rule & Location\\
+\midrule
+\exptag{STAT} statistical experiments & Lower-tail shape (Theorems~\ref{thm:cross}, \ref{thm:clt}); conditional miss rate and extra capacity (Theorem~\ref{thm:coverage}) & $k=3,4,5$, $M\in\{256,1024,4096,16384\}$, $c\in\{0.5,\dots,64\}$, load $\in\{0.95,\dots,3\}$ and $d=2,3,6$, load at most 3; $M=64$ boundary under the same rule & 189 + 42 configurations, about 20{,}000 failures each; fixed number of trials & \ref{sec:exp-setup}, \ref{sec:exp-dist}, \ref{sec:exp-cover}; \ref{app:sampling-impl}, \ref{app:limit}, \ref{app:cover-more}\\
+\exptag{PLANT} planted sampling control & Finite-size error of the planted distribution (Lemma~\ref{lem:plant}) & Critical-load group: $k=3,4,5$, $M=64$--1024, load 0.85--0.95, direct failure probability at least $10^{-3}$; low-load group: for $k=3$, $M=1024$--16384, load 0.04--0.61; for $k=4,5$, $M=256,1024$, load 0.04--0.71 & Critical-load group: 21 configurations, 65{,}000 failures each for direct and planted; low-load group: 12 configurations, direct trial count fixed by $\lambda$, about 65{,}000 failures for $k=3$ and about 20{,}000 to 65{,}000 for $k=4,5$, 65{,}000 planted each & \ref{sec:exp-setup}; \ref{app:planted}\\
+\exptag{DEC} decoding-equivalence test & Decoding equivalence (Proposition~\ref{prop:decode}) & Grid: $k\in\{3,4,5,6,10\}$, $M\in\{64,1024,16384\}$, load 0.5--3, five sign compositions; near threshold: $M\in\{1024,16384,65536\}$, load 0.90--1.05; rejected candidates: $M=16384$, load 0.5--1, nine sign compositions & Grid: 375 configurations, 500,000,000 paired trials in total; near threshold: 13,000,000; rejected candidates: 6,750,000 & \ref{sec:exp-decode}; \ref{app:decode-exp}\\
+\exptag{UNB} conditional-unbiasedness test & Conditional unbiasedness (Propositions~\ref{prop:moments}, \ref{prop:composition}) & $k=3$--6, $M=64$--262144, critical window and its left side with load 0.4--0.95; Figures~\ref{fig:encoding}, \ref{fig:composition}: $M=16384$, failure probability about 0.1 & 203 configurations; Figure~\ref{fig:encoding}: 4,000,000 mappings, Figure~\ref{fig:composition}: 4 configurations & \ref{sec:exp-decode}; \ref{app:dist}\\
+\exptag{WORST} worst-configuration test & Risk guarantee on the worst configurations (Theorem~\ref{thm:coverage}) & 12 configurations (Table~\ref{tab:confirm}); another 10 configurations for Figure~\ref{fig:scale} under the same design & 56{,}000--330{,}000 failures per configuration; stop when the block-ordered cumulative failure count reaches the target & \ref{sec:exp-cover}, \ref{sec:exp-e2e}; \ref{app:cover-more}\\
+\exptag{PROTO} protocol experiments & Protocol reliability and communication cost (Theorem~\ref{thm:protocol}) & $k=3,4,5$, $M_1=256$--16384, load $\in\{0.95,1,1.05,1.5,3\}$, one-sided and balanced, $u\in\{0.01,0.05\}$ & 120 configurations, 13,940,000 trials in total per level of $u$ & \ref{sec:exp-e2e}; \ref{app:protocol}\\
+\exptag{COST} computation-cost measurement & Time and memory of sizing and decoding & $M=16384$, $k=3,4,5$, $c$ from 4 to 314; protocol load 1.0--3 & 10 repetitions per item; candidate-check counts run separately, 30 trials per configuration & \ref{sec:exp-cost}; \ref{app:timing}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The configurations, seeds, sampling sources, stopping rules, and budgets of the statistical experiments, the worst-configuration test, the planted sampling control, and the protocol experiments were frozen before launch based on a single feasibility pilot; the selection rule for the worst-configuration test was fixed before the statistical experiments began, and the specific configurations and sample sizes were derived from that rule after the statistical experiments finished (Appendix~\ref{app:cover-more}). The conditional-unbiasedness test and the decoding-equivalence test come from separate independent runs, and the computation-cost measurement was carried out separately from the other runs (Appendix~\ref{app:timing}).
+
+\subsection{Sampling Method}\label{app:sampling-impl}
+The statistical experiments choose the sampling source by the cost estimated in the pilot: configurations whose 20{,}000 direct failures are estimated to take at most 20 CPU core-hours use direct sampling, with the number of trials set to $\lceil2\times10^4/\widehat{\Pr}(F)\rceil$; the remaining configurations use 20{,}000 planted samples. Figure~\ref{fig:exp-grid} shows the position and sampling source of each configuration on the two axes of $c$ and load. The six points at load 3 ($d=\mathrm{round}(3\alpha_cM)$, where rounding makes the load slightly above 3) were run separately with independent seeds after the statistical experiments finished, with the same sampling method and target number of failures as the other configurations.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-exp-grid.pdf}
+\caption{The 189 configurations of the statistical experiments. Point shape distinguishes the sampling source; vertical lines are the grouping boundaries of $c$, and the horizontal shading marks load 0.95--1.05.}
+\label{fig:exp-grid}
+\end{figure}
+
+Planted sampling uniformly selects a pair of difference keys, makes them share a uniformly random $k$-cell set, generates the mappings of the remaining keys independently and uniformly, and draws the signs independently. This construction produces a peeling failure every time. Direct sampling needs on average $1/\Pr(F)$ mappings to obtain one failure, while planted sampling directly generates a mapping drawn from $Q$; its asymptotic relation to the true failure-conditioned distribution is given by Lemma~\ref{lem:plant}, and the finite-size comparison is in Appendix~\ref{app:planted}. Under iid random signs the statistic is label-invariant, so these experiments equivalently fix the last two labels as the duplicate edge pair.
+
+The runs used by the conditional-unbiasedness test implement direct sampling and splitting on an NVIDIA H100, combined with CPU sampling. The GPU direct sampler processes one graph per thread block and executes peeling in synchronized rounds; each round first identifies degree-one cells, then claims and deletes the corresponding edges through atomic operations, ensuring each edge is deleted once. Random numbers use Philox, organized by seed and trial index, so the random stream is independent of the GPU block partition. The CPU implementation re-peels the same exported batch of mappings independently and compares the final residual core graph by graph; the initial direct sampler found no difference on 14,100 graphs, and the failure-probability statistical controls on 15 configurations all passed the preset criterion. Synchronized peeling and sequential CPU peeling have the same final core, and path statistics that depend on the peeling order are handled by the CPU implementation.
+
+\subsection{Finite-Size Error of the Planted Distribution}\label{app:planted}
+The planted sampling control (\exptag{PLANT}) compares the failure samples generated at finite size by the planted distribution and the failure-conditioned distribution (Lemma~\ref{lem:plant}), comparing three quantities: the fraction of pure duplicate edge pairs among direct failures, the full-range KS distance of the post-failure $X$ on the two samples, and the miss/u of the Skellam rule on the two samples. The KS distance is compared with the asymptotic 95\% critical value, which is 0.0075 with 65{,}000 failures on each side and 0.011 with 20{,}000 on the direct side; since $X$ takes discrete values, this comparison is conservative. The control is split into two groups. The 12 configurations of the low-load group are taken from the planted configurations of the statistical experiments and directly test the planted samples used by the main text; the 21 configurations of the critical-load group have load 0.85 to 0.95, where direct failures are common, and are used to observe how the planted approximation departs with $M$. Figure~\ref{fig:planted} summarizes the two groups.
+
+Most of the 105 planted configurations of the statistical experiments are far from the critical load, so the expected number of duplicate edge pairs $\lambda=\binom d2/\binom Mk$ is small, and by Lemmas~\ref{lem:plant} and~\ref{lem:propL} the failure probability is of the same order as $\lambda$. The low-load group selects from these the 12 configurations that direct sampling can afford, with the direct-sampling trial count fixed by $\lambda$ before sampling (Table~\ref{tab:v-low}). The four configurations with $k=3$ cover $c=1$ to 64 and load 0.04 to 0.61, with about 65{,}000 failures on each side: at $u=0.05$ the equivalence tests with bound $\pm0.1$ and one-sided level $0.05/4$ all pass, and at $u=0.01$ the difference intervals all contain zero; the KS distances are 0.0048 to 0.0079, three below the critical value, and $(3,4096,1024)$ is 0.0079 ($p=0.034$), giving no detectable difference after correction for 12 tests. The eight configurations with $k=4,5$ cover $c=0.5$ to 16 and load 0.04 to 0.71, where failures are rarer, with about 20{,}000 direct failures each, of which $(k,M,d)=(4,256,16)$ and $(5,256,128)$ have about 65{,}000, and 65{,}000 planted samples. At $u=0.05$ the point estimates of the differences are all within $\pm0.04$ and the 95\% intervals all contain zero; the equivalence tests with bound $\pm0.1$ and one-sided level $0.05/8$ pass in 5 cases, and the interval endpoints of the other 3 ($(4,1024,512)$, $(5,256,32)$, $(5,256,64)$) are within $\pm0.13$. At $u=0.01$ the difference intervals of 7 configurations contain zero, and $(4,1024,512)$ is $-0.16$ (interval $[-0.30,-0.02]$), meaning the planted sample has higher miss. The KS distances are 0.0048 to 0.0071, all below their respective critical values. The fraction of pure duplicate edge pairs among direct failures over the 12 configurations is 0.988 to 1.000, consistent with the mechanism of Lemma~\ref{lem:plant}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Direct and planted sampling for the low-load group (Skellam rule, $u=0.05$; miss/u is direct / planted, difference is the 95\% interval of direct minus planted; KS is the full-range KS distance of $X$, with 95\% critical value 0.0075 at 65{,}000 direct failures and 0.011 at 20{,}000).}
+\label{tab:v-low}
+\small
+\begin{tabular}{@{}rrrrrrcccc@{}}
+\toprule
+& & & & & direct & pure duplicate edge pairs & & & \\
+$k$ & $M$ & $d$ & $c$ & load & failure count & fraction & miss/u & difference & KS\\
+\midrule
+3 & 1024 & 32 & 1 & 0.04 & 65061 & 1.000 & 0.94 / 0.94 & $[-0.05,+0.04]$ & 0.0059\\
+3 & 4096 & 512 & 8 & 0.15 & 64977 & 1.000 & 0.95 / 0.96 & $[-0.06,+0.03]$ & 0.0048\\
+3 & 4096 & 1024 & 16 & 0.31 & 65136 & 0.999 & 0.92 / 0.94 & $[-0.07,+0.03]$ & 0.0079\\
+3 & 16384 & 8192 & 64 & 0.61 & 65530 & 0.999 & 0.98 / 0.99 & $[-0.06,+0.04]$ & 0.0051\\
+\addlinespace
+4 & 256 & 8 & 0.5 & 0.04 & 20071 & 0.998 & 0.54 / 0.52 & $[-0.03,+0.07]$ & 0.0071\\
+4 & 256 & 16 & 1 & 0.08 & 65839 & 0.995 & 0.68 / 0.69 & $[-0.05,+0.03]$ & 0.0057\\
+4 & 1024 & 128 & 4 & 0.16 & 20067 & 0.997 & 0.95 / 0.95 & $[-0.06,+0.07]$ & 0.0049\\
+4 & 1024 & 256 & 8 & 0.32 & 20265 & 0.994 & 0.98 / 0.97 & $[-0.06,+0.08]$ & 0.0048\\
+4 & 1024 & 512 & 16 & 0.65 & 20038 & 0.988 & 0.94 / 0.97 & $[-0.10,+0.04]$ & 0.0062\\
+5 & 256 & 32 & 2 & 0.18 & 20137 & 0.999 & 1.00 / 0.98 & $[-0.05,+0.09]$ & 0.0068\\
+5 & 256 & 64 & 4 & 0.36 & 19885 & 0.997 & 0.91 / 0.95 & $[-0.11,+0.03]$ & 0.0048\\
+5 & 256 & 128 & 8 & 0.71 & 65470 & 0.995 & 0.99 / 1.01 & $[-0.07,+0.02]$ & 0.0063\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Direct sampling is infeasible for the remaining planted configurations: among the 77 planted configurations with $k=4,5$, 76 have $\lambda$ below $10^{-6}$ with the smallest about $10^{-19}$, and the feasibility pilot observed no failure in 68 of 75 configurations; collecting 65{,}000 failures needs at least $6.5\times10^{10}$ trials, and about half of the configurations need more than $10^{15}$, beyond the feasible range of direct sampling on CPU and GPU. On these configurations the distance between the planted distribution and the failure-conditioned distribution is controlled by Lemma~\ref{lem:plant}, whose error term tends to zero when $d=o(M)$; the region where direct sampling is hardest is precisely the region where this approximation is most accurate.
+
+The critical-load group observes the applicable boundary of the planted approximation. The statistical experiments have five planted configurations at load 0.95, all with $M\ge4096$; this group takes smaller $M$ and compares the two samples in the region where failure is mostly caused by larger stopping sets. The sample size is determined by the equivalence test on the miss/u difference at $u=0.05$: bound $\pm0.1$, one-sided level $0.05/21$, power 80\% when the difference is zero, and 65{,}000 failures on each side. Table~\ref{tab:v} gives the results for these 21 configurations.
+
+\begin{table}[!htbp]
+\centering
+\caption{Direct and planted sampling for the critical-load group (Skellam rule; miss/u is direct / planted; KS is the full-range KS distance of $X$, 95\% critical value 0.0075).}
+\label{tab:v}
+\small
+\begin{tabular}{@{}rrrrcccc r@{}}
+\toprule
+$k$ & $M$ & load & pure duplicate edge pairs & \multicolumn{2}{c}{$u=0.01$} & \multicolumn{2}{c}{$u=0.05$} & KS\\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+& & & fraction & miss/u & difference & miss/u & difference & \\
+\midrule
+3 & 64 & 0.86 & 0.09 & 0.44 / 0.48 & $-0.04\pm0.07$ & 0.87 / 0.88 & $-0.01\pm0.04$ & 0.0026\\
+3 & 64 & 0.90 & 0.05 & 0.49 / 0.52 & $-0.03\pm0.08$ & 0.82 / 0.87 & $-0.05\pm0.04$ & 0.0085\\
+3 & 64 & 0.95 & 0.02 & 0.44 / 0.51 & $-0.07\pm0.07$ & 0.87 / 0.94 & $-0.07\pm0.05$ & 0.0088\\
+4 & 64 & 0.85 & 0.01 & 0.56 / 0.49 & $+0.08\pm0.08$ & 0.89 / 0.92 & $-0.03\pm0.05$ & 0.0105\\
+4 & 64 & 0.89 & 0.01 & 0.54 / 0.65 & $-0.11\pm0.08$ & 0.89 / 0.96 & $-0.07\pm0.05$ & 0.0097\\
+4 & 64 & 0.95 & 0.00 & 0.39 / 0.55 & $-0.16\pm0.07$ & 0.81 / 0.93 & $-0.13\pm0.04$ & 0.0131\\
+5 & 64 & 0.85 & 0.00 & 0.58 / 0.69 & $-0.11\pm0.09$ & 0.96 / 1.07 & $-0.11\pm0.05$ & 0.0130\\
+5 & 64 & 0.89 & 0.00 & 0.57 / 0.69 & $-0.12\pm0.09$ & 1.00 / 1.13 & $-0.13\pm0.05$ & 0.0142\\
+5 & 64 & 0.96 & 0.00 & 0.55 / 0.72 & $-0.16\pm0.09$ & 0.89 / 1.04 & $-0.15\pm0.05$ & 0.0118\\
+3 & 256 & 0.85 & 0.63 & 0.75 / 0.62 & $+0.13\pm0.09$ & 0.89 / 0.88 & $+0.01\pm0.04$ & 0.0063\\
+3 & 256 & 0.90 & 0.13 & 0.75 / 0.66 & $+0.09\pm0.09$ & 0.95 / 0.88 & $+0.07\pm0.05$ & 0.0080\\
+3 & 256 & 0.95 & 0.02 & 0.77 / 0.64 & $+0.14\pm0.09$ & 0.92 / 0.91 & $+0.01\pm0.05$ & 0.0060\\
+4 & 256 & 0.90 & 0.01 & 0.71 / 0.70 & $+0.01\pm0.09$ & 0.93 / 0.98 & $-0.05\pm0.05$ & 0.0045\\
+4 & 256 & 0.95 & 0.00 & 0.72 / 0.73 & $-0.01\pm0.09$ & 0.93 / 0.97 & $-0.05\pm0.05$ & 0.0052\\
+5 & 256 & 0.90 & 0.00 & 0.71 / 0.75 & $-0.04\pm0.09$ & 0.92 / 0.94 & $-0.02\pm0.05$ & 0.0052\\
+5 & 256 & 0.95 & 0.00 & 0.73 / 0.80 & $-0.07\pm0.09$ & 0.95 / 0.94 & $+0.00\pm0.05$ & 0.0027\\
+3 & 1024 & 0.85 & 0.97 & 0.79 / 0.78 & $+0.01\pm0.10$ & 0.92 / 0.91 & $+0.02\pm0.05$ & 0.0033\\
+3 & 1024 & 0.90 & 0.96 & 0.83 / 0.86 & $-0.03\pm0.10$ & 0.93 / 0.95 & $-0.02\pm0.05$ & 0.0037\\
+3 & 1024 & 0.95 & 0.08 & 0.84 / 0.84 & $+0.01\pm0.10$ & 0.96 / 0.96 & $-0.00\pm0.05$ & 0.0091\\
+4 & 1024 & 0.95 & 0.00 & 0.89 / 0.91 & $-0.02\pm0.10$ & 0.97 / 0.94 & $+0.03\pm0.05$ & 0.0054\\
+5 & 1024 & 0.95 & 0.00 & 0.85 / 0.79 & $+0.06\pm0.10$ & 0.96 / 0.95 & $+0.01\pm0.05$ & 0.0039\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On the five tested $M=1024$ configurations, the equivalence tests with bound $\pm0.1$ all pass at $u=0.05$, and the difference intervals at both levels of $u$ contain zero, including configurations where the fraction of pure duplicate edge pairs among direct failures is 0.97 and configurations where it is close to zero. Among the nine $M=64$ configurations, seven fail to confirm the difference within the bound, on which the planted sample has higher miss, with the difference interval reaching $-0.20$; the two configurations with $k=3$, $M=256$ agree at $u=0.05$, and at $u=0.01$ the direct sample has miss/u higher by about 0.13 (interval $[+0.04,+0.22]$).
+
+The KS distance decreases as $M$ grows. For the five $M=1024$ configurations it is 0.0033 to 0.0091, four below the critical value; the configuration $(k,M,d)=(3,1024,796)$ that exceeds it differs in the middle of the distribution, with a maximum difference of only 0.0039 in the lower tail between the 0.2\% and 15\% quantiles of the pooled sample. For the seven $M=256$ configurations it is 0.0027 to 0.0080, six below the critical value; for the nine $M=64$ configurations it is 0.0026 to 0.0142, eight above the critical value. The configuration among $M=1024$ with pure-duplicate-edge-pair fraction 0.97 and those close to zero have similarly small KS distance: when the failure mechanism differs the distribution of $X$ can still be close, and the pure-duplicate-edge-pair fraction does not suffice to predict the distribution error of $X$, which also depends on the overlap fluctuation on the $s(d)$ scale.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-planted.pdf}
+\caption{Comparison of direct and planted sampling. The upper three panels are the critical-load group (grouped by $M$), and the bottom is the low-load group; the vertical axis labels $k$ and load. Left: the miss/u difference of the Skellam rule (direct minus planted) with its 95\% interval, shaded $\pm0.1$; right: the full-range KS distance of $X$, with gray ticks marking the 95\% critical value at that sample size.}
+\label{fig:planted}
+\end{figure}
+
+\subsection{Random-Sign Encoding Does Not Change Decoding}\label{app:decode-exp}
+The decoding-equivalence test (\exptag{DEC}) uses the real IBLT encoder and decoder of the two-round protocol directly, builds the two parties' tables and subtracts them, and compares the first-round decoding of standard encoding and random-sign encoding. The test consists of three groups of paired trials, which use the same construction and verification.
+
+Each trial regenerates non-repeating keys and the seeds of the cell hash, sign hash, and checksum hash; the two encodings share the same batch of keys and hashes. We first verify cell by cell that the three fields after cancellation of the common elements equal the result of encoding the difference directly, then run decoding. The independent reference uses only the unsigned incidence graph of the true difference and computes the residual 2-core by the degree-one rule. Whenever the actual decoder accepts a key, it checks the true residual degree, key, and direction and updates the reference state; the checks cover the trajectories of both eventual success and failure. After termination, we verify that the recovered key set is exactly the difference outside the 2-core with all directions correct, reconstruct the three fields from the true residual and compare cell by cell, and check that all fields are zero if and only if the residual core is empty.
+
+The first group is a grid covering the whole load range: $k\in\{3,4,5,6,10\}$, $M\in\{64,1024,16384\}$, load $d/(\alpha_cM)\in\{0.5,0.95,1,1.05,3\}$, and positive-direction ratio $d_+/d$ with target values $0,1/4,1/2,3/4,1$; $d$ and $d_+$ are rounded to integers from the target values. Each $k$ uses its corresponding peeling threshold, giving 375 configurations in total. The number of common elements is $\min\{1000,M\}$. At $M=64,1024,16384$ each configuration runs 3,000,000, 900,000, and 100,000 trials respectively, 500,000,000 in total, and 100,000,000 for each $k$.
+
+Table~\ref{tab:decode-paired} gives the results by $k$. Over all configurations, the numbers of paired success/failure disagreements, non-pure acceptances, incorrect recoveries, and residual-core disagreements are all zero. The two decoders together checked 211,516,840,988 acceptance operations, all satisfying the true degree-one and direction conditions.
+
+The second group densifies the load near the threshold, and Table~\ref{tab:decode} of the main text comes from this group. The configurations are $k\in\{3,4,5,6,10\}$, $M\in\{1024,16384,65536\}$, load taking 10 values between 0.90 and 1.05, and $d_-/d\in\{0,1/2\}$. Each configuration runs 100,000, 20,000, and 10,000 trials at $M=1024,16384,65536$ respectively, 13,000,000 in total, all checks passing. At $M=16384$ the failure probability at load 0.99 is 0.020 to 0.060 and at 1.01 is 0.993 to 0.998; at $M=65536$ load 0.99 and 1.01 give almost no failure and almost all failure respectively. On failure the decoder still recovers the difference outside the 2-core, with an average recovery fraction at $M=65536$, load 1.02 of 0.18 ($k=10$) to 0.50 ($k=3$).
+
+The third group of paired trials counts the rejected candidates separately for each encoding, namely the cells whose count is $\pm1$ but that fail the checksum or the cell-ownership check. The configurations are $M=16384$, $k\in\{3,4,5,6,10\}$, load $0.5,0.95,1$, and $d_-/d$ taking nine values from 0 to 1 in steps of $1/8$, with 50,000 trials per configuration, 6,750,000 in total, all checks passing. Figure~\ref{fig:decode} gives the results for $k=3$ to 6. Standard encoding has no rejected candidates under one-sided differences because the count equals the degree; the closer the difference is to balanced, the more opposite-sign cancellation occurs and the more rejected candidates there are. The number of rejected candidates under random-sign encoding differs by at most 0.3\% across the nine sign compositions, and equals the value of standard encoding in the balanced case, consistent with Proposition~\ref{prop:composition}: the coding coefficient is an iid random sign independent of $(d_+,d_-)$. The results for $k=10$ are the same, with both encodings giving about 1.27 rejected candidates per difference key at load 1. Across the three groups the two decoders together rejected $2.8\times10^{11}$ non-pure candidates with count $\pm1$ without a single false acceptance; the cell-ownership check rejected zero candidates, and all wrong candidates were rejected at the checksum step.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-decode.pdf}
+\caption{The number of rejected candidates per first-round decoding divided by $d$ ($M=16384$, the two encodings share the same batch of mappings on the same configuration). Solid lines with filled markers are standard encoding, dashed lines with open markers are random-sign encoding.}
+\label{fig:decode}
+\end{figure}
+
+\begin{table}[!htbp]
+\centering
+\caption{First-round paired decoding results.}
+\label{tab:decode-paired}
+\begin{tabular}{rrrr}
+\toprule
+$k$ & paired trials & successes & failures\\
+\midrule
+3 & 100,000,000 & 36,532,515 & 63,467,485\\
+4 & 100,000,000 & 35,900,798 & 64,099,202\\
+5 & 100,000,000 & 33,530,250 & 66,469,750\\
+6 & 100,000,000 & 32,553,378 & 67,446,622\\
+10 & 100,000,000 & 30,233,256 & 69,766,744\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The Post-Failure Estimate Is Conditionally Unbiased over the Sign Composition}\label{app:dist}
+Among the 203 configurations of the conditional-unbiasedness test (\exptag{UNB}), 196 have at least 1000 failure samples. On these configurations the $|\E[X\mid F]|$ under random-sign encoding is at most 0.032, with 93\% within two standard errors, consistent with the exact unbiasedness of Proposition~\ref{prop:moments}; the conditional variance to the left of the critical window is 0.972--1.049. Among the 84 direct-sampling configurations of the statistical experiments, $|\E[X\mid F]|$ under random-sign encoding is at most 0.019, with 98\% within two standard errors. In the statistical experiments at load 1.0 and failure probability about 0.67, the conditional mean under standard encoding with one-sided differences is $+0.20$, $+0.02$, and $-0.08$ for $k=3,4,5$ (standard error 0.007).
+
+Table~\ref{tab:mean-by-k} lists the values behind Figure~\ref{fig:composition} of the main text. For each $(k,M,d)$ it records the five compositions under both encodings, with the ten datasets sharing the same batch of mappings and both encodings using all failure records; the failure probability of the four configurations is 0.099--0.102. The 20 values under random-sign encoding all have absolute value at most 0.005, all within two standard errors of zero. The data of Figure~\ref{fig:encoding} are generated by the sampling code of the interactive experiment page Peeling Lens, which computes $X$ for three encodings on each random mapping, with the random signs from an independent generator. This configuration has $c\approx104$. Under standard encoding $\E[X\mid F]=+0.599\pm0.001$ for one-sided differences and $-0.002$ for balanced differences; under random-sign encoding it is $+0.001\pm0.001$, with conditional variance 1.007, and the failure samples are close in distribution to the full sample, consistent with the large-$c$ form described by Theorem~\ref{thm:clt}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Values behind Figure~\ref{fig:composition}: the mean of the post-failure $X$ ($M=16384$, failure probability about 0.1). Standard errors: 0.0018 for $k=3$, 0.0031--0.0032 for $k=4,5,6$.}
+\label{tab:mean-by-k}
+\begin{tabular}{rrlrrrrr}
+\toprule
+& & & \multicolumn{5}{c}{$d_-/d$}\\
+\cmidrule(lr){4-8}
+$k$ & $d$ & encoding & 0 (one-sided) & 0.1 & 0.25 & 0.4 & 0.5 (balanced)\\
+\midrule
+3 & 13306 & standard & $+0.638$ & $+0.405$ & $+0.158$ & $+0.028$ & $+0.003$\\
+  &       & random sign & $+0.002$ & $-0.001$ & $0.000$ & $-0.004$ & $+0.002$\\
+\addlinespace
+4 & 12567 & standard & $+0.084$ & $+0.052$ & $+0.016$ & $-0.002$ & $-0.003$\\
+  &       & random sign & $-0.001$ & $-0.002$ & $+0.005$ & $+0.001$ & $-0.001$\\
+\addlinespace
+5 & 11418 & standard & $-0.218$ & $-0.137$ & $-0.054$ & $-0.009$ & $+0.002$\\
+  &       & random sign & $+0.003$ & $-0.005$ & $0.000$ & $-0.002$ & $-0.004$\\
+\addlinespace
+6 & 10363 & standard & $-0.387$ & $-0.244$ & $-0.096$ & $-0.021$ & $-0.004$\\
+  &       & random sign & $+0.002$ & $+0.003$ & $+0.005$ & $+0.001$ & $+0.001$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Distance between the Post-Failure Lower Tail and the Limit Distribution}\label{app:limit}
+This section uses the failure records of the statistical experiments (\exptag{STAT}). Figure~\ref{fig:crosscdf} computes $\widetilde d=\sum_vC_v^2/k$ from the raw integer sums of squares, keeps all empirical value points, and standardizes them on the same scale as $G_d$ of the main text. The KS distance is computed on the left and right sides of all value points of the two distributions. By \eqref{eq:raw-decomp} of Appendix~\ref{app:ams}, the difference between $\widehat d$ and $\widetilde d$ is about $0.02s(d)$ at $M=16384$. This perturbation is small relative to the standard deviation but shifts the discrete atoms, so the distribution check uses the $\widetilde d$ corresponding to Theorem~\ref{thm:cross}.
+
+Table~\ref{tab:limit-ks} computes the full KS distance from the raw integer records of the statistical experiments. The discrete-limit column compares $\widetilde d$ with $G_d$, taking $c=1,2,4$ and $k=3,4,5$, nine configurations for each $M$, with direct and planted samples for $M\le1024$ and planted samples for $M\ge4096$; the Gaussian control in the same column uses $(\widetilde d-d)/s(d)$. The Gaussian column on the right compares $X=(\widehat d-d)/s(d)$ with $N(0,1)$, taking the 75 direct-sampling configurations with $c\ge8$, including the critical window and overload. Each configuration has about 20{,}000 failures, and at a fixed sample size the per-configuration 95\% error bound of DKW is about 0.010. The discrete approximation has visible finite-size error on small tables, decreasing overall as $M$ grows; the quantile error of the Gaussian also decreases as $M$ grows.
+
+\begin{table}[!htbp]
+\centering
+\caption{Full KS distance after failure. The discrete limit uses $\widetilde d$ and the Gaussian uses $\widehat d$. The quantile error is in units of $s(d)$, taken as the maximum absolute value over each configuration.}
+\label{tab:limit-ks}
+\small
+\begin{tabular}{rcccccc}
+\toprule
+& \multicolumn{3}{c}{discrete limit ($c=1,2,4$)} & \multicolumn{3}{c}{Gaussian ($c\ge8$, direct sampling)}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+$M$ & KS & KS of Gaussian ($c=1$) & configs & KS & 1\% quantile error & configs\\
+\midrule
+256 & 0.019--0.034 & 0.237--0.252 & 9 & 0.010--0.021 & 0.18 & 23\\
+1024 & 0.008--0.023 & 0.224--0.244 & 9 & 0.005--0.015 & 0.10 & 23\\
+4096 & 0.004--0.016 & 0.215--0.230 & 9 & 0.005--0.014 & 0.06 & 17\\
+16384 & 0.003--0.012 & 0.214--0.230 & 9 & 0.003--0.010 & 0.05 & 12\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The conditional variance reflects the same structure. Among the 84 direct-sampling configurations of the statistical experiments, the conditional variance under random-sign encoding is 0.98--1.06 when $c\ge8$, and 0.985--1.020 within the critical window. When $c$ is small the conditional variance is clearly above one, about 1.12 at $c=4$, about 1.5 at $c=2$, and above 10 when $c<1$, consistent with the $1+2/c^2$ obtained by converting the variance $4+2c^2$ of the limit distribution to the $X$ scale. The excess comes from the $\pm2$ shift of the duplicate edge pair, which is non-negligible relative to $s(d)$.
+
+\subsection{Conditional Miss Rate and Extra Capacity at Finite Size}\label{app:cover-more}
+Among the 189 configurations of the statistical experiments, 84 use direct sampling and 105 use planted sampling. The maximum miss/u of the Skellam rule on the direct-sampling configurations is 1.04 (the same at both levels of $u$), occurring within the critical window; the maximum of 1.03 on the planted configurations is computed under the planted distribution. Each configuration has about 20{,}000 failures, corresponding to about 200 misses at $u=0.01$, and the standard error of miss/u is about 0.07, so a value like 1.04 slightly above 1 cannot be distinguished from 1. On the low-load configurations with $c<8$, the median miss/u of the Skellam rule at $u=0.01$ is at most 0.76. Every sample accepts at least one candidate. When no candidate is accepted, $U=+\infty$ and this is not counted as a miss. The Gaussian rule has miss/u 0.83--1.19 over all configurations when $c\ge8$; at $c=1$, $u=0.01$ it is about 11 for $k=3$ and about 8.5 for $k=4,5$. When $c$ is small and the observation falls near $d-2$, the observations for $d=2,3$ are below the acceptance threshold of every candidate, so the Gaussian rule returns $+\infty$ and no miss occurs. On the direct-sampling configurations with $c\ge8$ in the statistical experiments, the median miss/u of the Skellam rule at the two levels of $u$ is 0.79--0.86 and 0.95--0.97.
+
+At $u=0.01$ and $c\ge8$, the median extra capacity of the Skellam rule is 25\%, 11.3\%, 5.4\%, and 2.6\% at $M=256$, 1024, 4096, 16384, with the 90\% quantile at most 41\%, 18\%, 8.5\%, and 4.1\%; the medians of the Gaussian rule are 23.5\%, 10.8\%, 5.3\%, and 2.6\%, differing from the Skellam rule by at most 1.5 percentage points. At $c=1,2,4$ the median of $U-d$ is 5, 8, 15 under the Skellam rule and 3, 6, 14 under the Gaussian rule. For fixed small $d$, the 90\% quantile of the upper bound at $d=2$ exceeds $d$ by 4--5. Among the 42 configurations with $M=64$, the maximum miss/u of the Skellam rule is 1.08 at $u=0.05$ ($k=4$, $d=6$, 95\% Wilson interval 1.02--1.15) and 1.04 at $u=0.01$.
+
+Table~\ref{tab:gauss-c} lists the miss/u of the Gaussian rule at fixed $c$ on $M=16384$, corresponding to the triangles with $c\le16$ in Figure~\ref{fig:coverage} of the main text. As $c$ decreases the excess grows rapidly, being about 8--11 at $c=1$ and above 33 at $c=0.5$ for $u=0.01$; for $c\le4$ the values at $M=4096$ and 16384 differ by at most 8\%, and the excess does not vanish as the table size grows.
+
+\begin{table}[!htbp]
+\centering
+\caption{The miss/u of the Gaussian rule at fixed $c$ ($M=16384$).}
+\label{tab:gauss-c}
+\begin{tabular}{rrrrrrr}
+\toprule
+& \multicolumn{3}{c}{$u=0.01$} & \multicolumn{3}{c}{$u=0.05$}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+$c$ & $k=3$ & $k=4$ & $k=5$ & $k=3$ & $k=4$ & $k=5$\\
+\midrule
+0.5 & 36.4 & 33.2 & 33.2 & 9.37 & 8.81 & 9.39\\
+1 & 11.3 & 8.74 & 8.27 & 4.09 & 4.24 & 4.60\\
+2 & 3.06 & 2.48 & 2.60 & 2.00 & 1.70 & 1.94\\
+4 & 1.51 & 1.41 & 1.50 & 1.21 & 1.19 & 1.20\\
+8 & 1.12 & 1.03 & 1.08 & 1.07 & 1.08 & 1.06\\
+16 & 0.98 & 0.93 & 0.99 & 0.98 & 1.01 & 1.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+The samples of the worst-configuration test (\exptag{WORST}) are independent of the statistical experiments, and the selection rule and sample sizes are fixed before sampling. The configurations are selected as follows: first take the five configurations whose miss/u exceeds 1 in exploration, then fill the remaining slots in descending order of the larger of the one-sided 95\% exact upper bounds divided by $u$ over the two levels of $u$ in the statistical experiments. Four of the top-ranked configurations have only planted samples, for which direct sampling cannot obtain failures at feasible cost, so they are passed over by the rule to later configurations; their miss/u under $Q$ is at most 1.02. For each configuration and each level of $u$, the previously estimated 95\% Wilson upper bound (at most 1) is used as the planning value, and the number of failures is set so that the single-item passing probability is at least $1-0.2/24$, taking the larger of the two levels, so that the probability that all 24 judgments pass is at least 80\% at the planning value. Each judgment passes when the one-sided simultaneous confidence upper bound is at most $1.1u$; the bound uses the Clopper--Pearson interval with a Bonferroni correction over the 24 judgments. All 24 judgments pass, with the largest upper bound $1.024u$; 22 of the 24 two-sided 95\% intervals lie entirely below 1, and the other 2 cover 1. Only one test configuration uses $M=256$. Sampling runs in blocks, and the analysis uses all blocks up to the first time the block-ordered cumulative failure count reaches the target; the stopping depends only on the failure count. At the two test-configuration points with $k=3$, $M=1024$, the miss/u of the Gaussian rule is 11.1 ($u=0.01$) and 4.1 ($u=0.05$) at $c=1$, and 2.9 and 1.8 at $c=2$. Table~\ref{tab:confirm} lists the load, failure count, miss/u, and one-sided simultaneous confidence upper bound of each test configuration; the segments in Figure~\ref{fig:confirm} of the main text are two-sided 95\% intervals.
+
+\begin{table}[!htbp]
+\centering
+\caption{The miss/u of the Skellam rule on the \exptag{WORST} configurations and the one-sided simultaneous confidence upper bound (in parentheses, per-item level $0.05/24$).}
+\label{tab:confirm}
+\begin{tabular}{lrrcc}
+\toprule
+configuration & load & failures & $u=0.01$ & $u=0.05$\\
+\midrule
+$k=3$, $M=1024$, $d=32$ & 0.04 & 55{,}509 & 0.53 (0.62) & 0.97 (1.02)\\
+$k=3$, $M=1024$, $d=64$ & 0.08 & 289{,}001 & 0.90 (0.95) & 0.91 (0.94)\\
+$k=3$, $M=1024$, $d=192$ & 0.23 & 289{,}394 & 0.79 (0.83) & 0.95 (0.97)\\
+$k=4$, $M=256$, $d=128$ & 0.65 & 105{,}689 & 0.74 (0.82) & 0.93 (0.97)\\
+$k=4$, $M=1024$, $d=751$ & 0.95 & 298{,}439 & 0.85 (0.90) & 0.95 (0.98)\\
+$k=3$, $M=4096$, $d=3352$ & 1.00 & 333{,}476 & 0.93 (0.98) & 0.97 (1.00)\\
+$k=5$, $M=4096$, $d=3018$ & 1.05 & 332{,}350 & 0.90 (0.95) & 0.99 (1.01)\\
+$k=5$, $M=1024$, $d=755$ & 1.05 & 332{,}353 & 0.83 (0.87) & 0.96 (0.98)\\
+$k=4$, $M=16384$, $d=16384$ & 1.29 & 293{,}250 & 0.95 (1.01) & 0.98 (1.01)\\
+$k=3$, $M=4096$, $d=5029$ & 1.50 & 332{,}350 & 0.91 (0.96) & 0.98 (1.00)\\
+$k=4$, $M=16384$, $d=18980$ & 1.50 & 290{,}808 & 0.96 (1.02) & 0.98 (1.00)\\
+$k=4$, $M=16384$, $d=37959$ & 3.00 & 289{,}952 & 0.95 (1.01) & 0.97 (1.00)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Among the 12 configurations in the upper row of Figure~\ref{fig:scale}, two ($k=3$, $M=4096$ and $k=4$, $M=16384$) are test configurations; the other 10 follow the same design (sample size and stopping rule fixed before sampling), each with about 290{,}000 direct-sampling failures. Under random-sign encoding the common elements cancel in the difference table, the sign composition does not affect the post-failure distribution, and the $|b|\le1$ used by the protocol under balanced differences does not change the upper bound either, so the protocol experiments, the statistical experiments, and these direct samples estimate the same conditional miss rate and are pooled by configuration in the figure. On these 10 configurations the one-sided upper bound of the Skellam rule is at most $1.025u$ at $u=0.01$ and $1.003u$ at $u=0.05$.
+
+\subsection{Reliability and Communication Cost of the Two-Round Protocol}\label{app:protocol}
+Each trial generates the common elements and difference elements separately, with all differences on the $A$ side when one-sided and half on each side when balanced. The common elements cancel in the difference table but still participate in table building and cell-by-cell subtraction as usual. Trials that succeed in the first round need no upper bound; only first-round-failure trials enter the comparison, and the two levels of $u$ are computed separately on the same batch of trials. The 64 cells in the second-round table length are an additional lower bound set on top of the table length of Section~\ref{sec:flow}; the second round decodes independently on the new table, consistent with the analysis of Theorem~\ref{thm:protocol}. The second-round recovery results all match the true difference element by element. The two rounds use independent cell hashes, and share the sign hash and checksum hash. Bytes are counted at 20 bytes per cell (4 bytes for the count line and 8 bytes each for keySum and checksum), with random-sign encoding adding an 8-byte global counter. The upper bounds share the same batch of keys and hashes, and for each first-round-failure trial we record $U_b$, the second-round size, and the second-round outcome for each bound, with the paired comparison aligned by trial. The number of trials per configuration is shared between the two levels of $u$, set to $\lceil2\times10^4/\widehat{\Pr}(F_1)\rceil$ with a cap of 3,000,000. At load 0.95 and $M_1\ge4096$, the eight configurations with $k=4,5$ have no first-round failure in the pilot or the 100,000 trials, and enter only the failure-rate and byte statistics. The interval of the success-rate difference is computed by the Newcombe hybrid score method for paired proportion differences.
+
+Table~\ref{tab:e2e} summarizes the protocol results of Section~\ref{sec:exp-e2e} of the main text by $M_1$ and $u$. The final two-round failure rate is at most 0.3\% at $M_1=256$; the conditional miss rate on the balanced configurations is consistent with the statistical experiments of Section~\ref{sec:exp-cover}. The second-round failure after $U_b\ge d$ is 0.06--0.08\% at $M_1=256$. The oracle's second-round table is smaller, and in per-trial pairing the success rate of the Skellam rule is at most 0.35 percentage points higher than the oracle on some $M_1=256$ configurations.
+
+\begin{table}[!htbp]
+\centering
+\caption{Two-round protocol summary ($k=3,4,5$). miss/u is the median / maximum over the balanced configurations (at least 1000 first-round failures); the final failure is the maximum over configurations; the second-round size and total bytes are medians relative to the oracle. The oracle does not depend on $u$ and is listed only in the upper half.}
+\label{tab:e2e}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+$M_1$, $u$ & upper bound & miss/u & final failure & second-round size & total bytes\\
+\midrule
+256, 0.01 & Skellam & 0.73 / 0.87 & 0.24\% & +25.6\% & +14.7\%\\
+& Gaussian & 1.00 / 1.12 & 0.25\% & +23.9\% & +13.7\%\\
+& oracle & -- & 0.51\% & 0 & 0\\
+1024, 0.01 & Skellam & 0.88 / 1.00 & 0.06\% & +11.4\% & +6.5\%\\
+& Gaussian & 1.04 / 1.17 & 0.08\% & +11.1\% & +6.3\%\\
+& oracle & -- & 0.09\% & 0 & 0\\
+4096, 0.01 & Skellam & 0.92 / 1.01 & 0.02\% & +5.4\% & +3.1\%\\
+& Gaussian & 1.01 / 1.09 & 0.03\% & +5.3\% & +3.0\%\\
+& oracle & -- & 0.03\% & 0 & 0\\
+16384, 0.01 & Skellam & 0.96 / 1.07 & 0.01\% & +2.6\% & +1.5\%\\
+& Gaussian & 1.02 / 1.13 & 0.01\% & +2.6\% & +1.5\%\\
+& oracle & -- & 0.02\% & 0 & 0\\
+\addlinespace
+256, 0.05 & Skellam & 0.93 / 1.01 & 0.29\% & +16.9\% & +9.7\%\\
+& Gaussian & 1.01 / 1.07 & 0.27\% & +16.3\% & +9.4\%\\
+1024, 0.05 & Skellam & 0.95 / 1.05 & 0.13\% & +7.8\% & +4.5\%\\
+& Gaussian & 1.02 / 1.09 & 0.11\% & +7.7\% & +4.4\%\\
+4096, 0.05 & Skellam & 0.97 / 1.04 & 0.02\% & +3.8\% & +2.2\%\\
+& Gaussian & 1.01 / 1.07 & 0.02\% & +3.8\% & +2.1\%\\
+16384, 0.05 & Skellam & 1.00 / 1.05 & 0.01\% & +1.9\% & +1.1\%\\
+& Gaussian & 1.01 / 1.06 & 0.02\% & +1.9\% & +1.1\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The baseline uses the calibration rule from \cite{wu2026selfsizing}: for $k=3$ that work bins by first-round size and takes the worst 1\% quantile $q_{0.01}$ of the post-failure $\widehat d/d$ over several loads and sign compositions (0.8045, 0.8997, 0.9482 for $M_1=256,1024,4096$). Here we keep only its upper-bound part $U=\lceil\widehat d/q_{0.01}\rceil$, attached to the same second-round table length as the two rules of this paper; the capacity coefficient, the deduction of elements already recovered in the first round, and the two-round joint peeling of that protocol are outside the comparison. Table~\ref{tab:vldb} compares this rule under the two encodings, with and without accounting for $|b|$.
+
+\begin{table}[!htbp]
+\centering
+\caption{Calibration rule versus the Skellam rule ($k=3$, $u=0.01$). conditional miss rate /u is the median / maximum over balanced and the range over one-sided; the final failure is the maximum; total bytes are the median relative to the oracle.}
+\label{tab:vldb}
+\small
+\begin{tabular}{@{}rlcccc@{}}
+\toprule
+$M_1$ & rule & balanced & one-sided & final failure & total bytes\\
+\midrule
+256 & standard encoding, calibration factor & 0.92 / 1.02 & 0.09--0.90 & 0.27\% & +13.9\%\\
+& standard encoding, calibration factor, with $|b|$ & 0.92 / 1.02 & 0 & 0.26\% & +13.9\%\\
+& random sign, calibration factor & 0.87 / 0.97 & 0.85--0.93 & 0.23\% & +13.9\%\\
+& random sign, Skellam rule & 0.72 / 0.80 & 0 & 0.24\% & +14.6\%\\
+1024 & standard encoding, calibration factor & 0.88 / 0.94 & 0.05--1.03 & 0.07\% & +6.4\%\\
+& standard encoding, calibration factor, with $|b|$ & 0.88 / 0.94 & 0 & 0.07\% & +6.4\%\\
+& random sign, calibration factor & 0.98 / 1.03 & 0.80--1.04 & 0.08\% & +6.4\%\\
+& random sign, Skellam rule & 0.89 / 0.92 & 0 & 0.06\% & +6.5\%\\
+4096 & standard encoding, calibration factor & 0.84 / 0.86 & 0.36--0.89 & 0.02\% & +3.1\%\\
+& standard encoding, calibration factor, with $|b|$ & 0.84 / 0.86 & 0 & 0.02\% & +3.1\%\\
+& random sign, calibration factor & 0.90 / 0.94 & 0.77--0.95 & 0.02\% & +3.1\%\\
+& random sign, Skellam rule & 0.97 / 1.01 & 0 & 0.01\% & +3.1\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under the same calibration factor, the conditional miss rate of the standard-encoding one-sided configurations is between $0.05u$ and $1.03u$, and that of random-sign encoding is between $0.77u$ and $1.04u$; at fixed load 0.95--1.0, the one-sided and balanced of standard encoding are $0.05$--$0.40u$ and $0.86$--$0.94u$, and those of random-sign encoding are $0.80$--$0.95u$ and $0.85$--$1.01u$. After accounting for $|b|$, the one-sided miss of both encodings is zero. In per-trial pairing, at fixed calibration factor and with or without $|b|$, the success-rate difference of random-sign encoding relative to standard encoding is within $\pm1\times10^{-3}$, with 2 of the 30 items having intervals that exclude zero (both at $M_1=256$, load 1.0), and the median total-byte difference is about 0.01\%.
+
+\subsection{Computation Cost}\label{app:timing}
+The host of the computation-cost measurement (\exptag{COST}) is a dual-socket Intel Xeon Silver 4410Y (nominal 2.0 GHz, 24 physical cores and 48 logical CPUs), Linux, with a single-threaded Go implementation. Before timing, the host's task queue is paused, and after all the current batch's tasks on it finish, the program is pinned to one core; the frequency and system load of that core are recorded every 10 seconds, and the frequency stays at 2.001 GHz during the run.
+
+The Poisson tables are kept in a main-memory cache managed by the program. One cache entry corresponds to one value in the Poisson table of a candidate $n$ and stores two double-precision numbers, the probability and the cumulative probability of that value, 16 bytes in total; the capacity is 16,000,000 entries (about 256 MB). When the cache exceeds its limit, the program evicts the least recently used tables in recency order until the occupancy plus the size of the table to insert is at most half the capacity, then inserts the new table. We time sizing under three cache conditions: cold means each sizing starts from an empty cache; session means the same receiver performs several consecutive synchronizations (possibly one or two rounds of the protocol) at a fixed $(M,k)$, with the cache kept between synchronizations and each processing a new observation; warm means recomputing the same observation once immediately.
+
+Sizing timing uses the failure records of the statistical experiments at $M=16384$, taking the first 200 per configuration, with the order of the four modes cold, session, warm, and Gaussian rule rotated over repetitions and each mode repeated 10 times. Protocol timing uses $M_1=16384$ and 100,000 common elements, with the same set of 40 trials per configuration repeated 10 times and the branch order rotated over repetitions; the first-round decoding time is counted per trial. Figure~\ref{fig:sizing} and Table~\ref{tab:proto} come from two runs on the same host and settings, and the protocol part differs by less than 1\% from the first run.
+
+Appendix~\ref{app:search} predicts that the sizing cost is roughly proportional to $\lambda_d$, that is, growing about as $c^2$. Figure~\ref{fig:sizing} fixes $M$, with load proportional to $c$. cold grows roughly as the 1.9-th power of the load, that is, about as $c^{1.9}$, from 0.06--0.12 ms at load about 0.08 ($c=8$) to 69--84 ms at load 3; session is about one fifth of cold, and warm about one sixth to one seventh. At load 3 the Poisson tables requested cumulatively by session exceed the cache limit, the program evicts some old tables, and session rises to 41--55 ms. The sizing of the Gaussian rule is 0.06--0.29 $\mu$s. In the full protocol, the total time of the Gaussian rule and the oracle differs by less than 1\%. The Poisson-table memory has a session peak of 49--86 MB at load 1.05, 128--174 MB at load 1.5, and reaches the 256 MB limit at load 3.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-sizing.pdf}
+\caption{Single sizing time of the Skellam rule ($M=16384$, single thread, cache limit 16,000,000 entries). (a) cold; (b) session (solid) and warm (dashed).}
+\label{fig:sizing}
+\end{figure}
+
+The decoder treats cells with count $\pm1$ as candidate pure cells and confirms them with the checksum. Under standard encoding with one-sided differences all keys have the same sign, so a cell with count $\pm1$ necessarily contains only one key and every candidate passes. When the difference has both positive and negative elements, for example three keys with signs $+1,+1,-1$ landing in the same cell, the count is also $+1$, and such candidates are excluded by the checksum. The numbers of pure-cell checks, checksum rejections, and sign hashes per recovered key come from a single separate run (30 trials per configuration, 3 repetitions): random-sign encoding checks on average 1.77 candidates ($k=3$) and 2.53 candidates ($k=4$); standard encoding checks 1.00 under one-sided differences and matches random-sign encoding under balanced differences. The first-round decoding time ratio (random sign / standard) is 0.99--1.06 under balanced differences and 1.26--2.42 under one-sided differences at load 1.0--1.5. At load 3 the one-sided ratio is 3.1, because standard encoding stops almost immediately under one-sided differences; the absolute times of both are only 0.04--0.16 ms, less than 1\% of the total protocol time.
+
+The exact Skellam CDF can also be replaced by the Gaussian approximation at large parameters: over the 33 configurations in the exploration phase whose Poisson mean exceeds 200, the samples whose $U$ changes are at most 1.8\%, and the miss count is unchanged. All results in this paper use the exact rule.

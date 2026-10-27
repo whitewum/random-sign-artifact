@@ -2,11 +2,11 @@
 
 An executable research artifact for random-sign invertible Bloom lookup tables (IBLTs): failure-conditioned estimation, Gaussian and Skellam sizing rules, and two-round set reconciliation.
 
-This initial snapshot provides the simulation and protocol implementations, frozen experimental configurations, selected numerical summaries, and scripts for eleven paper figures. It supports local smoke experiments and regeneration of figures from bundled summaries. Full reproduction of the original large-scale campaigns requires the trial records described in [Data availability](docs/DATA.md).
+This release provides the English manuscript, the simulation and protocol implementations, frozen experimental configurations, selected numerical summaries, and programs for all fourteen paper figures. It supports local smoke experiments and regeneration of figures from bundled summaries. Full reproduction of the original large-scale campaigns requires the trial records described in [Data availability](docs/DATA.md).
 
 ## Quick start
 
-Requirements: Go 1.23 or later, Python 3.11 or later, and Make. Go programs use only the standard library. No GPU or server account is required for the smoke experiment.
+Requirements: Go 1.23 or later, Python 3.11 to 3.13 (the pinned SciPy has no wheel for 3.14), and Make. Go programs use only the standard library. No GPU or server account is required for the smoke experiment.
 
 ```sh
 make build
@@ -30,6 +30,7 @@ The smoke experiment runs direct and planted sampling, replays both sizing rules
 | `sim/exp6/` | Configuration and seed generation, frozen tasks, aggregation and analysis |
 | `theory/scripts/random_sign_crossover.py` | High-precision reference CDF |
 | `sim/results/` | Selected published-figure inputs and decoder audit summaries |
+| `manuscript/random-sign/EN/` | English manuscript source and PDF (CC BY 4.0) |
 | `manuscript/random-sign/figure/` | Figure programs and encoding histograms |
 | `audit/` | Source provenance and integrity manifests |
 
@@ -37,4 +38,4 @@ See [validation results](docs/VALIDATION.md), [reproduction instructions](docs/R
 
 ## License and citation
 
-Code, included numerical data, and documentation are distributed under the [MIT License](LICENSE). Dependencies retain their own licenses; see [THIRD_PARTY.md](THIRD_PARTY.md). Citation metadata is in [CITATION.cff](CITATION.cff). The paper identifier and archival artifact DOI will be added when available.
+Code, included numerical data, and documentation are distributed under the [MIT License](LICENSE). The manuscript in `manuscript/random-sign/EN/` is licensed under [CC BY 4.0](manuscript/random-sign/EN/LICENSE). Dependencies retain their own licenses; see [THIRD_PARTY.md](THIRD_PARTY.md). Citation metadata is in [CITATION.cff](CITATION.cff). The paper identifier and archival artifact DOI will be added when available.

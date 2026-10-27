@@ -1,6 +1,6 @@
 # Data availability and schemas
 
-This snapshot includes compact summaries sufficient to regenerate eleven figures. SHA-256 hashes and source-relative paths appear in `audit/source-manifest.json`. `audit/SHA256SUMS.json` covers the release files themselves. Copied numerical summaries retain their original bytes.
+This snapshot includes compact summaries sufficient to regenerate all fourteen paper figures. SHA-256 hashes and source-relative paths appear in `audit/source-manifest.json`. `audit/SHA256SUMS.json` covers the release files themselves. Copied numerical summaries retain their original bytes.
 
 ## Included
 

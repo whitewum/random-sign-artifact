@@ -4,7 +4,7 @@
 
 Run commands from the repository root. `make build` compiles the sampler, replay executable, protocol executable, and sign-composition reducer into `bin/`. `make test` exercises the existing CDF/search/cache checks, adversarial decoder checks, resume checks, and sampler self-test. `make smoke` uses fixed small configurations with 200 sampler trials per mode and 100 protocol trials per configuration. It requires seconds to a few minutes on a laptop; the test suite may take longer.
 
-`make figures` regenerates eleven figures from included summaries. Direct Python dependencies are pinned in `requirements.txt`; the tested transitive environment is recorded in `requirements-lock.txt`. Use the lock file for the validated environment. `python scripts/check_quantiles.py` independently checks the frozen comparator table. The command fails on any missing input or unsuccessful figure program. Figures retain the manuscript's original paths for traceability.
+`make figures` regenerates the fourteen paper figures from included summaries; the TikZ diagram `fig-structure` requires `pdflatex` and is skipped when it is unavailable. Direct Python dependencies are pinned in `requirements.txt`; the tested transitive environment is recorded in `requirements-lock.txt`. Use the lock file for the validated environment. `python scripts/check_quantiles.py` independently checks the frozen comparator table. The command fails on any missing input or unsuccessful figure program. Figures retain the manuscript's original paths for traceability.
 
 ## Full campaigns
 

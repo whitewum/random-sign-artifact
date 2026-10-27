@@ -54,9 +54,15 @@ def smoke():
 
 def figures():
     for name in ['encoding','composition','crossover-cdf','coverage','confirm','protocol','scale',
-                 'sizing','planted','exp-grid','aux']:
+                 'sizing','planted','exp-grid','aux','decode','bias']:
         run(sys.executable,ROOT/'manuscript/random-sign/figure'/f'fig-{name}.py')
-    print('Generated eleven paper figures.')
+    import shutil
+    if shutil.which('pdflatex'):
+        run('pdflatex','-interaction=nonstopmode','-halt-on-error','fig-structure.tex',
+            cwd=ROOT/'manuscript/random-sign/figure')
+    else:
+        print('pdflatex not found; skipped the TikZ diagram fig-structure.tex.')
+    print('Generated paper figures.')
 
 if __name__=='__main__':
     if len(sys.argv)!=2 or sys.argv[1] not in ('build','smoke','figures'):

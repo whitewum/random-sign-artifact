@@ -299,7 +299,11 @@ func main() {
 		return
 	}
 	if *rejectMode {
-		runDecodeReject(*out, *jobs, *seed)
+		runDecodeReject(*out, *jobs, *seed, rejectConfigs())
+		return
+	}
+	if *thresholdMode {
+		runDecodeReject(*out, *jobs, *seed, thresholdConfigs())
 		return
 	}
 	if *armList != "" {

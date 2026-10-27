@@ -1,0 +1,98 @@
+\section{Encoding properties and proofs of exact moments}\label{app:encoding}
+This appendix first describes the XOR implementation of keySum and checksum, then gives the proofs of the finite identities in Sections~\ref{sec:design} and~\ref{sec:measurement}, summarizes the exact verification of these identities on small parameter sets, and finally discusses the AMS observation given by the count sum.
+
+\subsection{XOR implementation}\label{app:xor}
+In the set model, each key is inserted at most once on each side, so keySum and checksum can be accumulated by bitwise XOR as in the common implementation of the standard IBLT, with only the count multiplied by $\varepsilon(x)$. Under XOR, $-x=x$, so the keySum and checksum of a difference-table cell are the XOR of the differing keys that select the cell and of their $\mathrm{chk}$ values, independent of the coding coefficients. In a pure cell, keySum and checksum equal $x_i$ and $\mathrm{chk}(x_i)$ directly, and the check becomes verifying that the checksum equals $\mathrm{chk}(x)$; when deleting $x_i$, the count subtracts $C_v$, and the other two fields are XORed once more with $x_i$ and $\mathrm{chk}(x_i)$. The induction argument of the next subsection for the additive form still holds, the direction is still recovered by $C_v\,\varepsilon(x)$, and the process and result of peeling are the same as in the additive form. In a multiset, the same key may be inserted repeatedly, and XOR cancels repeated contributions while the count does not, so the additive form is needed there. If peeling modifies the difference table in place, the receiver can accumulate the two scalars $\sum_vC_v^2$ and $\sum_vC_v$ while subtracting cell by cell, with no need to keep the original difference table.
+
+
+\subsection{\texorpdfstring{Proof of Proposition~\ref{prop:decode} (ideal decoding equivalence)}{Proof of ideal decoding equivalence}}\label{app:proof-decode}
+\begin{proof}
+Induct on the number of peeling steps. The invariant is that after each step, the three fields of every cell equal the encoded sum of the keys not yet deleted: the count is $\sum s_i\varepsilon_i$, keySum is $\sum s_i\varepsilon_i x_i$, and checksum is $\sum s_i\varepsilon_i\,\mathrm{chk}(x_i)$, the sums ranging over the keys not yet deleted that select the cell. Initially this is the definition in~\eqref{eq:fields}.
+
+Suppose that at some step the degree of cell $v$ in the unsigned hypergraph is one, with the unique key $x_i$. Then the count is $s_i\varepsilon_i\in\{\pm1\}$, the count times keySum equals $x_i$, the checksum equals the count times $\mathrm{chk}(x_i)$, and the cell hash of $x_i$ contains $v$, so $v$ passes the pure-cell test. Conversely, a cell of degree other than one passing the test is a false positive, excluded by the ideal-purity assumption. Hence the set of cells removable by the random-sign encoding is the same as the set of unsigned degree-one cells. When deleting $x_i$, subtract the coding coefficient $s_i\varepsilon_i$ times the three-field contribution from its $k$ cells; the invariant is preserved, and the corresponding edge is removed from the unsigned hypergraph. The two processes adopt the same cell-selection order and reach the same endpoint. The endpoint of peeling is independent of the selection order and is always the 2-core, so $F$ depends only on $\mathcal G$.
+
+At termination all fields must be checked: all-zero counts alone do not certify success, because under random signs the counts of a nonempty core can also all be zero. keySum can also cancel simultaneously, and success is misjudged only when the checksums are then also all zero; this event is accounted for in $E$ of Section~\ref{sec:protocol}.
+\end{proof}
+
+\subsection{\texorpdfstring{Proof of Proposition~\ref{prop:moments} (conditional unbiasedness and conditional moments)}{Proof of conditional unbiasedness and conditional moments}}\label{app:proof-moments}
+\begin{proof}
+By $H_{ii}=k$ and $\varepsilon_i^2=1$, the sum of squared counts and the square of the sum are
+\begin{align*}
+\sum_vC_v^2&=\sum_{i,j}\varepsilon_i\varepsilon_jH_{ij}=kd+2\sum_{i<j}\varepsilon_i\varepsilon_jH_{ij},\\
+\frac1M\Bigl(\sum_vC_v\Bigr)^2&=\frac{k^2}M\Bigl(\sum_i\varepsilon_i\Bigr)^2=\frac{k^2}Md+2\sum_{i<j}\varepsilon_i\varepsilon_j\frac{k^2}M.
+\end{align*}
+Dividing the first identity by $k$ gives~\eqref{eq:raw-expand}; subtracting the two gives $kd(1-k/M)+2\sum_{i<j}\varepsilon_i\varepsilon_j(H_{ij}-k^2/M)$, and dividing by $k(1-k/M)$ gives~\eqref{eq:rs-expand}. For a fixed mapping, $\E[\varepsilon_i\varepsilon_j]=0$ ($i\ne j$), so the conditional expectations of $\widehat d-d$ and $\widetilde d-d$ are both zero.
+
+Below we write the cross-term coefficients as inner products. Let $w_i\in\mathbb R^M$ be the incidence vector of key $i$ minus its mean $k/M$; then $\langle w_i,w_j\rangle=H_{ij}-k^2/M$, $\|w_i\|^2=k(1-k/M)$, and~\eqref{eq:rs-expand} becomes
+\begin{equation*}
+\widehat d-d=\frac{2}{k(1-k/M)}\sum_{i<j}\langle w_i,w_j\rangle\,\varepsilon_i\varepsilon_j.
+\end{equation*}
+Given $\mathcal G$ the inner products are constants, and the randomness lies only in the sign products $\varepsilon_i\varepsilon_j$. The expectation of a product of sign products is nonzero if and only if each subscript occurs an even number of times, in which case the expectation is one.
+
+For the variance, expand the square and consider two unordered pairs $\{i,j\}$ and $\{i',j'\}$. When the two are the same, the product is $\varepsilon_i^2\varepsilon_j^2=1$; when they differ, they share at most one subscript, so some subscript occurs exactly once and the expectation is zero. Hence only the diagonal part remains,
+\begin{equation*}
+\Var(\widehat d\mid\mathcal G)=\frac{4}{k^2(1-k/M)^2}\sum_{i<j}\langle w_i,w_j\rangle^2,
+\end{equation*}
+which is the equality part of~\eqref{eq:condmoments}.
+
+For the third central moment, expand the cube and consider ordered triples of unordered pairs. When all three are the same, the product is $\varepsilon_i\varepsilon_j$; when two are the same, the product is the sign product of the third pair; both have expectation zero. When the three are pairwise distinct, each subscript occurring an even number of times requires the three pairs to form a triangle $\{i,j\},\{i,h\},\{j,h\}$; each triangle corresponds to $3!=6$ ordered triples. Hence
+\begin{equation*}
+\E[(\widehat d-d)^3\mid\mathcal G]=\frac{8\cdot6}{k^3(1-k/M)^3}\sum_{i<j<h}\Bigl(H_{ij}-\frac{k^2}{M}\Bigr)\Bigl(H_{ih}-\frac{k^2}{M}\Bigr)\Bigl(H_{jh}-\frac{k^2}{M}\Bigr).
+\end{equation*}
+
+For the two upper bounds, by Cauchy--Schwarz, $\langle w_i,w_j\rangle^2\le\|w_i\|^2\|w_j\|^2=[k(1-k/M)]^2$. Substituting into the variance formula, each of the $\binom d2$ unordered pairs contributes at most $4$, giving $\Var(\widehat d\mid\mathcal G)\le2d(d-1)$. On the other hand, the component of the vector $\sum_i\varepsilon_iw_i$ on cell $v$ is $C_v-\frac1M\sum_uC_u$, so
+\begin{equation*}
+\widehat d=\frac{\|\sum_i\varepsilon_iw_i\|^2}{k(1-k/M)}\ge0,
+\end{equation*}
+and by the triangle inequality $\|\sum_i\varepsilon_iw_i\|\le\sum_i\|w_i\|=d\sqrt{k(1-k/M)}$, giving $\widehat d\le d^2$.
+
+For the random mapping $\mathcal G$, the conditional mean is identically $d$, and by the law of total variance $\Var\widehat d=\E[\Var(\widehat d\mid\mathcal G)]$. The intersection size $H_{ij}$ of two independent uniform $k$-subsets has a hypergeometric distribution with mean $k^2/M$ and variance $k^2(1-k/M)^2/(M-1)$. Substituting into the variance formula, each unordered pair contributes $4/(M-1)$, giving $\Var\widehat d=2d(d-1)/(M-1)=s(d)^2$.
+\end{proof}
+
+\subsection{Exact verification on small parameters}\label{app:exact}
+The finite identities of Sections~\ref{sec:design} and~\ref{sec:measurement} are verified by exhaustive enumeration on small parameters. For the six triples $(M,k,d)$ in Table~\ref{tab:exact}, all mappings and all signs are enumerated, 155,640 states in total; all arithmetic uses integers and rationals, and the resulting values are exact. Over all states, common elements cancel in the difference table; the keys and directions recovered by signed peeling are correct, and the unrecovered keys are exactly the unsigned 2-core; on every mapping, $\E[\widehat d\mid\mathcal G]=d$, the conditional variance and third central moment equal the formulas above, and $\Var(\widehat d\mid\mathcal G)\le2d(d-1)$; under all direction vectors the distribution of $\widehat d$ over the random signs is the same. Table~\ref{tab:exact} summarizes the unconditional and post-failure statistics.
+
+\begin{table}[!htbp]
+\centering
+\caption{Exact results obtained by exhaustive enumeration on small parameters.}
+\label{tab:exact}
+\begin{tabular}{@{}crccccc@{}}
+\toprule
+$(M,k,d)$ & states & $p_F$ & $\Var\widehat d$ & $\E[\widehat d\mid F]$ & $\Var(\widehat d\mid F)$ & $\Pr(\widehat d=0\mid F)$\\
+\midrule
+$(4,3,2)$ & 40 & $1/4$ & $4/3$ & 2 & 4 & $1/2$\\
+$(4,3,3)$ & 160 & 1 & 4 & 3 & 4 & 0\\
+$(4,3,4)$ & 560 & 1 & 8 & 4 & 8 & $27/512$\\
+$(5,3,3)$ & 1,760 & $2/5$ & 3 & 3 & 4 & 0\\
+$(5,3,4)$ & 11,440 & 1 & 6 & 4 & 6 & $93/8000$\\
+$(6,3,4)$ & 141,680 & $2029/4000$ & $24/5$ & 4 & $11256/2029$ & $75/4058$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In Table~\ref{tab:exact}, $\Var\widehat d$ equals $s(d)^2=2d(d-1)/(M-1)$ row by row, and $\E[\widehat d\mid F]$ equals $d$ row by row, consistent with the conditional unbiasedness given the mapping in~\eqref{eq:condmoments}. Failure preserves the mean and amplifies the scale: on the three parameter sets with $p_F<1$, $\Var(\widehat d\mid F)$ is $3$ times, $4/3$ times, and about $1.16$ times the unconditional variance, respectively; when $p_F=1$, failure is a certain event and the two coincide. After failure, $\widehat d$ takes the value zero with positive probability, which for $(4,3,2)$ is $1/2$.
+
+The values in the $(4,3,2)$ row come from a duplicate edge pair. Each key independently and uniformly chooses one of the $\binom43=4$ $3$-subsets. When the two keys choose the same subset, the degree of these three cells is two, there is no pure cell, and peeling stops at the first step, so $p_F=1/4$. The counts of the three cells then all equal $\varepsilon_1+\varepsilon_2$, and the remaining cells are zero. When the two signs are equal, $\sum_vC_v^2=12$ and $\sum_vC_v=\pm6$, and~\eqref{eq:dhat} gives $\widehat d=4$; when they differ, the counts are all zero and $\widehat d=0$. The two cases have probability $1/2$ each, so $\E[\widehat d\mid F]=2=d$, $\Var(\widehat d\mid F)=4$, which is $3$ times the unconditional variance $4/3$, and $\Pr(\widehat d=0\mid F)=1/2$. This is the smallest-scale instance of the duplicate-edge-pair structure of Section~\ref{sec:inversion}.
+
+
+\subsection{An AMS observation independent of failure}\label{app:ams}
+Each key enters $k$ cells and uses the same sign, so under random signs the count sum equals the sum of the signs sample by sample,
+\begin{equation}
+\frac1k\sum_vC_v=\sum_{i=1}^d\varepsilon_i.\label{eq:ams}
+\end{equation}
+The right-hand side depends only on the signs, and its square is the standard AMS second-moment estimator under unit weights\cite{alon1999spacecomplexity}. Rearranging~\eqref{eq:dhat} and~\eqref{eq:raw-energy} relates $\widetilde d$ and $\widehat d$ through this AMS term:
+\begin{equation}
+\widetilde d=\Bigl(1-\frac kM\Bigr)\widehat d+\frac kM\Bigl(\frac1k\sum_vC_v\Bigr)^2.\label{eq:raw-decomp}
+\end{equation}
+
+\begin{proposition}[AMS on the same table]\label{prop:ams}
+The full distribution of $(\frac1k\sum_vC_v)^2$ is exactly independent of the mapping, and hence exactly independent of ideal failure: $\frac1k\sum_vC_v$ takes the value $d-2j$ with probability $2^{-d}\binom dj$, $j=0,\ldots,d$. Its mean is $d$ and its variance is $2d(d-1)$, which is $M-1$ times the unconditional variance $s(d)^2$ of $\widehat d$. By~\eqref{eq:raw-decomp}, $\widetilde d$ is a deterministic weighted sum of it and $\widehat d$. Given the mapping, its conditional covariance with $\widehat d$ is $\frac{4}{k(1-k/M)}\sum_{i<j}(H_{ij}-k^2/M)$.
+\end{proposition}
+
+\begin{proof}
+The right-hand side of~\eqref{eq:ams} depends only on the signs and is independent of $\mathcal G$, hence independent of any event that depends only on the mapping. $\sum_i\varepsilon_i=d-2j$ if and only if exactly $j$ signs are negative, with probability $2^{-d}\binom dj$. $\E(\sum_i\varepsilon_i)^2=d$, and the fourth moment is $3d^2-2d$, so the variance is $2d(d-1)$. \eqref{eq:raw-decomp} follows by directly rearranging~\eqref{eq:dhat} and~\eqref{eq:raw-energy}. The covariance formula follows by expanding both as quadratic forms in the signs and using that products of different unordered pairs are uncorrelated: $(\sum_i\varepsilon_i)^2-d=2\sum_{i<j}\varepsilon_i\varepsilon_j$, multiplied pair by pair with the cross expectation of~\eqref{eq:rs-expand}. Averaged over failure it is $2d(d-1)c_F$, generally nonzero.
+\end{proof}
+
+This observation explains the connection of the design to classical AMS: the count array is a random-sign linear sketch whose sum is exactly the AMS sketch. It is exactly independent of failure, and no matter how rare the failure, it does not change its distribution; the cost is precision, as its variance is $M-1$ times that of $\widehat d$. $\widehat d$ replaces the square of a single sum by the sum of squares over the $M$ cells, reducing the variance to $2d(d-1)/(M-1)$, but it is correlated with failure and requires the post-failure analysis. By the covariance of Proposition~\ref{prop:ams}, the two are generally correlated after failure, and the risk must be allocated separately when they are combined.
+
+Proposition~\ref{prop:ams} is verified by the same exhaustive enumeration as Appendix~\ref{app:exact} on the four parameter sets $(4,3,2)$, $(4,3,4)$, $(5,3,3)$, and $(6,3,4)$, 144,040 states in total: on every mapping the distribution of $(\frac1k\sum_vC_v)^2$ is the same, with mean $d$ and variance $2d(d-1)$.

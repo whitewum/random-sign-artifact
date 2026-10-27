@@ -7,7 +7,9 @@ build:
 	$(PYTHON) scripts/artifact.py build
 test: build
 	cd sim/iblt2r && go test ./...
+	cd sim/peelsim && go test ./...
 	bin/peelsim -selftest
+	cd sim/peelsim && $(PYTHON) -m unittest -q test_distribution
 smoke: build
 	$(PYTHON) scripts/artifact.py smoke
 figures:

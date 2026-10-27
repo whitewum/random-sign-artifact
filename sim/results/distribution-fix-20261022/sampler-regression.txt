@@ -1,0 +1,1 @@
+PASS: direct chunks byte-identical to pre-fix sampler; planted chunks independent of worker count; new resume preserved; legacy planted resume rejected.

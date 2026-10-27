@@ -15,6 +15,7 @@ import (
 
 var rejectMode = flag.Bool("decode-reject", false, "run per-encoding rejected-candidate experiment over sign compositions")
 var rejectTrials = flag.Int("reject-trials", 20000, "trials per configuration")
+var thresholdMode = flag.Bool("decode-threshold", false, "run paired decoding on a fine load grid around the peeling threshold")
 
 // Minus fractions d_-/d; Plus = d - round(d * minus).
 var rejectMinus = []float64{0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1}
@@ -29,6 +30,25 @@ func rejectConfigs() []stressConfig {
 			for _, minus := range rejectMinus {
 				plus := d - int(math.Round(float64(d)*minus))
 				out = append(out, stressConfig{len(out), k, m, d, plus, min(1000, m), *rejectTrials, load, minus, a})
+			}
+		}
+	}
+	return out
+}
+
+// Fine load grid around alpha_c; d_-/d in {0, 1/2}. Trials per configuration depend on M.
+func thresholdConfigs() []stressConfig {
+	var out []stressConfig
+	for _, k := range []int{3, 4, 5, 6, 10} {
+		a := peelingAlpha(k)
+		for mi, m := range []int{1024, 16384, 65536} {
+			for _, load := range []float64{0.90, 0.95, 0.97, 0.98, 0.99, 1, 1.01, 1.02, 1.03, 1.05} {
+				d := int(math.Round(a * float64(m) * load))
+				for _, minus := range []float64{0, 0.5} {
+					plus := d - int(math.Round(float64(d)*minus))
+					n := []int{100000, 20000, 10000}[mi]
+					out = append(out, stressConfig{len(out), k, m, d, plus, min(1000, m), n, load, minus, a})
+				}
 			}
 		}
 	}
@@ -63,11 +83,10 @@ func (e *encCount) add(r decoded, n int64, f int) {
 	e.Fake2 += float64(f) * float64(f)
 }
 
-func runDecodeReject(path string, jobs int, seed uint64) {
+func runDecodeReject(path string, jobs int, seed uint64, configs []stressConfig) {
 	if *stressShards < 1 || *stressShard < 0 || *stressShard >= *stressShards || *stressChunk < 1 || jobs < 1 {
 		panic("invalid partition or worker count")
 	}
-	configs := rejectConfigs()
 	done := map[int]bool{}
 	if f, e := os.Open(path); e == nil {
 		sc := bufio.NewScanner(f)
@@ -117,8 +136,15 @@ func runDecodeReject(path string, jobs int, seed uint64) {
 	}
 	go func() {
 		id := 0
-		for start := 0; start < *rejectTrials; start += *stressChunk {
+		maxTrials := 0
+		for _, c := range configs {
+			maxTrials = max(maxTrials, c.Trials)
+		}
+		for start := 0; start < maxTrials; start += *stressChunk {
 			for _, c := range configs {
+				if start >= c.Trials {
+					continue
+				}
 				if id%*stressShards == *stressShard && !done[id] {
 					tasks <- task{id, start, min(*stressChunk, c.Trials-start), c}
 				}

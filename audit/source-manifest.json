@@ -8,8 +8,18 @@
   ],
   "files": [
     {
+      "path": "manuscript/STD/figure/figstyle.py",
+      "source_sha256": "9f0af40147a33af9ddc7c59130fca40387f09022dbc6c66e27247c1fad6e6d86",
+      "adaptation": "Removed unused STD theory import and replaced module description.",
+      "packaging_edit": "removed unused import and edited docstring"
+    },
+    {
       "path": "manuscript/random-sign/figure/fig-aux.py",
       "source_sha256": "81ef38d560455ff97efa20d5014208f3ee51b2c07f1fa50427d1f72b77aad74d"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-bias.py",
+      "source_sha256": "4010ddc3996c3d2cf8b7edfbc3389899cda2cd86255903bde07969d56297c217"
     },
     {
       "path": "manuscript/random-sign/figure/fig-composition.py",
@@ -17,15 +27,27 @@
     },
     {
       "path": "manuscript/random-sign/figure/fig-confirm.py",
-      "source_sha256": "3174faa1c55905d475d9f54711d59bea65025e0355ba9768febcc7fb939ff747"
+      "source_sha256": "0422e2208fc41849c010b13507401a59a7ccf3ec4b24d2d13e872f1d7571ab3d"
     },
     {
       "path": "manuscript/random-sign/figure/fig-coverage.py",
-      "source_sha256": "3de5fdfe14cf36ca468c167ed720b6048103f88ace8a53c5f948d2d6afc3b2ca"
+      "source_sha256": "477647958a5bd0e1e53b7c7c2f4888115965587864918889ebc1addb63978514"
     },
     {
       "path": "manuscript/random-sign/figure/fig-crossover-cdf.py",
-      "source_sha256": "090796c11efe70bda0732648a7e5659af1968d062dd3527132a3bafd459ba6b7"
+      "source_sha256": "d1b9add919ca78f18aa018bec63de3f669f4ea41d840226413e53fba46a56699"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-decode.py",
+      "source_sha256": "8b07d04a9ba41176ecb179c361ddd8c43986e543ab1f7b6afba5c1074721bcfe"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-encoding-agg/go.mod",
+      "source_sha256": "b6fb1417a61f95f3f0107ecb709c2700b7d4f6d6c5b67182c9be78a1d2f72547"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-encoding-agg/main.go",
+      "source_sha256": "9c977a425535308dbe2b9cc7f61fba20e87b20bf3c80dac8d71a63a8ac816cdb"
     },
     {
       "path": "manuscript/random-sign/figure/fig-encoding-hist.csv",
@@ -45,11 +67,11 @@
     },
     {
       "path": "manuscript/random-sign/figure/fig-planted.py",
-      "source_sha256": "6ac73a567ebe8d435469ade0f8aa6c530c8b322b2daecaa3caa27e7819bcfadc"
+      "source_sha256": "f07422763b267ca89872912381e222e717158484a3ecfcc4a4aba5fee612483e"
     },
     {
       "path": "manuscript/random-sign/figure/fig-protocol.py",
-      "source_sha256": "148c6038e0b1e357879f30e25151293d8682b543dc912d36640318aa3dc61dda"
+      "source_sha256": "7caabb5883432400c15e2da232c1b7dd8501f6ca5a010b568eb875b55c0be582"
     },
     {
       "path": "manuscript/random-sign/figure/fig-scale.py",
@@ -57,7 +79,11 @@
     },
     {
       "path": "manuscript/random-sign/figure/fig-sizing.py",
-      "source_sha256": "e9fb887b9aa0ce5ce6ddac5a5f82026d601d7b18a65cb03796cd4c337f410994"
+      "source_sha256": "085cfcde4bf7a56110a38b306ddf9b9953534cdc26b7e87449efdb5f59d12f89"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-structure.tex",
+      "source_sha256": "6887e3d90565ddc59611794374e439b2cb62080902848fa986ea163782fbeb93"
     },
     {
       "path": "sim/exp6/ana/a_moments.py",
@@ -69,15 +95,23 @@
     },
     {
       "path": "sim/exp6/ana/crosscdf_ks.py",
-      "source_sha256": "920a11ac17efda348a4dba762bd7bb939298b03495181fe20c86e9aac701a3f7"
+      "source_sha256": "4db8ea1a566a1c5dc3650bdc9c5a78726733c7e4cd41a435cb0de5225c1105ba"
     },
     {
       "path": "sim/exp6/ana/e2e_table.py",
       "source_sha256": "fefc2ecde75b6e8465de7252f7dfea80d0f0b4feb309cbc3238f9a7c84b566b0"
     },
     {
+      "path": "sim/exp6/ana/fullks/main.go",
+      "source_sha256": "e6201dbe162b07456b9cc00edf71ac89a9cbd4a8b7c49f9ad71993d1ad774aae"
+    },
+    {
+      "path": "sim/exp6/ana/fullks/mkspec.sh",
+      "source_sha256": "8ed62021630dfacfee23f2db805dcc07c104422f4b8131a1c6512fd88042473f"
+    },
+    {
       "path": "sim/exp6/ana/limit_ks.py",
-      "source_sha256": "b7b7b2c0728c220195a9c86790dede456952af7d5f4cb1502f90445fa9e72395"
+      "source_sha256": "1bd770d23ddbcfa2b43d23a2c96234de2f0d106dd027721e0b63a4f81acbc34e"
     },
     {
       "path": "sim/exp6/ana/p_pairs.py",
@@ -153,7 +187,7 @@
     },
     {
       "path": "sim/iblt2r/main.go",
-      "source_sha256": "4c7df1eba21a0549533189839c053f4a48e83fbdf9742e7916aa70c9c433429a"
+      "source_sha256": "4919707de33ebed3e77958d368a62a6741eb621c721fe1b012b1caad1bfe0f7c"
     },
     {
       "path": "sim/iblt2r/raw.go",
@@ -169,7 +203,7 @@
     },
     {
       "path": "sim/iblt2r/reject.go",
-      "source_sha256": "c74caf2780199b74942d1e07f10797f0cc2d5af068932de5bfc936d54ab03348"
+      "source_sha256": "6bc4c6b4253d7e5149d64f1e37f4e145162a157de938db9aa0e0143c74c8430d"
     },
     {
       "path": "sim/iblt2r/stress.go",
@@ -178,6 +212,10 @@
     {
       "path": "sim/iblt2r/stress_test.go",
       "source_sha256": "3d6441edc9f3816ff5234908690504159283cbcd5ecb92a06378278fbca47ff5"
+    },
+    {
+      "path": "sim/peelsim/distribution.py",
+      "source_sha256": "b84f354d8b050109cbb388927dd302671978893968735d8f9a635a42d5d77ec9"
     },
     {
       "path": "sim/peelsim/e0extract/qtable.json",
@@ -189,7 +227,7 @@
     },
     {
       "path": "sim/peelsim/exp4_report.py",
-      "source_sha256": "3b1724e7f6012b2f0994d684f635ec1b6c0dcd44b80ca96911c96ad9824e54e8"
+      "source_sha256": "0ddac7ec67e6d552a0a59f139d41bd1e89f21af63364418657cc980596155100"
     },
     {
       "path": "sim/peelsim/go.mod",
@@ -197,15 +235,35 @@
     },
     {
       "path": "sim/peelsim/main.go",
-      "source_sha256": "3d2896db81d6b4650c60328c95f220f3fb0246d9ba7f0980eff725fe4e5c3680"
+      "source_sha256": "324ad453c627366dc86d60c06f261e65eeab5f84a963ca803f2460d643ecabb2"
     },
     {
       "path": "sim/peelsim/peelio.py",
       "source_sha256": "e03f193a20f151aa3490a3d79a4f9f5c9fbad2af4277f7a03c8c5a333e5aa1cc"
     },
     {
+      "path": "sim/peelsim/planted_test.go",
+      "source_sha256": "b46cd4882220417c4582168290b35f60fafd7a05500e6ba0132fc67180626591"
+    },
+    {
       "path": "sim/peelsim/rscol/main.go",
       "source_sha256": "dd83da72f4ddf98e705172b9541d5c45b8c02777b8328cac6c8474f054ba8036"
+    },
+    {
+      "path": "sim/peelsim/test_distribution.py",
+      "source_sha256": "2a64433a53ebcdc6528b20ee89f33f9ae7728727c009dd61a42438509fdeb732"
+    },
+    {
+      "path": "sim/results/decode-reject-20261021/gateway.jsonl",
+      "source_sha256": "5ec68bd1d6c0345b49e0b52604972e19759ea0d44e9c6adc28cb73320d5b6de5"
+    },
+    {
+      "path": "sim/results/decode-reject-20261021/node1.jsonl",
+      "source_sha256": "aa7b82b0dd5ea74d30ff192db0fa6242e1990beeb83fc3e50d346d6001617991"
+    },
+    {
+      "path": "sim/results/decode-reject-20261021/node2.jsonl",
+      "source_sha256": "423ee9b3403ac4b229c88052242d3ee38c608c9796bdcd0c1808056684446bec"
     },
     {
       "path": "sim/results/decode-stress-20261015/final-configurations.csv",
@@ -214,6 +272,50 @@
     {
       "path": "sim/results/decode-stress-20261015/final-summary.json",
       "source_sha256": "e65994502516b9ad04ff5605c8dfb61122f3d05b7820c4a2b5051531db5da513"
+    },
+    {
+      "path": "sim/results/decode-threshold-20261021/gateway.jsonl",
+      "source_sha256": "f6602ba30276b3745f7e4b3529fa65eb9831fa921f413084a535b699cbfb0605"
+    },
+    {
+      "path": "sim/results/decode-threshold-20261021/node1.jsonl",
+      "source_sha256": "957daef29d5ad319d6f5f4a9f787cdf6e2336bca79bc165929936ffc18b03c98"
+    },
+    {
+      "path": "sim/results/decode-threshold-20261021/node2.jsonl",
+      "source_sha256": "2d9226a832029c9b1f42acc2f0177579def08751054fdb1a31a401196ad73d02"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/check_sampler.py",
+      "source_sha256": "0d2ddab83bda8a5a3335ae854c68d52c58e465ea9161f5633648981d203d3aa8"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/crossover_hist.json",
+      "source_sha256": "ff0eb8d3a9319a0fd241a32b8e7a6e62f26d8aeb064c1406ed410a37ee8a0aab"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/figure-metrics.txt",
+      "source_sha256": "6ca06d9a3fd49a889160e8f0c19f3b52de68c5ed5f582637aee6023dee8590a1"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/go-tests.txt",
+      "source_sha256": "374fa8af90035730d50959e87d181718abc41af9a029db3f284d75fae9e7ed98"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/limit_ks.tsv",
+      "source_sha256": "9216d8c6d987dcea1b63c9b9c5bf3883a01c62d1aa7198778171ae1555eca4dc"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/sampler-regression.txt",
+      "source_sha256": "dce44c1082adab46f58d25f25f020080333421b2d23b8255bc6b96a4ae741206"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/summarize.py",
+      "source_sha256": "436d415a0564cafd81055d51c21b62b710971b5d9572b37f5ce0e35135e26d40"
+    },
+    {
+      "path": "sim/results/distribution-fix-20261022/table-summary.txt",
+      "source_sha256": "73bb51318cf4c1125ae9e341726587409e1ccf8ddf69c90b604bd0235b008fa2"
     },
     {
       "path": "sim/results/exp6-20261016/T/proto-3-13410-1-r0.csv",
@@ -1668,6 +1770,10 @@
       "source_sha256": "7f81115393d9141f0111baaee403fa65641210d307e4036f532a700093d1e9ef"
     },
     {
+      "path": "sim/results/exp6-20261016/ana/fullks.tsv",
+      "source_sha256": "89e382e389cf440c991cb2a672a2e3cad4df63110d029f172e14353dd4d0105d"
+    },
+    {
       "path": "sim/results/exp6-20261016/ana/limit/limit_ks.tsv",
       "source_sha256": "ad0f9cc3e9f7b72fa9c0ca95e819eace87f48a07ae97a9db34944b083d4b1478"
     },
@@ -1706,6 +1812,30 @@
     {
       "path": "sim/results/exp6-20261016/ana/v2/v2s_tail.tsv",
       "source_sha256": "5421f0d955ed459d84fefabc1f39f77cf8049646ecd6435c0b326a048cb924d2"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3a.tsv",
+      "source_sha256": "7025a653a86af2288bbddc8913a18545195cc16c89a535419e092059c04e19ea"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3a_tail.tsv",
+      "source_sha256": "f8342d19e1c34f019c08beff7d0e0ab245b19ab24a785ef20ddd8d3766de6447"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3b.tsv",
+      "source_sha256": "fab41708e02effe6b9dc81b1d899b820266c63f8bfcf97cae04d57d38e576773"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3b_tail.tsv",
+      "source_sha256": "1f42903890c68c8cb7742986a0d47a1eda7d954d94b12c167ac97e52288f2042"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3bc.tsv",
+      "source_sha256": "0412f5a24eaa314fec96e897f28049d7e8df22de2d3f69b3af644ef1f64e62e3"
+    },
+    {
+      "path": "sim/results/exp6-20261016/ana/v3/v3bc_tail.tsv",
+      "source_sha256": "8ed378ae038d54f6232586521a68101aa31d1b1942977a19099925e0eb6107ab"
     },
     {
       "path": "sim/results/exp6-20261016/c2.tsv",
@@ -1752,22 +1882,24 @@
       "source_sha256": "d71d7d2c21397e6f61537c7ce5c0908921f55082a5d726302f0b3f4ab08a9802"
     },
     {
+      "path": "sim/results/tail/calib.csv",
+      "source_sha256": "d84e2355cadf3973fe4531ad9fcc0ea4a2dac21d033d3cdec9cc740f7683a0f0"
+    },
+    {
       "path": "theory/scripts/random_sign_crossover.py",
       "source_sha256": "98ccd9bbc983a4b1259bcd465c49ddd9c7e171fd0064a37575396b0369073b37"
-    },
-    {
-      "path": "manuscript/STD/figure/figstyle.py",
-      "source_sha256": "9f0af40147a33af9ddc7c59130fca40387f09022dbc6c66e27247c1fad6e6d86",
-      "adaptation": "Removed unused STD theory import and replaced module description."
-    },
-    {
-      "path": "manuscript/random-sign/figure/fig-encoding-agg/main.go",
-      "source_sha256": "9c977a425535308dbe2b9cc7f61fba20e87b20bf3c80dac8d71a63a8ac816cdb"
-    },
-    {
-      "path": "manuscript/random-sign/figure/fig-encoding-agg/go.mod",
-      "source_sha256": "b6fb1417a61f95f3f0107ecb709c2700b7d4f6d6c5b67182c9be78a1d2f72547"
     }
   ],
-  "snapshot_note": "The source workspace was active during packaging. This manifest identifies the copied bytes; later workspace edits are not included."
+  "snapshot_note": "The source workspace was active during packaging. This manifest identifies the copied bytes; later workspace edits are not included.",
+  "update": {
+    "source_commit": "50630dcf6fab418126df6c34cab5708a7a9c2754",
+    "date": "2026-10-27",
+    "source_dirty_files": [
+      "manuscript/random-sign/figure/fig-planted.py",
+      "manuscript/random-sign/figure/fig-protocol.py",
+      "manuscript/random-sign/figure/fig-sizing.py",
+      "sim/exp6/ana/fullks/",
+      "sim/results/exp6-20261016/ana/fullks.tsv"
+    ]
+  }
 }

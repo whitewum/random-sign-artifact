@@ -4,7 +4,7 @@ Data: sim/results/exp6-20261016/protocol.tsv (120 configurations: k = 3, 4, 5, f
 one-sided and balanced; 13.94 million trials per u). (a) Second-round table length after a first-round failure,
 relative to the oracle that knows d, one point per configuration with first-round failures; dotted line:
 slope -1/2 through the M1 = 16384 median. (b) Two-round final failure rate per configuration, u = 0.01;
-zero is drawn at the lower edge.
+zero is drawn below an axis break.
 uv run --with matplotlib python fig-protocol.py  ->  fig-protocol.{pdf,png}
 """
 import csv
@@ -72,7 +72,13 @@ ax.set_xscale("log", base=2); ax.set_yscale("log")
 ax.set_xticks(MS); ax.set_xticklabels([str(M) for M in MS])
 ax.set_ylim(LOW * 0.7, 1e-2)
 ax.set_yticks([LOW, 1e-4, 1e-3, 1e-2]); ax.set_yticklabels(["0", r"$10^{-4}$", r"$10^{-3}$", r"$10^{-2}$"])
-ax.axhline(LOW * 2.2, color="#cccccc", lw=0.5)
+# axis break between the zero row and the log scale
+tr = ax.get_yaxis_transform()
+yb = LOW * 2.2
+ax.plot([0, 0], [yb / 1.3, yb * 1.3], color="white", lw=2, transform=tr, clip_on=False, zorder=5)
+for f in (1 / 1.3, 1.3):
+    ax.plot([-0.025, 0.025], [yb * f / 1.15, yb * f * 1.15], color="black", lw=0.6, transform=tr,
+            clip_on=False, zorder=6)
 ax.set_xlabel(r"$M_1$")
 ax.set_ylabel("final failure rate")
 ax.set_title("(b) two-round failure, $u=0.01$", fontsize=8)

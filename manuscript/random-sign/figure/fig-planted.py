@@ -1,11 +1,12 @@
-"""Direct vs planted sampling: Skellam rule miss/u difference and lower-tail CDF gap, per configuration.
+"""Direct vs planted sampling: Skellam rule miss/u difference and full-range KS distance of X, per configuration.
 
 Data: sim/results/exp6-20261016/coverage.tsv (stage v, 21 configurations near critical load, ~6.5e4 failures
-per side) with ana/v/cdf.tsv (max |F_direct - F_plant| over the pooled 0.2--15% quantile range); and the
-low-load comparison ana/v2/{v2,v2s,v2_tail,v2s_tail}.tsv (12 planted configurations, direct side 6.5e4 for
-k = 3 and ~2000 for k = 4, 5). Same numbers as appendix tables tab:v and tab:v-low.
+per side); and the
+low-load comparison ana/v2/{v2,v2_tail}.tsv for k = 3 (direct 6.5e4) and ana/v3/{v3a,v3bc}*.tsv for k = 4, 5
+(fresh direct samples: v3a 6.5e4, v3bc = v3b + v3c pooled, ~2e4; the v2s direct pilot of ~2000 is not used). Planted 6.5e4.
 Left: difference (direct minus planted) with 95% Wald interval, shaded band = equivalence bound +-0.1.
-Right: lower-tail CDF gap; dashed segment = 95% KS sampling error at n ~ 2000 (k = 4, 5 low-load rows).
+Right: full-range two-sample KS distance of X from ana/fullks.tsv (sim/exp6/ana/fullks); a grey bar marks the
+asymptotic 95% critical value 1.358 sqrt(1/n1 + 1/n2) at that sample size.
 uv run --with numpy,pandas,matplotlib python fig-planted.py  ->  fig-planted.{pdf,png}
 """
 import math
@@ -21,18 +22,18 @@ from figstyle import plt  # noqa: E402
 
 RES = os.path.join(ROOT, "sim", "results", "exp6-20261016")
 U_COL = {0.01: "#0072B2", 0.05: "#D55E00"}
-XLIM = 0.6
+XLIM = 0.45
 
 # --- 21 configurations near critical load ---
 cov = pd.read_csv(os.path.join(RES, "coverage.tsv"), sep="\t")
 cov = cov[(cov.stage == "v") & (cov.rule == "Skellam")]
-cdf = pd.read_csv(os.path.join(RES, "ana", "v", "cdf.tsv"), sep="\t")
-gap = cdf.assign(a=cdf["diff"].abs()).groupby("id").a.max()
+ks = pd.read_csv(os.path.join(RES, "ana", "fullks.tsv"), sep="\t").set_index("id")
 rows = []
 for cid, g in cov.groupby("id"):
     dr = g[g.kind == "direct"].set_index("u")
     pl = g[g.kind == "plant"].set_index("u")
-    r = dict(id=cid, k=int(dr.k.iloc[0]), M=int(dr.M.iloc[0]), load=float(dr.load.iloc[0]), gap=gap[cid],
+    r = dict(id=cid, k=int(dr.k.iloc[0]), M=int(dr.M.iloc[0]), load=float(dr.load.iloc[0]), gap=ks.ks_full[cid],
+             crit=ks.ks_crit95[cid],
              group=f"$M={int(dr.M.iloc[0])}$")
     for u in (0.01, 0.05):
         p1, n1 = dr.miss[u] / dr.n_fail[u], dr.n_fail[u]
@@ -43,14 +44,16 @@ for cid, g in cov.groupby("id"):
 crit = pd.DataFrame(rows)
 
 # --- 12 low-load planted configurations ---
-v2 = pd.concat([pd.read_csv(os.path.join(RES, "ana", "v2", f), sep="\t") for f in ("v2.tsv", "v2s.tsv")])
-t2 = pd.concat([pd.read_csv(os.path.join(RES, "ana", "v2", f), sep="\t") for f in ("v2_tail.tsv", "v2s_tail.tsv")])
+LOW = [("v2", "v2"), ("v3", "v3a"), ("v3", "v3bc")]
+v2 = pd.concat([pd.read_csv(os.path.join(RES, "ana", d, f + ".tsv"), sep="\t") for d, f in LOW])
+t2 = pd.concat([pd.read_csv(os.path.join(RES, "ana", d, f + "_tail.tsv"), sep="\t") for d, f in LOW])
 t2 = t2.set_index("id")
 rows = []
 for cid, g in v2.groupby("id"):
     k, M, d = (int(s[1:]) for s in cid.split("-"))
     g = g.set_index("u")
-    r = dict(id=cid, k=k, M=M, load=None, gap=t2.max_dF[cid], group="low load", d=d, n=t2.n_direct[cid])
+    r = dict(id=cid, k=k, M=M, load=None, gap=ks.ks_full[cid], crit=ks.ks_crit95[cid], group="low load", d=d,
+             n=t2.n_direct[cid])
     for u in (0.01, 0.05):
         r[u] = (g["diff"][u], g["diff"][u] - g.diff_lo[u], g.diff_hi[u] - g["diff"][u])
     rows.append(r)
@@ -90,10 +93,7 @@ for yy, r in zip(ys, recs):
             if clipped:
                 axl.plot(edge, yy + off, marker="<" if edge < 0 else ">", color=U_COL[u], ms=2.6)
     axr.plot(r.gap, yy, "o", color="0.25", ms=2.6)
-low_k45 = [yy for yy, r in zip(ys, recs) if r.group == "low load" and r.k >= 4]
-axr.plot([0.03, 0.03], [min(low_k45) - 0.4, max(low_k45) + 0.4], color="0.4", lw=0.8, ls="--")
-axr.text(0.0295, max(low_k45) + 0.5, "sampling error\n($n\\approx2000$)", ha="right", va="bottom", fontsize=6.5,
-         color="0.3")
+    axr.plot([r.crit, r.crit], [yy - 0.3, yy + 0.3], color="0.6", lw=1.0)  # 95% two-sample KS critical value
 
 for ax in (axl, axr):
     for yh, name in heads[1:]:
@@ -106,8 +106,8 @@ axl.set_ylim(min(ys) - 0.8, heads[0][0] + 0.8)
 axl.set_xlim(-XLIM, XLIM)
 axl.set_xticks([-0.4, -0.2, 0, 0.2, 0.4])
 axl.set_xlabel("miss/$u$, direct $-$ planted")
-axr.set_xlim(0, 0.034)
-axr.set_xlabel("lower-tail CDF gap")
+axr.set_xlim(0, 0.016)
+axr.set_xlabel("KS distance of $X$")
 axr.tick_params(axis="y", length=0)
 for u in (0.01, 0.05):
     axl.plot([], [], "o-", color=U_COL[u], ms=2.6, lw=0.9, label=f"$u={u}$")

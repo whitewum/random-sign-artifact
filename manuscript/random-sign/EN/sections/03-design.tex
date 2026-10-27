@@ -1,0 +1,84 @@
+\section{The random-sign IBLT}\label{sec:design}
+This section proposes the random-sign IBLT. The core change of the design is to multiply each key by a random sign shared by the two sides on insertion and deletion, while the cell fields, their widths, and the peeling process all remain unchanged. We first give the encoding and decoding rules, prove that it has the same ideal decoding capability as the standard IBLT and that the coding coefficients are independent of the mapping, and then explain how the two-round protocol uses the lower bound $|b|$ to determine the second-round capacity.
+
+\subsection{Encoding rules, decoding equivalence, and sign independence}
+The two sides share in advance a sign hash $\varepsilon:\mathcal U\to\{-1,+1\}$ independent of the cell hash, generated directly from the key and a shared seed, requiring no per-key storage. Algorithm~\ref{alg:encode} gives the complete encoding and decoding procedure; the lines marked $\star$ are the entire difference from the standard IBLT: the change is limited to multiplying in the sign on insertion and deletion, and recovering the sign when outputting the direction, while the number of cell fields, their widths, and the control flow of peeling are unchanged. We describe the encoding and decoding parts in turn.
+
+\begin{algorithm}[!htbp]
+\caption{Encoding and decoding of the random-sign IBLT. Lines marked $\star$ differ from the standard IBLT; field arithmetic is modulo $2^{64}$.}
+\label{alg:encode}
+\begin{algorithmic}[1]
+\Procedure{Insert}{$x$}
+\For{each cell $v$ of $x$}
+\State $\mathrm{count}_v\gets\mathrm{count}_v+\varepsilon(x)$\Comment{$\star$ standard IBLT adds $1$}
+\State $\mathrm{keySum}_v\gets\mathrm{keySum}_v+\varepsilon(x)\,x$\Comment{$\star$ standard IBLT adds $x$}
+\State $\mathrm{checksum}_v\gets\mathrm{checksum}_v+\varepsilon(x)\,\mathrm{chk}(x)$\Comment{$\star$ standard IBLT adds $\mathrm{chk}(x)$}
+\EndFor
+\EndProcedure
+\Procedure{Delete}{$x$}
+\State same as \Call{Insert}{$x$}, with the three fields subtracting the same quantities
+\EndProcedure
+\Procedure{Peel}{difference table}
+\State add cells with count $\pm1$ to the candidate queue
+\While{the candidate queue is nonempty}
+\State remove cell $v$; if $C_v\ne\pm1$, process the next candidate
+\State $x\gets C_v\,\mathrm{keySum}_v$
+\If{$\mathrm{checksum}_v=C_v\,\mathrm{chk}(x)$ and the cells of $x$ include $v$}
+\State output key $x$ and direction $C_v\,\varepsilon(x)$\Comment{$\star$ standard IBLT outputs $C_v$}
+\State if the direction is $+1$, call \Call{Delete}{$x$}, otherwise call \Call{Insert}{$x$}
+\State add cells whose count becomes $\pm1$ to the candidate queue
+\EndIf
+\EndWhile
+\State \Return whether all three fields of every cell are zero
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Encoding corresponds to lines 1--7 of Algorithm~\ref{alg:encode}. When inserting a key $x$, accumulate $\varepsilon(x)$, $\varepsilon(x)\,x$, and $\varepsilon(x)\,\mathrm{chk}(x)$ into its $k$ cells, and subtract the same quantities on deletion; keySum and checksum are accumulated modulo $2^{64}$ (in the set model, keySum and checksum can also use the bitwise XOR implementation common in the standard IBLT, see Appendix~\ref{app:xor}; the analysis and experiments of this paper use the additive form). After the two sides subtract cell by cell, the three-field contributions of a shared key are identical and cancel exactly; the coding coefficient of a differing key $i$ in the difference table is $s_i\varepsilon_i$, where $\varepsilon_i=\varepsilon(x_i)$. The three fields of cell $v$ in the difference table are thus
+\begin{equation}
+C_v=\sum_{i:v\in S_i}s_i\varepsilon_i,\qquad
+\mathrm{keySum}_v=\sum_{i:v\in S_i}s_i\varepsilon_i\,x_i,\qquad
+\mathrm{checksum}_v=\sum_{i:v\in S_i}s_i\varepsilon_i\,\mathrm{chk}(x_i).\label{eq:fields}
+\end{equation}
+In the analysis we treat $\varepsilon_i$ as iid uniform signs, independent of the mapping $\mathcal G$.
+
+Decoding corresponds to lines 8--17 and follows the peeling of the standard IBLT. When cell $v$ is a pure cell containing a single unrecovered differing key $x_i$, its count is $C_v=s_i\varepsilon_i\in\{-1,+1\}$, and multiplying $\mathrm{keySum}_v$ by $C_v$ cancels the sign $s_i\varepsilon_i$ to read out the candidate key $x_i$ (line 12). After passing the checksum and cell-membership checks (line 13), multiply $C_v$ by $\varepsilon(x_i)$; using $\varepsilon_i^2=1$ recovers the original set direction $s_i=C_v\,\varepsilon(x_i)$ (line 14). Then call \textsc{Delete} or \textsc{Insert} according to the recovered direction $s_i$ (line 15): both operations multiply $\varepsilon(x_i)$ again into all $k$ cells of $x_i$, so what is actually subtracted from the difference table is exactly the coding coefficient $s_i\varepsilon_i=C_v$ times the three-field contribution, and hence after each peeling step the three fields still equal the encoded sum of the unrecovered keys. The success criterion of peeling is also the same as in the standard IBLT, namely that all three fields of every cell become zero (line 17).
+
+Figure~\ref{fig:structure} uses a small one-sided example ($s_1=\dots=s_4=+1$) to compare the standard IBLT and the random-sign IBLT under the same mapping. At the peeling level, the pure cells of both encodings are the degree-$1$ cells 1, 4, 7, and 8 (shaded in the figure), and their counts all lie in $\{\pm1\}$; for example, in pure cell 4, although the random sign makes $C_4=-1$, multiplying back by $\varepsilon_2=-1$ still recovers the true direction of $x_2$ as $s_2=C_4\varepsilon_2=+1$, and the peeling processes of the two are identical. At the sum-of-squares level, the sum of the single-key diagonal terms of both encodings is $kd=12$, but the ways different keys superimpose on the shared cells (cells 2, 3, 5, and 6) are completely different: the same-sign accumulation of the standard IBLT raises the counts of all shared cells to $2$, the cross terms are all positive, and $\sum_vC_v^2=20$; in the random-sign IBLT, the solid lines ($\varepsilon_i=+1$) and dashed lines ($\varepsilon_i=-1$) cancel on the shared cells, and in this example each shared cell consists of exactly one positive and one negative key, so the cross terms are all negative, the counts cancel to $0$, and $\sum_vC_v^2=4$. The two propositions below generalize the decoding equivalence and sign independence shown in Figure~\ref{fig:structure}.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=.92\linewidth]{../figure/fig-structure.pdf}
+\caption{The standard IBLT and the random-sign IBLT under the same mapping ($k=3$, $M=8$, one-sided difference $d=4$). The shaded cells have count $\pm1$; in (b), solid and dashed lines correspond to $\varepsilon_i=+1$ and $\varepsilon_i=-1$, respectively.}
+\label{fig:structure}
+\end{figure}
+
+The random sign introduces a situation that cannot occur in the standard IBLT under a one-sided difference: a degree-three cell whose three coding coefficients are $(+1,+1,-1)$ also has count $+1$. The candidate key read out from such a cell fails the checksum and cell-membership checks, so peeling skips it until it contains a single key; hence the sign cancellation neither makes peeling delete an extra key nor makes it stop early. Proposition~\ref{prop:decode} formalizes this point.
+
+\begin{proposition}[Ideal decoding equivalence]\label{prop:decode}
+Assume the pure-cell test has no false positives and field arithmetic does not overflow. Then at every intermediate state, the keys removable by the random-sign IBLT are exactly those removable by unsigned degree-one peeling. Hence the random-sign IBLT and the standard IBLT leave the same 2-core under the same cell hash, the failure event $F$ depends only on the unsigned mapping $\mathcal G$, and the decoding threshold, the failure probability, and the recovered result are all identical to those of the standard IBLT.
+\end{proposition}
+
+\begin{proof}
+Induct on the number of peeling steps: the field invariant guarantees that a degree-one cell has count $\pm1$ and passes the check, cells of degree other than one are excluded by ideal purity, and the two processes can adopt the same cell-selection order; the full argument is in Appendix~\ref{app:proof-decode}.
+\end{proof}
+
+In a real implementation, the finite width of the 64-bit checksum gives a nonzero false-acceptance probability: under the ideal hash, each check of a non-pure cell passes falsely with probability at most $2^{-64}$. Section~\ref{sec:protocol} accounts for this term separately in the risk upper bound of the two-round protocol, Section~\ref{sec:exp-decode} verifies the implementation of this property in five hundred million real IBLT paired trials, and Table~\ref{tab:decode-paired} in the appendix summarizes the success-failure agreement and recovery checks on each configuration; the time cost of decoding is in Section~\ref{sec:exp-cost}.
+
+Another point that may raise questions is conditioning. Failure selects mappings with large overlap, and conditioning on failure usually changes the distribution of random variables associated with the mapping; the bias of the standard IBLT under a one-sided difference arises exactly from this. The random sign is not affected by this selection: by Proposition~\ref{prop:decode}, failure is determined only by the mapping, while the signs are generated by a sign hash independent of the cell hash, so after fixing the mapping the signs remain iid uniform. Proposition~\ref{prop:composition} gives a precise statement of this property.
+
+\begin{proposition}[Signs are independent of the mapping]\label{prop:composition}
+For any fixed direction vector $(s_i)$, the coding coefficients $(s_i\varepsilon_i)$ are iid uniform signs and are independent of the mapping $\mathcal G$. Hence failure $F$ is independent of the coding coefficients: given $F$, or even given the entire $\mathcal G$, the coding coefficients remain iid uniform signs. Any statistic built from $(C_v)$, $\mathcal G$, and $F$ has a joint distribution that is the same for all sign compositions $(d_+,d_-)$.
+\end{proposition}
+
+\begin{proof}
+Given $(s_i)$, the map $(\varepsilon_i)\mapsto(s_i\varepsilon_i)$ is a bijection on $\{\pm1\}^d$ that sends the uniform distribution to the uniform distribution; because $(\varepsilon_i)$ is independent of $\mathcal G$, $(s_i\varepsilon_i)$ is an iid uniform sign sequence independent of $\mathcal G$, and the joint distribution of $(s_i\varepsilon_i,\mathcal G)$ does not depend on $(s_i)$. By Proposition~\ref{prop:decode}, $F$ is a function of $\mathcal G$, so the distribution of the coding coefficients is unchanged given $F$ or given $\mathcal G$. By \eqref{eq:fields}, $(C_v)$ is determined by $(s_i\varepsilon_i)$ and $\mathcal G$, so the joint distribution of any statistic built from $(C_v)$, $\mathcal G$, and $F$ does not depend on $(s_i)$ and is the same for all $(d_+,d_-)$.
+\end{proof}
+
+The numerical manifestation of this property in the protocol is in Section~\ref{sec:exp-e2e} and Table~\ref{tab:vldb} of the appendix: after fixing the configuration and calibration factor, the random-sign encoding gives close conditional miss rates under one-sided and balanced differences. Figure~\ref{fig:encoding} visually contrasts the post-failure distributions of the standard and random-sign encodings.
+
+Propositions~\ref{prop:decode} and \ref{prop:composition} together are the starting point of all the analysis in this paper: the success of decoding is determined only by $\mathcal G$, the randomness of the estimator comes from the signs, and the two are independent. Hence the post-failure analysis can always first fix the mapping and then study the quadratic form of iid signs on the overlap graph; the resulting statements hold automatically for all sign compositions. Since the joint distribution of the coding coefficients $s_i\varepsilon_i$ does not depend on the direction vector $(s_i)$, the subsequent analysis need not distinguish $s_i\varepsilon_i$ from $\varepsilon_i$, and below we uniformly write them as $\varepsilon_i$.
+
+\subsection{\texorpdfstring{The two-round protocol flow and the lower bound $|b|$}{The two-round protocol flow and the lower bound |b|}}\label{sec:flow}
+When the random-sign IBLT is used in a two-round protocol, the receiver runs peeling after subtracting cell by cell to obtain the difference table. In the standard IBLT, the count sum of the difference table $\frac1k\sum_vC_v=b=d_+-d_-$ directly gives the deterministic lower bound $d\ge|b|$; in the random-sign IBLT, however, $\frac1k\sum_vC_v=\sum_i\varepsilon_i$ depends only on the random signs and no longer carries the set-size difference $b$. For this reason the sender attaches the set size $|A|$ (8 bytes) to the first-round table, and the receiver thereby obtains $b=|A|-|B|$ directly.
+
+If the first-round peeling succeeds, the protocol ends immediately. If the first round suffers failure, the receiver computes an upper bound $U$ from the raw counts $(C_v)$ of the difference table and, using the known lower bound $|b|$, takes $U_b=\max(U,|b|)$ (for the one-sided difference, $|b|=d$). It then sets the second-round table size $m(U_b)=\lceil U_b/(0.8\alpha_c)\rceil$ and re-encodes and decodes with a fresh cell hash independent of the first round: as long as $U_b\ge d$, the second-round load is at most $0.8\alpha_c$, below the peeling threshold with a margin left, so the second round succeeds with high probability. Any constant target load below $\alpha_c$ works for the analysis that follows, and 0.8 is the value adopted in this paper. Sections \ref{sec:measurement} and \ref{sec:inversion} analyze the distribution of the sum of squared counts after failure and give the rule for computing the upper bound $U$.

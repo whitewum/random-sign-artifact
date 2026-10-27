@@ -1,0 +1,59 @@
+\section{Notation}\label{app:notations}
+This appendix collects the notation used in the main text and the principal proofs, ordered by section for easy reference. Except where quantities are compared across different scales, the dependence of each quantity on $M$ is suppressed; we fix $k\ge3$ and let $M\to\infty$, and a subscript $k$ denotes a constant depending only on $k$. The symbol $\Rightarrow$ denotes convergence in distribution. Section~\ref{sec:design} uniformly writes the coding coefficient $s_i\varepsilon_i$ as $\varepsilon_i$, and this convention is followed below.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Principal notation.}
+\begin{tabular}{@{}l p{0.72\linewidth}@{}}
+\toprule
+Notation & Meaning\\
+\midrule
+\multicolumn{2}{@{}l}{\bfseries Model and peeling}\\
+$A$, $B$ & sets held by the two sides; $|A|$ and $|B|$ are the set sizes\\
+$M$, $M_1$ & number of cells; number of cells in the first-round table\\
+$k$ & number of cells selected by each key\\
+$x$, $x_i$ & key; the $i$-th differing key\\
+$\mathrm{chk}(x)$ & checksum of key $x$\\
+$d$ & difference size $|A\triangle B|$\\
+$d_+$, $d_-$ & number of keys in $A$ only and in $B$ only\\
+$b$ & difference of the two set sizes, $d_+-d_-=|A|-|B|$\\
+$S_i$ & the $k$-subset selected by key $i$\\
+$\mathcal G$ & unsigned mapping with key labels\\
+$H_{ij}$ & overlap $|S_i\cap S_j|$ of two edges\\
+$F$ & peeling failure on a single table; $\Pr(F)$ is the failure probability\\
+$F_1$, $F_2$ & peeling failure in the first and second rounds\\
+$E$ & checksum misjudgment event\\
+$\alpha_c$ & peeling threshold (about $0.818$ for $k=3$ and $0.772$ for $k=4$)\\
+\midrule
+\multicolumn{2}{@{}l}{\bfseries Encoding and measurement}\\
+$s_i$ & set direction of key $i$, taking values $\pm1$\\
+$\mathcal U$, $\varepsilon(\cdot)$ & universe of keys, and the sign hash shared by the two sides\\
+$\varepsilon_i$ & random sign $\varepsilon(x_i)$ of key $i$; in the analysis the coding coefficient $s_i\varepsilon_i$ is written as $\varepsilon_i$\\
+$C_v$ & count of cell $v$, $\sum_{i:v\in S_i}\varepsilon_i$ (in the standard encoding, $\sum_{i:v\in S_i}s_i$)\\
+$\widehat d$ & estimator of $d$, see~\eqref{eq:dhat}; used by the Gaussian rule\\
+$s(n)$ & standardization scale $\sqrt{2n(n-1)/(M-1)}$, see~\eqref{eq:s}\\
+$X$ & standardized estimation error $(\widehat d-d)/s(d)$, see~\eqref{eq:X}\\
+$\widetilde d$ & estimator of $d$, $\frac1k\sum_vC_v^2$, see~\eqref{eq:raw-energy}; used by the Skellam rule\\
+$c_F$ & normalized amount by which the overlap exceeds its unconditional mean in the failure sample, see~\eqref{eq:projection}\\
+$\Phi$, $\mathcal N(0,1)$ & CDF and distribution of the standard Gaussian\\
+\midrule
+\multicolumn{2}{@{}l}{\bfseries Inversion and protocol}\\
+$u$ & target risk, taken as $0.01$ and $0.05$ in the experiments\\
+$n$ & candidate difference size, an integer $n\ge2$\\
+$U$, $U_b$ & upper bound on $d$ given by the selected rule; $\max(U,|b|)$ after enforcing the lower bound $|b|$\\
+$t(n)$ & acceptance lower bound of the Gaussian rule, see~\eqref{eq:gauss}\\
+$\chi^2_{M-1,u}$ & lower $u$ quantile of the chi-square distribution with $M-1$ degrees of freedom\\
+$\lambda_n$ & parameter of the Skellam term in the null distribution, see~\eqref{eq:lambda}\\
+$Z_n$ & $\Skellam(\lambda_n,\lambda_n)$, the difference of two independent $\Pois(\lambda_n)$\\
+$J_\lambda$ & $2\varepsilon_1\varepsilon_2+\frac2k\Skellam(\lambda,\lambda)$, see~\eqref{eq:J}\\
+$G_n$ & CDF of the null distribution $n+J_{\lambda_n}$ of candidate $n$ (Definition~\ref{def:null})\\
+$c$ & $d/\sqrt M$ (\eqref{eq:c}); its limit in Theorem~\ref{thm:cross}\\
+$m(\cdot)$ & second-round table-size rule $m(U_b)=\lceil U_b/(0.8\alpha_c)\rceil$\\
+$\Pr_m(F)$ & failure probability on a new table with $m$ cells\\
+\midrule
+\multicolumn{2}{@{}l}{\bfseries Proofs}\\
+$\Omega_2$ & sum of squared overlaps $\sum_{i<j}H_{ij}^2$\\
+$\mathcal G_M$ & set of good graphs in Appendix~\ref{app:graph}, whose complement has probability an arbitrary fixed negative power of $M$\\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,167 @@
+\section{Experimental evaluation}\label{sec:exp}
+The experiments answer three questions. First, whether the random-sign encoding removes the dependence of the post-failure estimate on the sign composition without changing decoding (Section~\ref{sec:exp-decode}). Second, what shape the lower tail of the post-failure statistic has (Section~\ref{sec:exp-dist}), and how this shape determines the conditional miss rate and the extra capacity of the two rules at finite size (Section~\ref{sec:exp-cover}). Third, what the reliability and communication cost are when the upper bound is placed into the two-round protocol of a real IBLT (Section~\ref{sec:exp-e2e}), and what the computational cost is (Section~\ref{sec:exp-cost}). Finally, Section~\ref{sec:exp-deploy} summarizes the guarantees and costs of the various rule choices and gives deployment recommendations.
+
+The experiments are divided into two kinds, statistical experiments (\exptag{STAT}) and protocol experiments (\exptag{PROTO}). The statistical experiments study only the distribution of the post-failure statistic, with configurations in Section~\ref{sec:exp-setup}; the protocol experiments run the two-round protocol on a complete IBLT, with configurations in Section~\ref{sec:exp-e2e}. A few figures additionally take a single configuration to display the shape of the distribution, with its parameters given in the figure caption.
+
+\subsection{Configurations and sampling of the statistical experiments}\label{sec:exp-setup}
+The statistical experiments do not need a complete IBLT: the sampler independently and uniformly generates $d$ random hyperedges and runs peeling, and on the same mapping simultaneously computes $X=(\widehat d-d)/s(d)$ of the standard encoding under one-sided and balanced differences, together with the exact integers $\sum_vC_v$ and $\sum_vC_v^2$ of the random-sign encoding, and then computes the upper bound of the two rules from the same observation.
+
+Each configuration is determined by $(k,M,d)$. Two axes describe the position of a configuration: $c=d/\sqrt M$ (\eqref{eq:c}) and the first-round load $d/(\alpha_cM)$, controlling different effects. The parameter $c$ determines the statistical scale of the estimation error: when $c$ is small the post-failure $\widehat d-d$ is dominated by the $\pm2$ offset of a few duplicate edge pairs, and when $c$ is large it tends to a continuous distribution; the load determines the position of the peeling phase transition, subcritical below 0.95, in the critical window from 0.95 to 1.05, and overloaded above 1.05. For fixed $k,M$ the two axes satisfy $d/(\alpha_cM)=c/(\alpha_c\sqrt M)$, so only changing $M$ can move the load while keeping $c$ fixed, thereby separating the two effects.
+
+The statistical experiments take $k=3,4,5$ and $M\in\{256,1024,4096,16384\}$. For each pair $(k,M)$, $d$ takes the union of three kinds of values: the 8 values making $c\in\{0.5,1,2,4,8,16,32,64\}$, the 5 values making the load $\in\{0.95,1,1.05,1.5,3\}$, and the small differences $d=2,3,6$. After removing the points with load exceeding 3 there are 189 configurations, each collecting about 20,000 failures. $M=64$ gives 42 configurations by the same rule, used separately to test the boundary of applicability of the rules. The positions of these configurations on the two axes are shown in Figure~\ref{fig:exp-grid} of the appendix.
+
+\paragraph{Planted sampling.}
+Failure samples have two sources. When the load is near or above the critical value, failure is common, and it suffices to randomly generate a mapping and keep the failure samples; this direct sampling gives the true failure-conditional distribution. When the load is low the failure probability is small, and direct sampling is too expensive. By Proposition~\ref{prop:plant}, when $d=o(M)$ failure is almost always caused by a pair of keys with completely identical mappings, so such samples can be constructed directly: randomly choose a pair of differing keys to fall on the same group of $k$ cells, and draw the mappings and signs of the remaining keys independently. In the statistical experiments the 84 configurations with high failure rate use direct sampling, and the remaining 105 use this planted sampling, marked separately in the figures (Appendix~\ref{app:sampling-impl}).
+
+The planted-sampling control (\exptag{PLANT}) compares the two kinds of samples on 12 planted configurations where direct sampling is still affordable: among direct failures the proportion caused by a duplicate edge pair is 0.988 to 1.000, the KS distance of $X$ is 0.0048 to 0.0079, comparable to the sampling error at this sample size, and the miss/u of the Skellam rule also agrees. The planted approximation deviates only near the critical load when $M$ is small, and the planted configurations of the statistical experiments are not in this region (Appendix~\ref{app:planted}).
+
+\subsection{The random-sign encoding removes the dependence on the sign composition}\label{sec:exp-decode}
+This subsection verifies two properties of the random-sign encoding: the post-failure estimate no longer depends on the sign composition, and the result of decoding is identical to that of the standard encoding.
+
+\paragraph{Conditional bias.}
+Under the random-sign encoding, the post-failure $\widehat d$ is unbiased for every sign composition; under the standard encoding, the selection of the mapping by failure introduces into $\widehat d$ a bias that depends on the sign composition. Figure~\ref{fig:encoding} compares three conditions on the same batch of 4 million mappings, with the success or failure of peeling identical in each case: the failure samples of the standard encoding under a one-sided difference are shifted right as a whole by about $0.6s(d)$ and are almost unbiased under a balanced difference; the failure samples of the random-sign encoding almost coincide with all samples (numerical values in Appendix~\ref{app:dist}).
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-encoding.pdf}
+\caption{$X=(\widehat d-d)/s(d)$ under three conditions on the same batch of mappings ($k=3$, $M=16384$, $d=13314$, failure rate 0.125).}
+\label{fig:encoding}
+\end{figure}
+
+The bias of the standard encoding depends on both the sign composition and $k$, and the receiver cannot correct it in advance. Figure~\ref{fig:composition}(a) compares the two encodings at five sign compositions: the solid lines of the standard encoding are near zero at the balanced point and deviate more as the difference tilts to one side, with the direction of the deviation determined by $k$; for a one-sided difference it is $+0.638$ at $k=3$ and $-0.387$ at $k=6$ (mechanism in Appendix~\ref{app:std}). The receiver knows $k$ and therefore the direction of the bias, but it does not know $(d_+,d_-)$ in advance and cannot determine the size of the correction. The dashed lines of the random-sign encoding stay near zero, and after magnifying the vertical axis by about 40 times (Figure~\ref{fig:composition}(b)) there is still no discernible difference among the five sign compositions. This agrees with Proposition~\ref{prop:composition}: the coding coefficients $s_i\varepsilon_i$ are iid random signs, and their distribution is independent of $(d_+,d_-)$. The 84 direct-sampling configurations of the statistical experiments give the same conclusion (Appendix~\ref{app:dist}).
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-composition.pdf}
+\caption{The mean of the post-failure $X$ as the sign composition varies ($M=16384$, failure probability about 0.1, with the two encodings sharing the same batch of mappings on the same configuration). Color indicates $k$. (a) Solid lines with filled markers are the standard encoding, dashed lines with open markers are the random-sign encoding; (b) the random-sign encoding data in (a) magnified about 40 times on the vertical axis, with error bars of two standard errors.}
+\label{fig:composition}
+\end{figure}
+
+\paragraph{Decoding equivalence.}
+The random-sign encoding does not change the set of keys recovered by decoding (Proposition~\ref{prop:decode}), so it inherits the threshold and the failure probability of the standard IBLT. The decoding-equivalence test (\exptag{DEC}) verifies this with paired trials on a complete IBLT: the two encodings share the same batch of keys and cell hash, and each trial checks whether the success or failure of the first round, each accepted key, and the set recovered at termination agree with an independent degree-one peeling reference. In more than 500 million paired trials the number of disagreements is zero (Appendix~\ref{app:decode-exp}). Table~\ref{tab:decode} gives the failure probability near the threshold: after normalizing the load by the respective $\alpha_c$, the five values of $k$ almost coincide, and the transition band narrows as $M$ grows, consistent with the critical window of width of order $M^{-1/2}$ in Section~\ref{sec:model}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Failure probability of first-round decoding. Columns are the load $d/(\alpha_cM)$; the two encodings agree in every trial, so the values apply to both.}
+\label{tab:decode}
+\begin{tabular}{rr@{\hspace{1.2em}}ccc@{\hspace{1.2em}}ccc@{\hspace{1.2em}}ccc}
+\toprule
+& & \multicolumn{3}{c}{$M=1024$} & \multicolumn{3}{c}{$M=16384$} & \multicolumn{3}{c}{$M=65536$}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+$k$ & $\alpha_c$ & 0.98 & 1 & 1.02 & 0.98 & 1 & 1.02 & 0.98 & 1 & 1.02\\
+\midrule
+3 & 0.818 & 0.298 & 0.715 & 0.958 & 0.000 & 0.648 & 1.000 & 0.000 & 0.619 & 1.000\\
+4 & 0.772 & 0.266 & 0.743 & 0.977 & 0.000 & 0.654 & 1.000 & 0.000 & 0.620 & 1.000\\
+5 & 0.702 & 0.268 & 0.756 & 0.975 & 0.000 & 0.661 & 1.000 & 0.000 & 0.629 & 1.000\\
+6 & 0.637 & 0.284 & 0.740 & 0.971 & 0.000 & 0.665 & 1.000 & 0.000 & 0.627 & 1.000\\
+10 & 0.461 & 0.383 & 0.759 & 0.966 & 0.000 & 0.663 & 1.000 & 0.000 & 0.630 & 1.000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The additional requirement of the random-sign encoding on the decoder is the same as when the standard IBLT handles a balanced difference. The random signs make a cell of degree greater than one possibly show a count of $\pm1$ (Section~\ref{sec:design}); all such candidates are rejected at the checksum step, with not a single false acceptance. The frequency with which the random-sign encoding encounters such candidates is independent of the sign composition and equals the frequency of the standard encoding under a balanced difference (Figure~\ref{fig:decode} of the appendix). The cell fields and byte widths of the two encodings are the same; the random-sign encoding additionally sends the set size $|A|$ (8 bytes) with the table, used to recover the lower bound $|b|$.
+
+\subsection{The discrete limit distribution accurately describes the post-failure lower tail at finite size}\label{sec:exp-dist}
+The limit distribution of Section~\ref{sec:inversion} almost coincides with the empirical post-failure lower tail without any fitting. Figure~\ref{fig:crosscdf} takes six configurations with $c$ from 0.25 to 8 at $M=16384$ and compares the empirical CDF of the post-failure $(\widetilde d-d)/s(d)$, the limit distribution of Theorem~\ref{thm:cross}, and $N(0,1)$: on all six configurations the empirical CDF almost coincides with the limit distribution, while $N(0,1)$ deviates clearly when $c$ is small. The empirical distribution is computed exactly from integer sums of squares, and the limit distribution uses the $G_d$ of the main text, with no fitted parameters. The finite-size error decreases as $M$ grows; at $c=1,2,4$ the KS distance drops from within 0.034 at $M=256$ to within 0.012 at $M=16384$ (Table~\ref{tab:limit-ks} of the appendix).
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-crossover-cdf.pdf}
+\caption{The post-failure lower tail of $(\widetilde d-d)/s(d)$ at different $c$ ($k=3$, $M=16384$; 400,000 planted samples per configuration for $c=1,2,4$, and 100,000 for the rest). The limit distribution is computed directly from Theorem~\ref{thm:cross}, with zero fitting. Below the title are the KS distances from the empirical CDF to the limit distribution and to $N(0,1)$, with gray lines at 1\% and 5\%.}
+\label{fig:crosscdf}
+\end{figure}
+
+The steps of the lower tail come from the duplicate edge pairs and are filled in as $c$ grows. When $c$ is small, failure is almost always caused by one duplicate edge pair; when the two edges have opposite signs the observation is 2 below $d$. This $-2$ offset is large relative to $s(d)$; at $c=0.25$ it lies at a standardized error of about $-5.7$, and about four tenths of the failure samples fall on this step, the large step at $c=0.25$ in Figure~\ref{fig:crosscdf}. As $c$ grows, the overlap among the remaining edges brings many $\pm2/k$ offsets that fill in the steps, and the lower tail gradually approaches the Gaussian (Appendix~\ref{app:limit}).
+
+This discrete structure determines the behavior of the two rules at finite size. The Gaussian rule treats the discrete left tail as a continuous tail: when $c$ is small $s(d)$ is small, the $-2$ offset caused by opposite signs of the duplicate edge pair lies far in the Gaussian tail, and the probability of rejecting the true $d$ exceeds $u$. The $G_n$ of the Skellam rule counts the probability of the observation value itself and accepts the candidate when the observation falls on a lattice point, so it is conservative in the small-$c$ and low-load regions where the values are sparse. The conditional miss rate results of the next subsection agree with these two points.
+
+\subsection{Conditional miss rate and extra capacity at finite size}\label{sec:exp-cover}
+This subsection tests the risk of the two rules at finite table size and measures the extra capacity paid by the upper bound. Theorem~\ref{thm:coverage} guarantees that the conditional miss rate of the Skellam rule is asymptotically at most $u$ for all $d\ge2$, and the Gaussian rule has the same guarantee only when $c\to\infty$ (Corollary~\ref{cor:gauss}). The conditional miss rate is the proportion of misses ($U<d$) among failure samples, reported as miss/$u$; a value not exceeding 1 means the risk is within the target. The extra capacity is $(U-d)/d$.
+
+\paragraph{Conditional miss rate.}
+The Skellam rule keeps the risk near the target over the whole region. The circles in Figure~\ref{fig:coverage} all fall near miss/u $=1$ on the 189 configurations, and the maximum 1.04 is within the sampling error of 20,000 failures per configuration. Further, the 12 configurations closest to the risk upper bound are retested with independent samples (\exptag{WORST}), covering bounded $c$, the critical window, and the overload region: in Figure~\ref{fig:confirm} the estimated miss/u values do not exceed 0.99, and the largest confidence upper bound is $1.024u$, meeting the $1.1u$ criterion set before sampling (Appendix~\ref{app:cover-more}). The low-load configurations with $c<8$ are conservative, most clearly at $u=0.01$, for the reason of the discrete structure of Section~\ref{sec:exp-dist}: the lower tail concentrates on a few lattice points, and the rule cannot use up the risk budget exactly between lattice points.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-coverage.pdf}
+\caption{miss/u versus $c=d/\sqrt M$ in the statistical experiments ($k=3,4,5$, $M=256$--16384, about 20,000 failures per configuration; configurations with zero miss are drawn on the lower boundary). The top row is direct sampling, the bottom row is planted sampling; circles are the Skellam rule, triangles are the Gaussian rule.}
+\label{fig:coverage}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-confirm.pdf}
+\caption{Estimated miss/u of the Skellam rule and two-sided 95\% intervals (Clopper--Pearson) on the \exptag{WORST} configurations. Configurations are ordered by load, with the load in parentheses; the dashed line is miss/u $=1$.}
+\label{fig:confirm}
+\end{figure}
+
+The Gaussian rule meets the target only when $c$ is large. The triangles in Figure~\ref{fig:coverage} are near 1 when $c\ge8$ and rise quickly as $c$ decreases, already exceeding the target by more than 8 times at $u=0.01$, $c=1$ (Table~\ref{tab:gauss-c} of the appendix). This excess does not disappear as the table size grows, consistent with the finite limit of Theorem~\ref{thm:cross}. The reason is again the discrete structure: when $c$ is very small, the post-failure observation falls near $d+2$ and $d-2$ with probability one half each (Proposition~\ref{prop:smalld}), the Gaussian tail gives the latter an extremely small probability, the rule therefore accepts the candidate $d-2$, and the miss rate tends to 1/2.
+
+\paragraph{Extra capacity.}
+The extra capacity is determined by the table size and decreases as $M^{-1/2}$, with the two rules almost identical. At $u=0.01$ and $c\ge8$, the median extra capacity of the Skellam rule drops from 25\% at $M=256$ to 2.6\% at $M=16384$, because $U-d$ is about 2.3--2.8 times $s(d)$ and $s(d)/d\approx\sqrt{2/M}$. In the two-round protocol this extra capacity appears as the increase of the second-round table size over the oracle; in Figure~\ref{fig:protocol}(a) it falls along the dotted line of slope $-1/2$ (Section~\ref{sec:exp-e2e}). When $c$ is bounded the difference itself is small and few extra elements appear; at $c=4$ the median of $U-d$ is 15 (Appendix~\ref{app:cover-more}).
+
+For engineering use we recommend $M\ge1024$. The null distribution of Section~\ref{sec:inversion} omits the overlap between the duplicate edge pair and the remaining edges, whose occurrence rate $(d-2)k^2/M$ grows as the table size decreases. At $M=64$ this omission is no longer negligible, and the largest miss/u of the Skellam rule is 1.08, exceeding the sampling error. At $M=256$ no miss/u exceeding the sampling error is observed, but the occurrence rate of the omitted structure is 4 times that at $M=1024$, and the median extra capacity also reaches 25\%.
+
+\subsection{The two-round protocol on a real IBLT}\label{sec:exp-e2e}
+Theorem~\ref{thm:protocol} decomposes the two-round failure probability into three terms: the joint miss rate, the peeling failure when the capacity is sufficient, and the checksum misjudgment. This subsection runs the two-round protocol on a complete IBLT, tests the relative sizes of the first two terms in the real protocol, measures the communication cost of the random-sign IBLT, and compares it with the existing calibration rule.
+
+The protocol experiments (\exptag{PROTO}) take $k=3,4,5$, first-round table size $M_1\in\{256,1024,4096,16384\}$, and first-round loads 0.95, 1, 1.05, 1.5, 3, with the difference taking two sign compositions, one-sided (all on the $A$ side) and balanced, for 120 configurations in total; the two sides additionally hold 1000 common elements. Each configuration runs until the first round accumulates 20,000 failures. After each first-round failure, three upper bounds determine the second-round table size separately and the second round runs: the Skellam rule, the Gaussian rule, and the oracle that takes the true $d$ directly. The two rules take $U_b=\max(U,|b|)$ as in Section~\ref{sec:flow}, the second-round table size is $\max\{\lceil U_b/(0.8\alpha_c)\rceil,64\}$, and a fresh cell hash is used. The three upper bounds share all keys and hashes within the same trial, so the difference comes only from the upper bound itself and the three can be compared pairwise trial by trial (implementation details in Appendix~\ref{app:protocol}).
+
+The reliability of the two-round protocol is comparable to that of the oracle. In Figure~\ref{fig:protocol}(b), the final failure rates of the two rules fall in the same range as the oracle, none exceeding 0.13\% when $M_1\ge1024$, and at $u=0.01$ the maximum is not higher than the oracle (Table~\ref{tab:e2e} of the appendix); the two rules are statistically indistinguishable. The final failure comes mainly from the peeling failure of the second round itself, consistent with the expectation that the second term dominates in Theorem~\ref{thm:protocol}: at $u=0.01$, no more than 6\% of the final failures follow a miss. The reason is that the second-round table size leaves a margin $1/(0.8\alpha_c)$, which absorbs most slight underestimates. The same reason also explains why the rules are no worse than the oracle: the upper bound given by the rules is usually larger than $d$, the second-round table is slightly larger than the oracle, and the peeling failure is therefore smaller.
+
+The extra communication cost is determined only by $M_1$ and decreases as $M_1^{-1/2}$. In Figure~\ref{fig:protocol}(a), the configurations with different $k$, load, and sign composition at the same $M_1$ almost coincide and fall along the dotted line of slope $-1/2$. At $u=0.01$, the increase of the second-round table size of the Skellam rule over the oracle drops from 25.6\% at $M_1=256$ to 2.6\% at $M_1=16384$, consistent with the extra capacity of Section~\ref{sec:exp-cover}; converted to total bytes, the overhead drops from 14.7\% to 1.5\%.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-protocol.pdf}
+\caption{The two-round protocol as the first-round table size $M_1$ varies (120 configurations, 13.94 million trials per $u$ in total). (a) The increase of the second-round table size over the oracle after a first-round failure, one point per configuration, with the dotted line of slope $-1/2$; (b) the final two-round failure rate of each configuration at $u=0.01$, with zero configurations drawn at 0 below the axis break.}
+\label{fig:protocol}
+\end{figure}
+
+Figure~\ref{fig:scale} gives the same trend at fixed load (first-round target load 1.5, balanced, $u=0.01$): as the table size grows, the miss/u of the Skellam rule gradually approaches 1 from below, while the Gaussian rule stays near 1 (in the top row each point merges all first-round failures of the same configuration, Appendix~\ref{app:cover-more}); the total byte overhead relative to the oracle drops from 16.8\% at $M_1=256$ to 1.7\% at $M_1=16384$, tending to become negligible as the table size grows.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{../figure/fig-scale.pdf}
+\caption{The two-round protocol at fixed load as the table size varies (balanced, $u=0.01$, target load 1.5). One column per $k$; the top row merges all first-round failures of the same configuration (about 330,000 per point); the bottom row is the communication overhead relative to the oracle of the same configuration.}
+\label{fig:scale}
+\end{figure}
+
+\paragraph{Comparison with the existing calibration rule.}
+The existing calibration rule depends on the sign composition under the standard encoding, which is the consequence in the protocol of the bias shown in Section~\ref{sec:exp-decode}. We plug the calibration factor $q_{0.01}$ of \cite{wu2026selfsizing} into the same protocol, taking $U=\lceil\widehat d/q_{0.01}\rceil$, with the rest of the settings the same as the two rules of this paper (Table~\ref{tab:vldb} of the appendix). Under the standard encoding, at load 0.95--1.0 the same factor gives a conditional miss rate of $0.05$--$0.40u$ for a one-sided difference and $0.86$--$0.94u$ for a balanced one, differing by an order of magnitude; the random-sign encoding brings both to $0.80$--$1.01u$. The calibration factor must be calibrated by simulation separately for each set of parameters, and the literature gives values only for $k=3$, $M_1\le4096$, and $u=0.01$; on these parameters it is close to the Skellam rule in final failure rate and total bytes. The Skellam rule is computed directly from the theoretical distribution of Section~\ref{sec:inversion}, requiring no calibration for any $k$, $M$, load, or $u$.
+
+\subsection{Computational cost}\label{sec:exp-cost}
+Compared with the standard encoding, the extra computational time comes almost entirely from the sizing of the Skellam rule, and the overhead of the random-sign encoding itself is negligible. With the Gaussian rule as the baseline, the Skellam rule increases the total protocol time by less than half when the load does not exceed 1.5; at load 3, sizing becomes the main cost and the total time is 2.8--3.8 times that of the Gaussian rule; combining the two rules by the first-round observation avoids this part of the cost (Section~\ref{sec:switch}).
+
+The random-sign encoding makes any difference look like a balanced difference to the decoder; under a one-sided difference the candidates checked per recovered key increase from 1.00 to 1.77 ($k=3$), and the resulting increase in decoding time is less than 1\% of the total protocol time.
+
+The sizing cost of the Skellam rule grows with the load. Its exact CDF requires computing and looking up Poisson probability tables, which depend only on $(M,k)$ and the candidate $n$, and the same receiver can cache and reuse them across synchronizations. Table~\ref{tab:proto} gives the time of the complete protocol at $M_1=16384$, including first-round encoding and decoding, sizing, and the second round: at load 1.0--1.05 the Skellam rule is 14--23\% more than the Gaussian rule, and at load 1.5 it is 39--43\% more; the sizing cost grows roughly as $c^2$, and at load 3 the total time of the Skellam rule is 57--88 ms. The conditions of the computational-cost measurement (\exptag{COST}), the per-sizing time under different cache conditions, and the memory use are in Appendix~\ref{app:timing}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Total protocol time per trial (ms, median of 10 repetitions; $M_1=16384$, one-sided difference; the Skellam rule caches the Poisson probability tables between successive trials).}
+\label{tab:proto}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{3}{c}{Skellam rule} & \multicolumn{3}{c}{Gaussian rule}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Load & $k=3$ & $k=4$ & $k=5$ & $k=3$ & $k=4$ & $k=5$\\
+\midrule
+1.0 & 12.7 & 16.6 & 17.6 & 10.9 & 14.0 & 15.4\\
+1.05 & 15.9 & 19.2 & 21.5 & 13.1 & 15.6 & 18.4\\
+1.5 & 19.7 & 24.0 & 27.4 & 14.0 & 16.8 & 19.7\\
+3 & 57.1 & 84.1 & 88.1 & 18.8 & 22.4 & 25.8\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Rule choice and deployment}\label{sec:exp-deploy}
+At deployment we recommend combining the two rules by the first-round observation (Section~\ref{sec:switch}). Table~\ref{tab:sizing-options} summarizes the guarantees and costs of using each rule alone and in combination. The Gaussian rule needs only a microsecond-scale scalar search, and its guarantee range is $d\gg\sqrt M$, suited to applications whose workload can guarantee this condition and that pursue low latency; the table size alone is not enough to rule out bounded $c$ and a fixed small $d$. The Skellam rule holds for all $d\ge2$ and does not need to know which load region $d$ falls in, at the cost of millisecond-scale computation that looks up Poisson tables, which becomes the main cost of the protocol when the first round is heavily overloaded (Section~\ref{sec:exp-cost}). The combined use takes the Gaussian rule at high load and the Skellam rule otherwise, keeping the uniform guarantee unchanged and the time in the overload region the same as the Gaussian rule.
+
+\begin{table}[!htbp]
+\centering
+\caption{Choice of the sizing rule.}
+\label{tab:sizing-options}
+\begin{tabular}{@{}p{.19\linewidth}p{.24\linewidth}p{.29\linewidth}p{.18\linewidth}@{}}
+\toprule
+Rule & Range of conditional miss rate asymptotically at most $u$ & Suitable scenario & Computational cost\\
+\midrule
+Gaussian rule & $d\gg\sqrt M$ & workload guarantees the range, low latency valued & microsecond-scale, scalar search\\
+Skellam rule & all $d\ge2$, uniformly & $d$ may range from far below $\sqrt M$ to overload & millisecond-scale, cached Poisson tables\\
+Combined use & all $d\ge2$, uniformly & needs the uniform guarantee while controlling overload time & microsecond-scale at high load, otherwise as the Skellam rule\\
+\bottomrule
+\end{tabular}
+\end{table}

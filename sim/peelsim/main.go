@@ -48,7 +48,7 @@ import (
 // identical to round 1/2).
 var (
 	optConfig bool     // configuration model: k iid uniform endpoints per edge, repeats allowed
-	optPlant  bool     // edge D-1 is an exact copy of edge D-2 (planted duplicate pair)
+	optPlant  bool     // uniformly chosen edge labels share a mapping
 	optScore  bool     // record the precritical score R_M, H_M and core duplicate pairs
 	optEps    []string // score times t_- = t_* - eps: "m8" = M^-1/8, "m4" = M^-1/4, or a number
 	optSrep   int      // random fixed-composition sign redraws per graph
@@ -89,6 +89,7 @@ type cfgMeta struct {
 type manifest struct {
 	CodeVersion string    `json:"code_version"`
 	RNGSeeding  string    `json:"rng_seeding"`
+	PlantScheme string    `json:"plant_scheme"`
 	RunSeed     uint64    `json:"run_seed"`
 	Args        []string  `json:"args"`
 	Fields      []string  `json:"fields"`
@@ -153,6 +154,10 @@ type worker struct {
 	coef     []int8     // selftest only: coefficients of the last variant
 	re       *rand.Rand // eps stream of the random-sign variants (separate, so rs is unchanged)
 	powc     []float64
+
+	plantI, plantJ int
+	rplant         *rand.Rand
+
 	// score
 	nMinus  []int       // per eps, increasing removal counts (-1: not representable)
 	fB      [][]float64 // per eps, f_j(b_-)
@@ -170,6 +175,7 @@ type worker struct {
 
 func newWorker(M, K, D int, vars []variant, qgrid, rs, rc int, pairs bool, sc float64) *worker {
 	w := &worker{M: M, K: K, D: D, vars: vars, qgrid: qgrid, rSimple: rs, rConfig: rc, pairs: pairs, sc: sc}
+	w.rplant = rand.New(rand.NewPCG(11, 12)) // selftest default; production sets a separate seeded stream
 	w.cells = make([]int32, D*K)
 	w.deg = make([]int32, M)
 	w.deg0 = make([]int32, M)
@@ -406,6 +412,33 @@ func (w *worker) genericPeel(rc []int32) int {
 	return D - removed
 }
 
+// uniformPair samples each unordered label pair with probability 1/C(d,2).
+func uniformPair(r *rand.Rand, d int) (int, int) {
+	if d < 2 {
+		panic("planted sampling requires d >= 2")
+	}
+	i, j := r.IntN(d), r.IntN(d-1)
+	if j >= i {
+		j++
+	}
+	if i > j {
+		i, j = j, i
+	}
+	return i, j
+}
+
+func savedPlantScheme(m manifest) string {
+	if m.PlantScheme != "" {
+		return m.PlantScheme
+	}
+	for _, arg := range m.Args {
+		if arg == "-plant-dup" || arg == "--plant-dup" || arg == "-plant-dup=true" || arg == "--plant-dup=true" {
+			return "fixed-last-pair-v0"
+		}
+	}
+	return "none"
+}
+
 func (w *worker) trial(rm, rs, rp, rr *rand.Rand, rec []uint32) {
 	M, K, D := w.M, w.K, w.D
 	mf, kf, df := float64(M), float64(K), float64(D)
@@ -413,6 +446,10 @@ func (w *worker) trial(rm, rs, rp, rr *rand.Rand, rec []uint32) {
 	sdd := math.Sqrt(2 * df * (df - 1) / (mf - 1))
 	for i := 0; i < M; i++ {
 		w.deg0[i] = 0
+	}
+	// Select labels independently of mapping, signs, and peeling streams.
+	if optPlant {
+		w.plantI, w.plantJ = uniformPair(w.rplant, D)
 	}
 	// mapping
 	for e := 0; e < D; e++ {
@@ -428,9 +465,9 @@ func (w *worker) trial(rm, rs, rp, rr *rand.Rand, rec []uint32) {
 			w.cells[base+n] = c
 			n++
 		}
-		if optPlant && e == D-1 {
+		if optPlant && e == w.plantJ {
 			// draw as usual (keeps the mapping stream aligned with the unplanted run), then copy
-			copy(w.cells[base:base+K], w.cells[base-K:base])
+			copy(w.cells[base:base+K], w.cells[w.plantI*K:(w.plantI+1)*K])
 		}
 		for j := 0; j < K; j++ {
 			w.deg0[w.cells[base+j]]++
@@ -1092,7 +1129,7 @@ func selftest() {
 		}
 		fmt.Printf("selftest plant (config=%v): failed %d/2000, core has duplicate pair %d/2000\n", cfgm, nf, dupc)
 	}
-	// dup-idx: the planted pair (D-2, D-1) is the recorded pair whenever the core is that pair alone
+	// dup-idx: the sampled planted pair is recorded whenever the core is that pair alone
 	optConfig, optScore, optEps, optDupIdx = false, true, []string{"m8"}, true
 	w4 := newWorker(400, 3, 300, parseVariants("0", 300), 0, 0, 0, false, 0.5)
 	rec4 := make([]uint32, nFields(1, 0, 0, 0))
@@ -1102,7 +1139,7 @@ func selftest() {
 		n := len(rec4)
 		if int32(rec4[2]) == 2 && int32(rec4[n-5]) == 1 {
 			pureN++
-			if int32(rec4[n-2]) == 298 && int32(rec4[n-1]) == 299 {
+			if int32(rec4[n-2]) == int32(w4.plantI) && int32(rec4[n-1]) == int32(w4.plantJ) {
 				hit++
 			}
 		}
@@ -1152,7 +1189,7 @@ func main() {
 	st := flag.Bool("selftest", false, "run self test and exit")
 	resume := flag.Bool("resume", false, "skip chunks already completed in -out (same spec and seed required)")
 	model := flag.String("model", "plain", "plain (distinct cells per edge) or config (iid endpoints, repeats allowed)")
-	flag.BoolVar(&optPlant, "plant-dup", false, "make edge d-1 an exact copy of edge d-2")
+	flag.BoolVar(&optPlant, "plant-dup", false, "uniformly choose two edge labels and give them the same mapping")
 	flag.BoolVar(&optScore, "score", false, "record precritical score R_M (t_- = t_* - M^-1/8), H_M, core duplicate pairs")
 	flag.IntVar(&optSrep, "srep", 0, "random fixed-composition sign redraws per graph (records mean/var and exact values)")
 	flag.StringVar(&optSrepC, "srep-comp", "zp", "composition for -srep (sign-variant token)")
@@ -1227,6 +1264,10 @@ func main() {
 		}
 	}
 	vars0 := man.Configs[0].Variants
+	man.PlantScheme = "none"
+	if optPlant {
+		man.PlantScheme = "uniform-pair-v1"
+	}
 	man.Fields, man.FieldTypes = fieldNames(vars0, *qgrid, *rSimple, *rConfig)
 	man.RecordBytes = 4 * len(man.Fields)
 	man.ChunksTotal = len(jobsList)
@@ -1255,6 +1296,9 @@ func main() {
 			var old manifest
 			if err := json.Unmarshal(b, &old); err != nil {
 				panic(err)
+			}
+			if savedPlantScheme(old) != man.PlantScheme {
+				panic("resume: planted sampling scheme differs; use a new output directory")
 			}
 			oldScheme := old.RNGSeeding
 			if oldScheme == "" {
@@ -1338,6 +1382,7 @@ func main() {
 				rp := rand.New(seededPCG(*runSeed^0x165667B19E3779F9, s2))
 				rr := rand.New(seededPCG(*runSeed^0xD6E8FEB86659FD93, s2))
 				w.re = rand.New(seededPCG(*runSeed^0x27D4EB2F165667C5, s2))
+				w.rplant = rand.New(seededPCG(*runSeed^0xA24BAED4963EE407, s2))
 				nf := nFields(len(meta.Variants), *qgrid, *rSimple, *rConfig)
 				rec := make([]uint32, nf)
 				path := filepath.Join(*outDir, fmt.Sprintf("cfg_%03d", j.ci), fmt.Sprintf("chunk_%05d.bin", j.chunk))

@@ -1,0 +1,20 @@
+\section{Post-failure bias of the standard IBLT}\label{app:std}
+This appendix proves Proposition~\ref{prop:projection} and gives a numerical verification.
+
+In the standard IBLT the count is $C_v=\sum_{i:v\in S_i}s_i$, and the coefficient is the set direction. Expanding $\widehat d$,
+\begin{equation}
+\widehat d-d=\frac{2}{k(1-k/M)}\sum_{i<j}s_is_j\Bigl(H_{ij}-\frac{k^2}{M}\Bigr).\label{eq:std-expand}
+\end{equation}
+Failure changes the distribution of the overlap: the overlap of same-sign pairs raises $\widehat d$, and the overlap of opposite-sign pairs lowers $\widehat d$, which yields Proposition~\ref{prop:projection}.
+
+\begin{proof}[Proof of Proposition~\ref{prop:projection}]
+By~\eqref{eq:std-expand},
+\begin{equation*}
+\E[\widehat d\mid F]-d=\frac{2}{k(1-k/M)}\sum_{i<j}s_is_j\,\E\Bigl[H_{ij}-\frac{k^2}{M}\Bigm|F\Bigr].
+\end{equation*}
+$F$ depends only on the unsigned mapping and is invariant under permutation of the key labels; the random mapping $\mathcal G$ is exchangeable over the labels, so $\E[H_{ij}\mid F]$ is the same for all $i<j$ and equals $k^2/M+k(1-k/M)c_F$. The number of same-sign pairs minus the number of opposite-sign pairs is $\binom{d_+}2+\binom{d_-}2-d_+d_-=(b^2-d)/2$. Substituting gives $\E[\widehat d\mid F]-d=c_F(b^2-d)$, and dividing by $d$ yields~\eqref{eq:projection}. The proof uses only these two properties of $F$, so it holds for any event that depends only on the unsigned mapping, is invariant under label permutation, and has positive probability.
+\end{proof}
+
+The simulations used in Figure~\ref{fig:bias} of Section~\ref{sec:model} and Figure~\ref{fig:composition} of Section~\ref{sec:exp-decode} directly verify Proposition~\ref{prop:projection}. The key point is that the five sign compositions on the same configuration share the same batch of mappings: $F$ depends only on the unsigned mapping, so the failure samples of the five sign compositions are identical sample by sample and hence share the same $c_F$. The other factor on the right, $b^2/d-1$, depends only on the sign composition and equals $d-1$ under a one-sided difference. Hence the conditional bias of any sign composition equals the one-sided bias multiplied by $(b^2-d)/(d^2-d)$: once $c_F$ is determined from a single one-sided point, the bias of every other level can be predicted with no fitting. Figure~\ref{fig:bias} plots exactly this prediction. The horizontal axis is $(b/d)^2$; the straight line of each color is determined by the one-sided point of that configuration at $(b/d)^2=1$, and the remaining four points fall on the line, confirming~\eqref{eq:projection}.
+
+The full verification covers 20 configurations with $k=3,4,5,6$ and failure probability from 0.10 to 0.90 on the $M=16384$ grid, each configuration having five levels of sign composition $d_-/d\in\{0,0.1,0.25,0.4,0.5\}$. Figure~\ref{fig:bias} shows ten of these configurations with $k=3$ and $k=6$; the standard-encoding curves in Figure~\ref{fig:composition}(a) are four of the configurations with failure probability about 0.1, including $k=4$ and $k=5$. The 20 configurations have four non-one-sided sign composition levels each, 80 predictions in total. In units of $s(d)$, the difference between prediction and measurement is at most 0.0064, all within two standard errors (the standard error accounts for the sampling error of both the one-sided mean and the measured value).

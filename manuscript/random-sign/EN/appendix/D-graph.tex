@@ -1,0 +1,86 @@
+\section{Hypergraph lemmas}\label{app:graph}
+This appendix proves the hypergraph results used by both Theorem~\ref{thm:clt} and the discrete limit distribution: the small-core counting, the fact that failure is determined by a duplicate edge pair when $d=o(M)$, the low-load lemma at fixed subcritical load, and the concentration of the overlap graph. These results depend only on the unsigned mapping $\mathcal G$, where $\mathcal G$ consists of $d$ labeled independent uniform $k$-subsets, with duplicate edges allowed.
+
+Fix $k\ge3$. Let $\lambda=\binom d2/\binom Mk$ be the expected number of duplicate edge pairs, let $Q$ be the planted distribution that first picks a pair of edge labels uniformly and then conditions on this pair mapping identically, and let $b_k=\lceil3(k-2)/2\rceil$. Write $K=\binom Mk$, let $N=\sum_{i<j}\mathbf1_{\{S_i=S_j\}}$ be the number of duplicate edge pairs, and let $D=\{N\ge1\}$.
+
+\subsection{Small-core counting and duplicate edge pairs}
+\begin{lemma}[Small-core counting]\label{lem:smallcore}
+A 2-core subgraph with $e$ edges uses at most $v_e=\lfloor ke/2\rfloor$ vertices. For $d\le A_0M$ and $e\le\varepsilon M$ (with $\varepsilon<1/k$), the first-moment upper bound on its occurrence probability satisfies
+\begin{equation*}
+B_e=\binom de\binom M{v_e}\Bigl(\binom{v_e}k\Big/\binom Mk\Bigr)^e\le\bigl[C(e/M)^{(k-2)/2}\bigr]^e,
+\end{equation*}
+where $C$ depends only on $k$ and $A_0$. When the factor in $d$ is kept, $B_e\le(C_kd/M)^e(e/M)^{\lceil(k-2)e/2\rceil}$.
+\end{lemma}
+
+The proof of Theorem 1 in \cite{gm} uses the same first-moment counting to obtain a failure probability $O(t^{-k+2})$; the analogous counting of stopping sets appears in \cite{yw,orlitsky2005stopping}. Here we keep the factor in $d$, for use by Lemma~\ref{lem:plant} when $d=o(M)$.
+
+\begin{proof}
+For a fixed set $I$ of $e$ edge labels and a set $V$ of $v_e$ vertices, the event $A_{I,V}=\{S_i\subseteq V,\ i\in I\}$ contains every core lying in $V$. Summing over $I$ and $V$ gives the first moment $B_e$ in the lemma. Using $\binom de\le(3d/e)^e$, $\binom M{v_e}\le(3M/v_e)^{v_e}$, $\binom{v_e}k/\binom Mk\le(v_e/M)^k$, together with $ke-v_e=\lceil ke/2\rceil$ and $v_e\le ke/2$,
+\[
+B_e\le3^{e+v_e}\Bigl(\frac de\Bigr)^e\Bigl(\frac{v_e}M\Bigr)^{\lceil ke/2\rceil}\le\Bigl(\frac{C_kd}M\Bigr)^e\Bigl(\frac eM\Bigr)^{\lceil(k-2)e/2\rceil},
+\]
+which is the bound that keeps the factor in $d$. Substituting $d\le A_0M$ and dropping the ceiling since $e/M<1$ gives the first bound. Let $a=(k-2)/2$; keeping the ceiling at $e=3$ gives $B_3=O(M^{-b_k})$. For $e\ge4$, the ratio of consecutive terms is at most $Ce^a((e+1)/M)^a$. For fixed $r\ge0$, choose $\varepsilon$ small enough that the ratio of consecutive terms of $e^rB_e$ is at most $1/2$ on $4\le e<\varepsilon M$, so that
+\[
+\sum_{e=3}^{\lfloor\varepsilon M\rfloor}e^rB_e=O(M^{-b_k}).
+\]
+This sum also covers the intermediate range with $e\to\infty$ and $e=o(M)$.
+\end{proof}
+
+
+The following lemma is the quantitative form of Proposition~\ref{prop:plant}: when $d=o(M)$, failure is almost always caused by a pair of duplicate edges, so the failure-conditioned mapping is close to the planted distribution $Q$ in TV. Duplicate edge pairs are the bottleneck of IBLT failure, a mechanism pointed out in \cite{gm}; $Q$ has density $N/\lambda$ with respect to the original distribution, the size-biased distribution of $N$ \cite{arratia2019sizebias}.
+
+\begin{lemma}[failure is determined by a duplicate edge pair when $d=o(M)$]\label{lem:plant}
+Let $2\le d=o(M)$; $d\to\infty$ is not required. Then
+\begin{align*}
+\Pr(F\setminus\{\text{there is a duplicate edge pair}\})&\le C_k\Bigl(\frac{d^3}{M^{b_k+3}}+\frac{d^4}{M^{2k}}\Bigr)=o(\lambda),\\
+\bigl\|\mathcal L(\mathcal G\mid F)-Q\bigr\|_{TV}&\le C_k\Bigl\{\lambda+dM^{k-b_k-3}+\frac{d^2}{M^k}\Bigr\}\to0.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+A single edge cannot form a core; two edges form a core if and only if they map identically. Hence $D\subseteq F$, and on $F\setminus D$ the core has at least three edges. Since $d=o(M)$, eventually $d\le\varepsilon M$, so every core of size $e\le d$ falls within the range of Lemma~\ref{lem:smallcore}; use the bound that keeps the factor in $d$. The $e=3$ term is $O_k(d^3M^{-3-b_k})$. For $e\ge4$, use the envelope without the ceiling $(C_kd/M)^e(e/M)^{(k-2)e/2}$, whose ratio of consecutive terms is at most $C_k(d/M)((e+1)/M)^{(k-2)/2}$, tending to zero uniformly on $e\le d=o(M)$, so $\sum_{e=4}^dB_e\le C_kd^4/M^{2k}$. Adding the two gives the first bound. From $\lambda\asymp_kd^2/M^k$ and $b_k\ge k-1$, the ratio of the first bound to $\lambda$ is $O_k(dM^{k-b_k-3}+d^2/M^k)\to0$.
+
+A specified pair of edges maps identically with probability $1/K$, so $\E N=\lambda$. Two distinct edge pairs are simultaneously duplicated with probability $K^{-2}$: if they share an edge, three edges map identically; if they do not, the two pairs are independent. Hence $\E[N(N-1)]\le\lambda^2$, and from $\mathbf1_D\ge N-N(N-1)/2$ we get $\lambda-\lambda^2/2\le\Pr(D)\le\lambda$. The density of $Q$ with respect to the original distribution is exactly $N/\lambda$; by the triangle inequality,
+\[
+\bigl\|\mathcal L(\mathcal G\mid D)-Q\bigr\|_{TV}\le\frac12\E\Bigl|\frac{\mathbf1_D}{\Pr(D)}-\frac{\mathbf1_D}{\lambda}\Bigr|+\frac1{2\lambda}\E(N-\mathbf1_D)=\frac{\lambda-\Pr(D)}{\lambda}\le\frac\lambda2.
+\]
+Since $D\subseteq F$, $\|\mathcal L(\mathcal G\mid F)-\mathcal L(\mathcal G\mid D)\|_{TV}=\Pr(F\setminus D)/\Pr(F)\le\Pr(F\setminus D)/\Pr(D)$. As $\lambda\to0$, $\Pr(D)\ge\lambda/2$, and by the first bound this term is $O_k(dM^{k-b_k-3}+d^2/M^k)$. Adding the two bounds gives the second bound. The proof uses only the small-core counting, so it holds for all $2\le d=o(M)$.
+\end{proof}
+
+\subsection{failure structure at fixed subcritical load}
+\begin{lemma}[Low load]\label{lem:propL}
+Let $d/M\to\alpha\in(0,\alpha_c)$. Then $\Pr(F\setminus P_2)=O(M^{-b_k})$, $\Pr(F)=\lambda\{1+O(M^{-\delta_k})\}$, and $\|\mathcal L(\mathcal G\mid F)-Q\|_{TV}=O(M^{-\delta_k})$, where $P_2$ denotes the event that the actual core consists of exactly two duplicate edges and $\delta_k=\min\{k-2,\,b_k-(k-2)\}\ge1$.
+\end{lemma}
+
+\begin{proof}
+We first show that for every fixed $\varepsilon>0$ and $\beta>0$, $\Pr(|\mathrm{core}|\ge\varepsilon M)=o(M^{-\beta})$. This is a variant of a known result: Kim \cite{kim2008poisson}, Theorem 1.7, proves for the binomial hypergraph $H(n,p;k)$ that $\Pr(|\mathrm{core}|\ge\delta n)$ is exponentially small at subcritical load, and \cite{gm} also states the same conclusion citing \cite{dn08}, whose model assumes a given bounded degree distribution. The mapping in this paper allows duplicate edges, and the probability of a duplicate edge at linear load is only polynomially small, so we prove the required bound directly by message passing of fixed depth, following the finite-round neighborhood analysis and concentration used for LDPC codes \cite[Theorem~2]{richardson2001capacity}, and handle the cell degree, which has no fixed upper bound in this model, separately. Let $Z_T$ be the number of edges all of whose incoming messages are $1$ at round $T$; then $|\mathrm{core}|\le Z_T$ on every graph. Local convergence to a Poisson branching tree gives $\E Z_T/M\to\alpha q_T^k$, where $q_0=1$ and $q_{t+1}=1-\exp(-k\alpha q_t^{k-1})$. When $\alpha<\alpha_c$, this recursion has no positive fixed point, so one can choose $T$ with $\alpha q_T^k<\varepsilon/4$. On the set $H$ of graphs whose maximum degree does not exceed $\lceil\log M\rceil$, changing $h$ edge coordinates changes $Z_T$ by at most $L_Mh$, where $L_M$ is of polylogarithmic order. By the typical bounded differences inequality \cite[Proposition~2]{combes2015mcdiarmid}, $\Pr(Z_T\ge\varepsilon M)\le\Pr(H^c)+\exp\{-cM/L_M^2\}=o(M^{-\beta})$.
+
+On $F\setminus P_2$, the actual core has at least three edges. The part of size below $\varepsilon M$ is controlled by Lemma~\ref{lem:smallcore}, and the rest by the linear core bound above, giving $\Pr(F\setminus P_2)=O(M^{-b_k})$. The remaining steps are the same as the second paragraph of the proof of Lemma~\ref{lem:plant}: the Bonferroni inequality gives $\Pr(F)=\lambda+O(\lambda^2+M^{-b_k})$; $\|\mathcal L(\mathcal G\mid D)-Q\|_{TV}\le\lambda/2$; and since $P_2\subseteq D\subseteq F$, $\|\mathcal L(\mathcal G\mid F)-\mathcal L(\mathcal G\mid D)\|_{TV}\le\Pr(F\setminus P_2)/\Pr(D)$. From $\lambda\asymp_kM^{2-k}$, the two terms combine into $O(M^{-\delta_k})$. This is a total variation bound on the entire labeled mapping.
+\end{proof}
+
+
+\subsection{Superpolynomial concentration of the overlap graph}
+\begin{lemma}[Superpolynomial graph concentration]\label{lem:mdconc}\label{lem:conc}
+Fix $k\ge3$, and let $d/M$ lie in a fixed compact interval of $(0,\infty)$. Write $m_{ij}=H_{ij}$, $\Omega=\sum_{i<j}m_{ij}$, $\Omega_2=\sum_{i<j}m_{ij}^2$, $\ell_i=l_i=\sum_{j\ne i}H_{ij}$, and $\Omega_\ell=\sum_i\ell_i^2$. There is a deterministic set of graphs $\mathcal G_M$, whose complement has probability smaller than any fixed negative power of $M$, on which these three statistics deviate from their exact means by at most $O(\sqrt M(\log M)^4)$, and
+\begin{equation*}
+\Omega_2=\binom d2\left\{\frac{k^2}M+\frac{k^2(k-1)^2}{M(M-1)}\right\}+O(\sqrt M(\log M)^4),\qquad
+\max_i l_i\le k\lceil\log M\rceil.
+\end{equation*}
+\end{lemma}
+
+\begin{proof}
+Write $D_v$ for the degree of cell $v$, let $L=\lceil\log M\rceil$ and $\mathcal D_L=\{\max_vD_v\le L\}$. Since $D_v\sim\mathrm{Bin}(d,k/M)$, $\Pr(\mathcal D_L^c)\le M(eC/L)^L$, which is superpolynomially small.
+
+\emph{Lipschitz bound.} For two graphs in $\mathcal D_L$, successively replace the edges with differing labels by the edges of the other graph. The incidence set of every intermediate graph is contained in the union of the two endpoint graphs, so no vertex degree exceeds $2L$. Replacing one edge in such an intermediate graph affects only the $O(L)$ edge labels overlapping the old or new edge, and each $m_{ij}\le k$, so $\Omega$ and $\Omega_2$ each change by $O(L)$. For the replaced edge $\ell_i=O(L)$, whose square changes by $O(L^2)$; the $\ell_j$ of the other $O(L)$ affected labels change by $O(1)$, each square changing by $O(L)$. Thus $\Omega_\ell$ changes in total by $O(L^2)$. Hence all three are $CL^2$-Lipschitz in the Hamming distance over edge labels on $\mathcal D_L$.
+
+\emph{Concentration.} For functions that are Hamming Lipschitz on the good set, the typical bounded differences inequality \cite{warnke2016typical} gives concentration; here we use the form of Combes \cite[Proposition~2]{combes2015mcdiarmid}: extend $f$ from $\mathcal D_L$ as a Lipschitz extension, truncate it to a deterministic nonnegative polynomial range, and then apply McDiarmid's inequality over the independent edges. The bad set has superpolynomially small probability, and both $f$ and its truncated extension are at most $O(M^3)$, so the change in the expectation is also superpolynomially small; hence
+\[
+\Pr\bigl(|f-\E f|>C\sqrt M(\log M)^4\bigr)\le\Pr(\mathcal D_L^c)+2e^{-c(\log M)^4},\qquad f=\Omega,\Omega_2,\Omega_\ell.
+\]
+
+\emph{Deterministic means.} For the overlap $H$ of independent uniform $k$-subsets, write $h_1=\E H=k^2/M$ and $h_2=\E H^2=k^2/M+k^2(k-1)^2/[M(M-1)]$. Exactly,
+\[
+\E\Omega=\tbinom d2h_1,\qquad\E\Omega_2=\tbinom d2h_2,\qquad\E\Omega_\ell=d\{(d-1)h_2+(d-1)(d-2)h_1^2\}.
+\]
+The last identity holds because, given $S_i$, the $m_{ij}$ are independent and their conditional first and second moments do not depend on $S_i$. Taking the good set as the intersection of $\mathcal D_L$ with the three deviation events gives the stated concentration bound. Since $l_i\le kL$, the lemma follows.
+\end{proof}

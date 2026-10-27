@@ -9,7 +9,7 @@ compares the empirical law of d̂-d with two zero-fit candidates:
        N1 ~ Poi(C(d-2,2) k^2/M) single-cell overlaps among the other edges,
        N2 ~ Poi((d-2) k^2/M) overlaps between another edge and the pair;
   tpn  two-point + normal (the mix rule's model): (Phi((x+2)/s) + Phi((x-2)/s))/2, s = s(d).
-Reports KS distances, the largest atoms, 1%/5% quantiles of X = (d̂-d)/s(d), and rule miss/u.
+Reports midpoint distances (not KS), the largest atoms, 1%/5% quantiles of X = (d̂-d)/s(d), and rule miss/u.
 """
 import json
 import math
@@ -24,7 +24,7 @@ US = {"01": 0.01, "05": 0.05}
 
 
 def cp_law(k, M, d, nmax=None):
-    """Return support (sorted values of d̂-d) and probabilities of the compound Poisson candidate."""
+    """Historical finite-size candidate, distinct from the manuscript G_d."""
     l1 = math.comb(max(d - 2, 0), 2) * k * k / M
     l2 = max(d - 2, 0) * k * k / M
     scale = 1 / (1 - k / M)
@@ -58,7 +58,7 @@ def emp(g):
     return xs, ps / ps.sum()
 
 
-def ks(xe, pe, cdf_fn, step):
+def midpoint_distance(xe, pe, cdf_fn, step):
     """Sup distance between CDFs at lattice midpoints (spacing step), robust to the O(d/M) atom offsets."""
     grid = np.arange(math.floor(xe.min() / step) - 1, math.ceil(xe.max() / step) + 2) * step + step / 2
     Fe = np.cumsum(pe)
@@ -90,7 +90,7 @@ def rows(summ):
             cdf_tpn = lambda x: (norm.cdf((x + 2) / sdd) + norm.cdf((x - 2) / sdd)) / 2  # noqa: E731
             top = np.argsort(pe)[::-1][:3]
             r = dict(run=run, k=k, M=M, d=d, c=d / math.sqrt(M), n=g["n"], pair=G["failed_pair"]["n"] / g["n"],
-                     ks_cp=ks(xe, pe, cdf_cp, 2 / k / (1 - k / M)), ks_tpn=ks(xe, pe, cdf_tpn, 2 / k / (1 - k / M)),
+                     midpoint_cp=midpoint_distance(xe, pe, cdf_cp, 2 / k / (1 - k / M)), midpoint_tpn=midpoint_distance(xe, pe, cdf_tpn, 2 / k / (1 - k / M)),
                      atoms=";".join(f"{xe[i]:.2f}:{pe[i]:.3f}" for i in top))
             for tag, u in US.items():
                 r[f"q{tag}_emp"] = quant(xe, pe, u) / sdd
@@ -112,7 +112,7 @@ def main(path, outdir):
     pd.set_option("display.width", 260)
     pd.set_option("display.max_rows", 500)
     f = lambda v: f"{v:.3g}"  # noqa: E731
-    cols = ["k", "M", "d", "c", "n", "pair", "ks_cp", "ks_tpn", "q01_emp", "q01_cp", "q01_tpn", "q05_emp", "q05_cp",
+    cols = ["k", "M", "d", "c", "n", "pair", "midpoint_cp", "midpoint_tpn", "q01_emp", "q01_cp", "q01_tpn", "q05_emp", "q05_cp",
             "q05_tpn", "rchi01", "mix01", "mix05", "cp01", "cp05", "max01", "miss_raw", "empty_rchi01", "atoms"]
     with open(os.path.join(outdir, "report.txt"), "w") as fo:
         for run, sub in df.groupby("run"):

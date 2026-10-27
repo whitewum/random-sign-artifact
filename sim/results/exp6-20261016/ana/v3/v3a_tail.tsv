@@ -1,0 +1,3 @@
+id	n_direct	n_plant	pair_direct	pair_plant	max_dF
+k4-M256-d16	65839	65000	0.9950	1.0000	0.0022
+k5-M256-d128	65470	65000	0.9950	1.0000	0.0020
