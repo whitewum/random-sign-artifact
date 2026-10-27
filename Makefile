@@ -1,4 +1,5 @@
 PYTHON ?= python3
+GOTESTFLAGS ?=
 export GOCACHE := $(CURDIR)/.cache/go-build
 export MPLCONFIGDIR := $(CURDIR)/.cache/matplotlib
 
@@ -6,7 +7,7 @@ export MPLCONFIGDIR := $(CURDIR)/.cache/matplotlib
 build:
 	$(PYTHON) scripts/artifact.py build
 test: build
-	cd sim/iblt2r && go test ./...
+	cd sim/iblt2r && go test $(GOTESTFLAGS) ./...
 	cd sim/peelsim && go test ./...
 	bin/peelsim -selftest
 	cd sim/peelsim && $(PYTHON) -m unittest -q test_distribution

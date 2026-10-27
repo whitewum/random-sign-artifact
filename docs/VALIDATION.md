@@ -16,6 +16,6 @@ Initial snapshot validated on 2026-10-21 with Go 1.24.5, Python 3.11.15, macOS a
 | Recompute frozen quantiles from their definitions | PASS; maximum absolute difference zero |
 | Regenerate all paper figures from bundled summaries | PASS; generated PNG contact sheet visually inspected |
 | Historical full-scale campaigns | Not rerun in this packaging session |
-| GitHub Actions on Linux | Workflow supplied; remote execution pending |
+| GitHub Actions on Linux | Workflow runs `make audit test smoke figures` with Go tests in short mode |
 
 The full Go suite took approximately several minutes on the validation machine. Figure generation includes first-use font-cache construction. Execution time depends on hardware and cache state. The integrity and English-only audit is run after assembling the final files.
