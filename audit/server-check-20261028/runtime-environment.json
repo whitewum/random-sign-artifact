@@ -1,0 +1,8 @@
+{
+  "python": "3.10.12 (main, Aug 15 2025, 14:32:43) [GCC 11.4.0]",
+  "platform": "Linux-3.10.0-1127.el7.x86_64-x86_64-with-glibc2.35",
+  "hostname": "f177340507b8",
+  "numpy": "2.2.6",
+  "scipy": "1.15.3",
+  "python_bytecode_disabled": true
+}

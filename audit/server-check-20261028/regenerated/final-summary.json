@@ -1,0 +1,55 @@
+{
+  "completed_checkpoints": 50000,
+  "completed_trials": 500000000,
+  "target_trials": 500000000,
+  "by_k": {
+    "3": {
+      "trials": 100000000,
+      "success": 36532515,
+      "failure": 63467485,
+      "accepted": 58217146280,
+      "candidates": 81233743824,
+      "checksum_rejected": 23016597544,
+      "worker_seconds": 350342.3182360797
+    },
+    "4": {
+      "trials": 100000000,
+      "success": 35900798,
+      "failure": 64099202,
+      "accepted": 49167728560,
+      "candidates": 78438113148,
+      "checksum_rejected": 29270384588,
+      "worker_seconds": 354565.5416930807
+    },
+    "5": {
+      "trials": 100000000,
+      "success": 33530250,
+      "failure": 66469750,
+      "accepted": 42109429034,
+      "candidates": 74497510992,
+      "checksum_rejected": 32388081958,
+      "worker_seconds": 358240.76013872435
+    },
+    "6": {
+      "trials": 100000000,
+      "success": 32553378,
+      "failure": 67446622,
+      "accepted": 37009165518,
+      "candidates": 71156425713,
+      "checksum_rejected": 34147260195,
+      "worker_seconds": 366045.49958921206
+    },
+    "10": {
+      "trials": 100000000,
+      "success": 30233256,
+      "failure": 69766744,
+      "accepted": 25013371596,
+      "candidates": 61429212198,
+      "checksum_rejected": 36415840602,
+      "worker_seconds": 421580.4805230913
+    }
+  },
+  "status": "COMPLETE",
+  "checkpoint_coverage_verified": true,
+  "trial_range_coverage_verified": true
+}

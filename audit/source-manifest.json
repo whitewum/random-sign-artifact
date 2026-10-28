@@ -15,7 +15,9 @@
     },
     {
       "path": "manuscript/random-sign/figure/fig-aux.py",
-      "source_sha256": "81ef38d560455ff97efa20d5014208f3ee51b2c07f1fa50427d1f72b77aad74d"
+      "source_sha256": "81ef38d560455ff97efa20d5014208f3ee51b2c07f1fa50427d1f72b77aad74d",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Read analytic inputs from artifact JSON and export recomputed numerical values."
     },
     {
       "path": "manuscript/random-sign/figure/fig-bias.py",
@@ -83,7 +85,9 @@
     },
     {
       "path": "manuscript/random-sign/figure/fig-structure.tex",
-      "source_sha256": "6887e3d90565ddc59611794374e439b2cb62080902848fa986ea163782fbeb93"
+      "source_sha256": "6887e3d90565ddc59611794374e439b2cb62080902848fa986ea163782fbeb93",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Read analytic inputs from artifact JSON and export recomputed numerical values."
     },
     {
       "path": "sim/exp6/ana/a_moments.py",
@@ -1888,6 +1892,125 @@
     {
       "path": "theory/scripts/random_sign_crossover.py",
       "source_sha256": "98ccd9bbc983a4b1259bcd465c49ddd9c7e171fd0064a37575396b0369073b37"
+    },
+    {
+      "path": "theory/scripts/check_random_sign_encoding.py",
+      "source_sha256": "98ab1bcceb196f1cfe73bd02807fd33a2a81896c8dfc2489a6795be9f79cf620",
+      "snapshot_date": "2026-10-28"
+    },
+    {
+      "path": "theory/diagnostics/random-sign-encoding-exact.json",
+      "source_sha256": "6b5b79347c72d2e8760bc3b5c9cc6270454fe89cfcfec13046f74eeefbd1a81e",
+      "snapshot_date": "2026-10-28"
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-encoding.md",
+      "source_sha256": "8a7ee50405e0ddf04998d2159bd4bea2669dd4da27d2153c9bf348ad17275698",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Translated the upstream explanation to English."
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-scale.md",
+      "source_sha256": "5717bed83b3b9a0150eae89bc0a54c164d89ca80a07a2ac2a09f56ce7eae416b",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Translated the upstream explanation to English."
+    },
+    {
+      "path": "manuscript/random-sign/figure/fig-sizing.md",
+      "source_sha256": "33ff8e49a9685edc8f9b442fc596b109db2b7cba9db779079a5c9623f8976334",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Translated the upstream explanation to English."
+    },
+    {
+      "path": "sim/results/analytic/aux-parameters.json",
+      "source_path": "manuscript/random-sign/figure/fig-aux.py",
+      "source_sha256": "81ef38d560455ff97efa20d5014208f3ee51b2c07f1fa50427d1f72b77aad74d",
+      "adaptation": "Analytic parameters extracted programmatically; no paper outcome values used."
+    },
+    {
+      "path": "sim/results/analytic/structure-mapping.json",
+      "source_path": "manuscript/random-sign/figure/fig-structure.tex",
+      "source_sha256": "6887e3d90565ddc59611794374e439b2cb62080902848fa986ea163782fbeb93",
+      "adaptation": "Analytic parameters extracted programmatically; no paper outcome values used."
+    },
+    {
+      "path": "audit/paper-inventory.json",
+      "adaptation": "Automatically extracted source locations/hashes and numeric comparison tokens; never a generation input.",
+      "source_inputs": [
+        {
+          "path": "manuscript/random-sign/CN/appendix/A-notations.tex",
+          "sha256": "22a9e2ad5618d64322365811e5794b15f8b25a6cc8b11e58f8c722897ce77455"
+        },
+        {
+          "path": "manuscript/random-sign/CN/appendix/C-encoding.tex",
+          "sha256": "088bcbaf543b455d9a364631b0918a05bd3ba9b1e3150b0b513bd6e95a2f924d"
+        },
+        {
+          "path": "manuscript/random-sign/CN/appendix/H-experiments.tex",
+          "sha256": "39dc228558f32f7d3e0c6ec31ac61c07b819897d693a6db958a1c70e44642ac9"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/02-model.tex",
+          "sha256": "711f8286dde886e5011958236cfe7375a5963cc961c6c6335deba730249de572"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/03-design.tex",
+          "sha256": "fa3f668347114530d4131071ac8b0b0d193bef3470f7438b7fcab679d57d6c9e"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/05-inversion.tex",
+          "sha256": "dfca9e30a177410d9110672fabc10a41666d3a74d6121d077e030816ca6ecee7"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/06-experiments.tex",
+          "sha256": "feb019e607e4388bdf21471a99d33397f88517890a613a974f3bbc49fb9c89d7"
+        }
+      ]
+    },
+    {
+      "path": "audit/table-reference.json",
+      "adaptation": "Automatically extracted source locations/hashes and numeric comparison tokens; never a generation input.",
+      "source_inputs": [
+        {
+          "path": "manuscript/random-sign/CN/appendix/A-notations.tex",
+          "sha256": "22a9e2ad5618d64322365811e5794b15f8b25a6cc8b11e58f8c722897ce77455"
+        },
+        {
+          "path": "manuscript/random-sign/CN/appendix/C-encoding.tex",
+          "sha256": "088bcbaf543b455d9a364631b0918a05bd3ba9b1e3150b0b513bd6e95a2f924d"
+        },
+        {
+          "path": "manuscript/random-sign/CN/appendix/H-experiments.tex",
+          "sha256": "39dc228558f32f7d3e0c6ec31ac61c07b819897d693a6db958a1c70e44642ac9"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/02-model.tex",
+          "sha256": "711f8286dde886e5011958236cfe7375a5963cc961c6c6335deba730249de572"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/03-design.tex",
+          "sha256": "fa3f668347114530d4131071ac8b0b0d193bef3470f7438b7fcab679d57d6c9e"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/05-inversion.tex",
+          "sha256": "dfca9e30a177410d9110672fabc10a41666d3a74d6121d077e030816ca6ecee7"
+        },
+        {
+          "path": "manuscript/random-sign/CN/sections/06-experiments.tex",
+          "sha256": "feb019e607e4388bdf21471a99d33397f88517890a613a974f3bbc49fb9c89d7"
+        }
+      ]
+    },
+    {
+      "path": "sim/iblt2r/stress_report.py",
+      "source_sha256": "6f7319a1ea0bee0a5b8b6812cc881b9443146819ba350fb1fd3316aec979d376",
+      "snapshot_date": "2026-10-28"
+    },
+    {
+      "path": "scripts/check_protocol_stopping.py",
+      "source_sha256": "b6ef34b4d61f0f2eb90e628ff8869d3a3de7eeae21cfabbdd4e95b2c3f7328cd",
+      "snapshot_date": "2026-10-28",
+      "packaging_edit": "Use the artifact source root and accept the raw result directory as a positional argument."
     }
   ],
   "snapshot_note": "The source workspace was active during packaging. This manifest identifies the copied bytes; later workspace edits are not included.",
@@ -1901,5 +2024,25 @@
       "sim/exp6/ana/fullks/",
       "sim/results/exp6-20261016/ana/fullks.tsv"
     ]
+  },
+  "paper_coverage_snapshot_date": "2026-10-28",
+  "server_verification_20261028": {
+    "evidence": "audit/server-check-20261028/comparisons.json",
+    "inventory": "audit/server-check-20261028/inventory-summary.json",
+    "inventory_supplement": "audit/server-check-20261028/inventory-supplement.json",
+    "generated_count_input": {
+      "path": "sim/results/exp6-20261016/ana/low-load-counts.tsv",
+      "sha256": "61ad01ac13dc41950bb6d5e1351bcfe8c4ae294419cd67864fdc7d5ac69be033",
+      "method": "Pool final low-load replay.json integer miss and failure counts; independently validate every contributing raw sampler block.",
+      "source_stages": [
+        "v2",
+        "v2s",
+        "v3a",
+        "v3b",
+        "v3c"
+      ]
+    },
+    "manuscript_edited": false,
+    "comparison_oracle_edited": false
   }
 }

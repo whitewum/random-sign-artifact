@@ -1,0 +1,144 @@
+{
+  "arithmetic": "exact integer and rational",
+  "all_checks_passed": true,
+  "mapping_multisets": 9855,
+  "effective_sign_states_checked": 155640,
+  "common_cancellation_checks": 8,
+  "cases": [
+    {
+      "M": 4,
+      "k": 3,
+      "d": 2,
+      "mapping_multisets": 10,
+      "effective_sign_states_checked": 40,
+      "recovered_items_checked": 48,
+      "labeled_mapping_count": 16,
+      "failure_probability": "1/4",
+      "unconditional_mean": 2,
+      "failure_conditional_mean": 2,
+      "unconditional_variance": "4/3",
+      "failure_conditional_variance": "4",
+      "failure_conditional_third_central_moment": "0",
+      "failure_conditional_zero_probability": "1/2",
+      "core_size_labeled_counts": {
+        "0": 12,
+        "2": 4
+      }
+    },
+    {
+      "M": 4,
+      "k": 3,
+      "d": 3,
+      "mapping_multisets": 20,
+      "effective_sign_states_checked": 160,
+      "recovered_items_checked": 96,
+      "labeled_mapping_count": 64,
+      "failure_probability": "1",
+      "unconditional_mean": 3,
+      "failure_conditional_mean": 3,
+      "unconditional_variance": "4",
+      "failure_conditional_variance": "4",
+      "failure_conditional_third_central_moment": "16/3",
+      "failure_conditional_zero_probability": "0",
+      "core_size_labeled_counts": {
+        "2": 36,
+        "3": 28
+      }
+    },
+    {
+      "M": 4,
+      "k": 3,
+      "d": 4,
+      "mapping_multisets": 35,
+      "effective_sign_states_checked": 560,
+      "recovered_items_checked": 192,
+      "labeled_mapping_count": 256,
+      "failure_probability": "1",
+      "unconditional_mean": 4,
+      "failure_conditional_mean": 4,
+      "unconditional_variance": "8",
+      "failure_conditional_variance": "8",
+      "failure_conditional_third_central_moment": "64/3",
+      "failure_conditional_zero_probability": "27/512",
+      "core_size_labeled_counts": {
+        "3": 48,
+        "4": 208
+      }
+    },
+    {
+      "M": 5,
+      "k": 3,
+      "d": 3,
+      "mapping_multisets": 220,
+      "effective_sign_states_checked": 1760,
+      "recovered_items_checked": 3120,
+      "labeled_mapping_count": 1000,
+      "failure_probability": "2/5",
+      "unconditional_mean": 3,
+      "failure_conditional_mean": 3,
+      "unconditional_variance": "3",
+      "failure_conditional_variance": "4",
+      "failure_conditional_third_central_moment": "20/3",
+      "failure_conditional_zero_probability": "0",
+      "core_size_labeled_counts": {
+        "0": 600,
+        "2": 270,
+        "3": 130
+      }
+    },
+    {
+      "M": 5,
+      "k": 3,
+      "d": 4,
+      "mapping_multisets": 715,
+      "effective_sign_states_checked": 11440,
+      "recovered_items_checked": 12000,
+      "labeled_mapping_count": 10000,
+      "failure_probability": "1",
+      "unconditional_mean": 4,
+      "failure_conditional_mean": 4,
+      "unconditional_variance": "6",
+      "failure_conditional_variance": "6",
+      "failure_conditional_third_central_moment": "12",
+      "failure_conditional_zero_probability": "93/8000",
+      "core_size_labeled_counts": {
+        "2": 3240,
+        "3": 3240,
+        "4": 3520
+      }
+    },
+    {
+      "M": 6,
+      "k": 3,
+      "d": 4,
+      "mapping_multisets": 8855,
+      "effective_sign_states_checked": 141680,
+      "recovered_items_checked": 329600,
+      "labeled_mapping_count": 160000,
+      "failure_probability": "2029/4000",
+      "unconditional_mean": 4,
+      "failure_conditional_mean": 4,
+      "unconditional_variance": "24/5",
+      "failure_conditional_variance": "11256/2029",
+      "failure_conditional_third_central_moment": "23104/2029",
+      "failure_conditional_zero_probability": "75/4058",
+      "core_size_labeled_counts": {
+        "0": 78840,
+        "2": 36720,
+        "3": 24560,
+        "4": 19880
+      }
+    }
+  ],
+  "finite_repetition_guarantee": {
+    "channels_per_block": 32,
+    "blocks": 51,
+    "count_channels": 1632,
+    "upper_bound_multiplier": 2,
+    "graph_uniform_undercoverage_bound_exact": "360999677493664571018044056253/444089209850062616169452667236328125",
+    "graph_uniform_undercoverage_bound": 8.128990065206685e-07,
+    "duplicated_pair_single_channel_zero_probability": "1/2",
+    "duplicated_pair_block_under_half_probability": "4514873/4294967296"
+  },
+  "scope": "Finite encoding, peeling, moment and probability identities; not a CLT verification or a finite-checksum collision analysis."
+}

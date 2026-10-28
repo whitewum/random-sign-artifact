@@ -1,0 +1,44 @@
+[
+  {
+    "root": "fig-encoding-20261021",
+    "group": "all",
+    "files": 208,
+    "bytes": 144793208,
+    "list_sha256": "2812f11da6de7c4e1cb91a04b186cea57bac4d20eb9a0021f6aef640b7211d16",
+    "manifests": [
+      {
+        "file": "fig-encoding-20261021__all.00.tsv",
+        "sha256": "2812f11da6de7c4e1cb91a04b186cea57bac4d20eb9a0021f6aef640b7211d16",
+        "bytes": 8247
+      }
+    ]
+  },
+  {
+    "root": "peel-diag-20260927/round1_AB",
+    "group": "all",
+    "files": 4509,
+    "bytes": 28800688410,
+    "list_sha256": "1bb564217bd857c49b5bbc1bebb1bfa20ecb904de52a76ddc93fb5aad0f1bfc0",
+    "manifests": [
+      {
+        "file": "peel-diag-20260927__round1_AB__all.00.tsv",
+        "sha256": "1bb564217bd857c49b5bbc1bebb1bfa20ecb904de52a76ddc93fb5aad0f1bfc0",
+        "bytes": 274944
+      }
+    ]
+  },
+  {
+    "root": "peel-diag-20260927/round2_k56",
+    "group": "all",
+    "files": 1507,
+    "bytes": 9600463634,
+    "list_sha256": "66f5e94024647f4f7341cdba50d873a5907ca104b664bf05b3f31bf86b5b8471",
+    "manifests": [
+      {
+        "file": "peel-diag-20260927__round2_k56__all.00.tsv",
+        "sha256": "66f5e94024647f4f7341cdba50d873a5907ca104b664bf05b3f31bf86b5b8471",
+        "bytes": 93358
+      }
+    ]
+  }
+]

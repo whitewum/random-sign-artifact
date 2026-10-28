@@ -1,0 +1,243 @@
+{
+  "coverage.tsv": {
+    "status": "match",
+    "rows": 1092,
+    "fields": 22932,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "protocol.tsv": {
+    "status": "match",
+    "rows": 840,
+    "fields": 17640,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "pilot.tsv": {
+    "status": "match",
+    "rows": 489,
+    "fields": 8313,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "c2.tsv": {
+    "status": "match",
+    "rows": 48,
+    "fields": 624,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "c2x.tsv": {
+    "status": "match",
+    "rows": 4,
+    "fields": 52,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "c2s.tsv": {
+    "status": "match",
+    "rows": 36,
+    "fields": 468,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "a_moments.tsv": {
+    "status": "match",
+    "rows": 190,
+    "fields": 2470,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "fullks.tsv": {
+    "status": "match",
+    "rows": 33,
+    "fields": 330,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "p/risk.tsv": {
+    "status": "match",
+    "rows": 840,
+    "fields": 14280,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "p/pairs.tsv": {
+    "status": "match",
+    "rows": 660,
+    "fields": 11880,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "p/pairs_score.tsv": {
+    "status": "match",
+    "rows": 660,
+    "fields": 7920,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "encoding/hist.csv": {
+    "status": "match",
+    "rows": 120,
+    "fields": 600,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "encoding/stats.csv": {
+    "status": "match",
+    "rows": 3,
+    "fields": 21,
+    "exact": true,
+    "differing_fields": 0,
+    "max_absolute_difference": 0,
+    "unaccepted_differences": []
+  },
+  "distribution/limit_ks.tsv": {
+    "status": "match",
+    "rows": 190,
+    "fields": 2660,
+    "exact": false,
+    "differing_fields": 67,
+    "max_absolute_difference": 4.218847493575595e-15,
+    "unaccepted_differences": []
+  },
+  "final-configurations.csv": {
+    "status": "match",
+    "rows": 375,
+    "fields": 6375,
+    "exact": false,
+    "differing_fields": 245,
+    "max_absolute_difference": 8.185452315956354e-12,
+    "unaccepted_differences": []
+  },
+  "trialcheck.json": {
+    "status": "match",
+    "exact": true
+  },
+  "distribution/crossover_hist.json": {
+    "status": "match",
+    "exact": true
+  },
+  "rs-columns/k3.json": {
+    "status": "match",
+    "exact": true
+  },
+  "rs-columns/k4.json": {
+    "status": "match",
+    "exact": true
+  },
+  "rs-columns/k56.json": {
+    "status": "match",
+    "exact": true
+  },
+  "protocol-stopping.json": {
+    "status": "match",
+    "exact": false,
+    "environment_field": "local_trial_csv_files",
+    "server": 488,
+    "artifact": 0,
+    "all_scientific_fields_exact": true
+  },
+  "final-summary.json": {
+    "status": "match",
+    "exact": false,
+    "all_counts_exact": true,
+    "worker_seconds_differing_fields": 5,
+    "max_worker_seconds_absolute_difference": 1.7462298274040222e-09,
+    "checkpoint_coverage_verified": true,
+    "trial_range_coverage_verified": true
+  },
+  "raw-replay": {
+    "status": "match",
+    "blocks": 17397,
+    "records": 18896267,
+    "mismatched_blocks": 0,
+    "all_expected_tasks_accounted_for": true,
+    "partitions": [
+      {
+        "name": "small",
+        "blocks": 15184,
+        "records": 12864187
+      },
+      {
+        "name": "large-prefix",
+        "blocks": 2033,
+        "records": 4042291
+      },
+      {
+        "name": "large-remaining",
+        "blocks": 180,
+        "records": 1989789
+      }
+    ],
+    "note": "The baseline large process was stopped after 2033 completed blocks; its remaining 180 blocks were verified with sorted observations and the monotone-in-S2 search bound. The source sizing rule and every replay group field are unchanged."
+  },
+  "decode-threshold-and-reject-inputs": {
+    "status": "match",
+    "exact": true,
+    "files": [
+      {
+        "path": "sim/results/decode-threshold-20261021/gateway.jsonl",
+        "sha256": "f6602ba30276b3745f7e4b3529fa65eb9831fa921f413084a535b699cbfb0605",
+        "match": true
+      },
+      {
+        "path": "sim/results/decode-threshold-20261021/node1.jsonl",
+        "sha256": "957daef29d5ad319d6f5f4a9f787cdf6e2336bca79bc165929936ffc18b03c98",
+        "match": true
+      },
+      {
+        "path": "sim/results/decode-threshold-20261021/node2.jsonl",
+        "sha256": "2d9226a832029c9b1f42acc2f0177579def08751054fdb1a31a401196ad73d02",
+        "match": true
+      },
+      {
+        "path": "sim/results/decode-reject-20261021/gateway.jsonl",
+        "sha256": "5ec68bd1d6c0345b49e0b52604972e19759ea0d44e9c6adc28cb73320d5b6de5",
+        "match": true
+      },
+      {
+        "path": "sim/results/decode-reject-20261021/node1.jsonl",
+        "sha256": "aa7b82b0dd5ea74d30ff192db0fa6242e1990beeb83fc3e50d346d6001617991",
+        "match": true
+      },
+      {
+        "path": "sim/results/decode-reject-20261021/node2.jsonl",
+        "sha256": "423ee9b3403ac4b229c88052242d3ee38c608c9796bdcd0c1808056684446bec",
+        "match": true
+      }
+    ]
+  },
+  "low-load-rounded-summaries": {
+    "status": "match",
+    "count_rows": 48,
+    "comparison_rows": 24,
+    "derived_fields": 168,
+    "tost_judgments": 12,
+    "mismatches": 0
+  }
+}

@@ -53,6 +53,7 @@ def smoke():
     print('Smoke experiment passed:',out.relative_to(ROOT))
 
 def figures():
+    run(sys.executable, ROOT/'scripts/structure.py')
     for name in ['encoding','composition','crossover-cdf','coverage','confirm','protocol','scale',
                  'sizing','planted','exp-grid','aux','decode','bias']:
         run(sys.executable,ROOT/'manuscript/random-sign/figure'/f'fig-{name}.py')

@@ -11,7 +11,7 @@ def files():
     for p in sorted(ROOT.rglob('*')):
         rel=p.relative_to(ROOT)
         if not p.is_file() or any(s in IGNORE for s in rel.parts): continue
-        if p==MANIFEST or p.suffix in ('.pyc','.pdf','.png') or p.name in ('.DS_Store','fig-scale.csv'): continue
+        if p==MANIFEST or p.suffix in ('.pyc','.pdf','.png','.aux','.log') or p.name in ('.DS_Store','fig-scale.csv'): continue
         yield p
 
 def main():

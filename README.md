@@ -2,7 +2,7 @@
 
 An executable research artifact for random-sign invertible Bloom lookup tables (IBLTs): failure-conditioned estimation, Gaussian and Skellam sizing rules, and two-round set reconciliation.
 
-This release provides the English manuscript, the simulation and protocol implementations, frozen experimental configurations, selected numerical summaries, and programs for all fourteen paper figures. It supports local smoke experiments and regeneration of figures from bundled summaries. Full reproduction of the original large-scale campaigns requires the trial records described in [Data availability](docs/DATA.md).
+This release provides the English manuscript, the simulation and protocol implementations, frozen experimental configurations, selected numerical summaries, and programs for all 14 paper figures and 14 numerical paper tables. It supports local smoke experiments and regeneration of figures from bundled summaries. The inventory also maps the two descriptive tables, which need no numerical data. Full reproduction of the original large-scale campaigns requires the trial records described in [Data availability](docs/DATA.md).
 
 ## Quick start
 
@@ -16,10 +16,12 @@ python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements-lock.txt
 make figures
+make tables
+make check-tables
 make audit
 ```
 
-The smoke experiment runs direct and planted sampling, replays both sizing rules, and runs paired two-round reconciliation with fixed seeds. Results are written to `outputs/smoke/`. Figure PDFs and PNGs are written to `manuscript/random-sign/figure/`. These small runs test execution and consistency; published statistical precision requires the full sample sizes.
+The smoke experiment runs direct and planted sampling, replays both sizing rules, and runs paired two-round reconciliation with fixed seeds. Results are written to `outputs/smoke/`. Numerical tables are written to `outputs/tables/tab-<name>.tsv`; `make check-tables` compares every numerical cell with a numeric-only snapshot (`audit/table-reference.json`) of the current manuscript revision, including the `tab:v-low` rounding correction found by the [server verification](docs/SERVER-CHECK.md). The bundled English manuscript predates this revision; its tables and appendix will be updated in the next release. Figure PDFs and PNGs are written to `manuscript/random-sign/figure/`. These small runs test execution and consistency; published statistical precision requires the full sample sizes.
 
 ## Contents
 
@@ -29,7 +31,7 @@ The smoke experiment runs direct and planted sampling, replays both sizing rules
 | `sim/iblt2r/` | Real additive IBLT, sizing implementation, paired decoder audit and tests |
 | `sim/exp6/` | Configuration and seed generation, frozen tasks, aggregation and analysis |
 | `theory/scripts/random_sign_crossover.py` | High-precision reference CDF |
-| `sim/results/` | Selected published-figure inputs and decoder audit summaries |
+| `sim/results/` | Figure and table inputs and decoder audit summaries |
 | `manuscript/random-sign/EN/` | English manuscript source and PDF (CC BY 4.0) |
 | `manuscript/random-sign/figure/` | Figure programs and encoding histograms |
 | `audit/` | Source provenance and integrity manifests |

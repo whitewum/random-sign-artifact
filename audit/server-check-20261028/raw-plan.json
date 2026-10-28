@@ -1,0 +1,29 @@
+{
+  "expected_blocks": 17397,
+  "unique_blocks": 17397,
+  "remaining_is_exact_suffix": true,
+  "complete": true,
+  "parts": [
+    {
+      "plan": "raw-small.txt",
+      "plan_sha256": "6d91a11b9e238acd501fbec11582fd84e63fd7ca34c20329cdcaec96aff80508",
+      "planned_blocks": 15184,
+      "completed_blocks": 15184,
+      "report": "raw-small.json"
+    },
+    {
+      "plan": "raw-large.txt",
+      "plan_sha256": "3e833c2a47b937484780d29ab7b88e083d2d4321634f768d4e898c3ddac41d61",
+      "planned_blocks": 2213,
+      "completed_blocks": 2033,
+      "report": "raw-large.json"
+    },
+    {
+      "plan": "raw-large-remaining.txt",
+      "plan_sha256": "0763c30617b990957a8b8508a57d19f1bac19c1dfccca39bc0516b30dae72732",
+      "planned_blocks": 180,
+      "completed_blocks": 180,
+      "report": "raw-large-remaining.json"
+    }
+  ]
+}

@@ -16,4 +16,4 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements-lock.txt
       # Short mode skips the M = 16384 windowed-sizing cases; run `make test` locally for the full suite.
-      - run: make audit test smoke figures GOTESTFLAGS=-short
+      - run: make audit test smoke figures check-tables GOTESTFLAGS=-short

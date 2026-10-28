@@ -1,0 +1,87 @@
+{
+  "tab:exact": {
+    "status": "match",
+    "numeric_tokens": 60,
+    "errors": []
+  },
+  "tab:v-low": {
+    "status": "mismatch",
+    "numeric_tokens": 144,
+    "errors": [
+      {
+        "row": 1,
+        "column": 8,
+        "source": "manuscript/random-sign/CN/appendix/H-experiments.tex",
+        "line": 49,
+        "expected": [
+          "0.94",
+          "0.94"
+        ],
+        "actual": [
+          "0.9397334808871673",
+          "0.9452307692307691"
+        ]
+      }
+    ]
+  },
+  "tab:v": {
+    "status": "match",
+    "numeric_tokens": 273,
+    "errors": []
+  },
+  "tab:decode-paired": {
+    "status": "match",
+    "numeric_tokens": 20,
+    "errors": []
+  },
+  "tab:mean-by-k": {
+    "status": "match",
+    "numeric_tokens": 48,
+    "errors": []
+  },
+  "tab:limit-ks": {
+    "status": "match",
+    "numeric_tokens": 40,
+    "errors": []
+  },
+  "tab:extra": {
+    "status": "match",
+    "numeric_tokens": 25,
+    "errors": []
+  },
+  "tab:gauss-c": {
+    "status": "match",
+    "numeric_tokens": 42,
+    "errors": []
+  },
+  "tab:confirm": {
+    "status": "match",
+    "numeric_tokens": 108,
+    "errors": []
+  },
+  "tab:e2e": {
+    "status": "match",
+    "numeric_tokens": 108,
+    "errors": []
+  },
+  "tab:vldb": {
+    "status": "match",
+    "numeric_tokens": 69,
+    "errors": []
+  },
+  "tab:dec-ratio": {
+    "status": "match",
+    "numeric_tokens": 24,
+    "errors": []
+  },
+  "tab:decode": {
+    "status": "match",
+    "numeric_tokens": 55,
+    "errors": []
+  },
+  "tab:proto": {
+    "status": "match",
+    "numeric_tokens": 28,
+    "errors": []
+  }
+}

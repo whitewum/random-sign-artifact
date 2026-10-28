@@ -17,14 +17,15 @@
         (k\n) at ({0.55+(\n-1)*1.55},1.9) {\lab};
     }
     % cells
-    \foreach \c [count=\v] in {#3} {
+    \edef\countList{#3}
+    \foreach \c [count=\v] in \countList {
       \ifnum\v=1 \def\cellfill{pure}\else\ifnum\v=4 \def\cellfill{pure}\else\ifnum\v=7 \def\cellfill{pure}\else\ifnum\v=8 \def\cellfill{pure}\else\def\cellfill{white}\fi\fi\fi\fi
       \node[draw,thick,fill=\cellfill,minimum width=6.2mm,minimum height=6.2mm,inner sep=0pt,font=\small]
         (c\v) at ({(\v-1)*0.72},0) {$\c$};
       \node[font=\scriptsize,gray] at ({(\v-1)*0.72},-0.48) {\v};
     }
     % edges: S_1={1,2,3}, S_2={3,4,5}, S_3={5,6,7}, S_4={2,6,8}
-    \foreach \key/\cells [count=\n] in {1/{1,2,3},2/{3,4,5},3/{5,6,7},4/{2,6,8}} {
+    \foreach \key/\cells [count=\n] in \mappingEdges {
       \pgfmathsetmacro{\sg}{{#5}[\n-1]}
       \foreach \v in \cells {
         \ifnum#6=1
@@ -41,17 +42,18 @@
   \end{scope}%
 }
 
+\input{../../../outputs/figures/structure-values.tex}
 \begin{document}
 \begin{tikzpicture}[line cap=round]
-  \panel{0cm}{(a) standard IBLT,\ $\sum_v C_v^2=20$}{1,2,2,1,2,2,1,1}%
+  \panel{0cm}{(a) standard IBLT,\ $\sum_v C_v^2=\standardEnergy$}{\standardCounts}%
     {1/$x_1$,2/$x_2$,3/$x_3$,4/$x_4$}{1,1,1,1}{0}
 
-  \panel{6.6cm}{(b) random-sign IBLT,\ $\sum_v C_v^2=4$}{+1,0,0,-1,0,0,+1,-1}%
-    {1/$x_1$,2/$x_2$,3/$x_3$,4/$x_4$}{1,-1,1,-1}{1}
+  \panel{6.6cm}{(b) random-sign IBLT,\ $\sum_v C_v^2=\signedEnergy$}{\signedCounts}%
+    {1/$x_1$,2/$x_2$,3/$x_3$,4/$x_4$}{\mappingSigns}{1}
 
   % sign labels for panel (b)
   \begin{scope}[xshift=6.6cm]
-    \foreach \lab/\col [count=\n] in {+/sgnpos,-/sgnneg,+/sgnpos,-/sgnneg} {
+    \foreach \lab/\col [count=\n] in \mappingSignLabels {
       \node[font=\scriptsize,text=\col] at ({0.55+(\n-1)*1.55},2.42) {$\varepsilon_{\n}{=}{\lab}1$};
     }
     % recovery at cell 4

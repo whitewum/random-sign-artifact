@@ -1,0 +1,47 @@
+[
+  {
+    "id": "k3-M1024-d32",
+    "CN_line": 49,
+    "direct_miss": "3057",
+    "direct_n_fail": 65061,
+    "plant_miss": "3072",
+    "plant_n_fail": 65000,
+    "direct_miss_u": 0.9397334808871673,
+    "plant_miss_u": 0.9452307692307691,
+    "diff_lo": -0.051563499116855906,
+    "diff_hi": 0.040568922429652356,
+    "display_direct": "0.94",
+    "display_plant": "0.95",
+    "display_interval": "[-0.05,+0.04]"
+  },
+  {
+    "id": "k3-M4096-d1024",
+    "CN_line": 51,
+    "direct_miss": "2998",
+    "direct_n_fail": 65136,
+    "plant_miss": "3058",
+    "plant_n_fail": 65000,
+    "direct_miss_u": 0.9205354949643821,
+    "plant_miss_u": 0.940923076923077,
+    "diff_lo": -0.06616669794011304,
+    "diff_hi": 0.02539153402272353,
+    "display_direct": "0.92",
+    "display_plant": "0.94",
+    "display_interval": "[-0.07,+0.03]"
+  },
+  {
+    "id": "k4-M1024-d256",
+    "CN_line": 57,
+    "direct_miss": "992",
+    "direct_n_fail": 20265,
+    "plant_miss": "3141",
+    "plant_n_fail": 65000,
+    "direct_miss_u": 0.9790278805822846,
+    "plant_miss_u": 0.9664615384615384,
+    "diff_lo": -0.05538463121643507,
+    "diff_hi": 0.08051731545792763,
+    "display_direct": "0.98",
+    "display_plant": "0.97",
+    "display_interval": "[-0.06,+0.08]"
+  }
+]

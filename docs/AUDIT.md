@@ -11,6 +11,10 @@ The implementations and frozen settings are preserved from the research workspac
 3. **Gaussian comparator.** The paper's Gaussian rule (Definition in Section 4) uses the standardized chi-square quantile $(\chi^2_{M-1,u}-(M-1))/\sqrt{2(M-1)}$ with scale $s(n)=\sqrt{2n(n-1)/(M-1)}$. The `rchi` arms implement exactly this rule; `scripts/check_quantiles.py` verifies the frozen quantiles. The empty-acceptance fallback ($M_2=4M_1$) was never triggered in the P campaign (`f1_empty` is zero for every arm).
 4. **Configuration count.** The paper's 189 statistical configurations are the 184 of C1 plus the five C1x configurations with $M\ge256$. C1x also has one $M=64$ configuration, giving 42 boundary configurations together with the original 41. Use both stages when auditing the main figure.
 
+## Server verification (2026-10-28)
+
+All historical protocol trial checks and 17,397 sampler replay checks were executed against the server archive. Coverage, confirmation, protocol, pilot, full KS, paired-risk and composition summaries reproduce their stored fields; the distribution CDF and decoder timing sums have only the floating differences quantified in `audit/server-check-20261028/comparisons.json`. Exact low-load counts identify one manuscript rounding error, preserved as a failing comparison rather than changing the paper oracle. See [server verification](SERVER-CHECK.md).
+
 ## Open items
 
 1. **Historical provenance.** Archive the raw per-trial records (including the P campaign `trials.csv` files) with sizes, SHA-256 hashes, source executables and sampling schemes before certifying full historical reproduction. Current source hashes establish snapshot integrity.

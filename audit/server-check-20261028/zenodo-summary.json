@@ -1,0 +1,96 @@
+{
+  "files": 185892,
+  "bytes": 6107788635,
+  "list_sha256": "81b026c644c9280e7edf526ad208e3a70d10dc7d9e2ccf0d1a486cbbb5f0caab",
+  "manifests": [
+    {
+      "file": "zenodo-files.00.tsv",
+      "sha256": "c38b2c5d1328f03a00ee7e20fb1df83a5ff5828ef683969f0be7fbc7ce07d9b5",
+      "bytes": 1999939
+    },
+    {
+      "file": "zenodo-files.01.tsv",
+      "sha256": "d9761772af481cf5ece0b90765d6915cb1e3ba8234866234eeb3e22c3cf80d3b",
+      "bytes": 1999991
+    },
+    {
+      "file": "zenodo-files.02.tsv",
+      "sha256": "6267365db2e023b709497923618f809221767e80e54eb1ef7aed2541c0e4472a",
+      "bytes": 1999988
+    },
+    {
+      "file": "zenodo-files.03.tsv",
+      "sha256": "ea8f076d7d688dbafeffa4b9fa41d644a3d3b1ef9ee4beff1fa708cb8c2b6cea",
+      "bytes": 1999944
+    },
+    {
+      "file": "zenodo-files.04.tsv",
+      "sha256": "a53198eeec310ab633899fb65a7478a904ed99ecbf7a8c589b47917eb52acfba",
+      "bytes": 1999985
+    },
+    {
+      "file": "zenodo-files.05.tsv",
+      "sha256": "37305ca336a5b0e7d3db25d961a2c84fa350bb234a9cf054afc3ea106ea7c2e3",
+      "bytes": 1999994
+    },
+    {
+      "file": "zenodo-files.06.tsv",
+      "sha256": "1d6f8a4fc4d950e2820e575a938e5139812e4fada11ff9407ba85418a05ae21c",
+      "bytes": 289761
+    }
+  ],
+  "groups": {
+    "exp6-20261016": [
+      184569,
+      2445378583
+    ],
+    "distribution-fix-20261022": [
+      6,
+      41820
+    ],
+    "distribution-audit-20261022": [
+      2,
+      11331
+    ],
+    "peel-diag-20260927/decode-stress-20261015": [
+      21,
+      28472470
+    ],
+    "peel-diag-20260927/decode-reject-20261021": [
+      8,
+      4054241
+    ],
+    "peel-diag-20260927/decode-threshold-20261021": [
+      8,
+      4652052
+    ],
+    "peel-diag-20260927/confirm_plant": [
+      242,
+      576041807
+    ],
+    "peel-diag-20260927/conv_plant": [
+      212,
+      504024433
+    ],
+    "peel-diag-20260927/rs_cols": [
+      312,
+      480222526
+    ],
+    "fig-encoding-20261021": [
+      208,
+      144793208
+    ],
+    "peel-diag-20260927/round1_AB": [
+      201,
+      1280041906
+    ],
+    "peel-diag-20260927/round2_k56": [
+      101,
+      640025170
+    ],
+    "artifact-check-20261028/run-01": [
+      2,
+      29088
+    ]
+  }
+}

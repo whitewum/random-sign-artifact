@@ -5,6 +5,8 @@ k = 3. Bars are stacked by the sign product of the duplicate pair (-2 and +2 com
 dashed curve is the Gaussian with variance 2c^2 (the Gaussian rule's s(d)^2), scaled by the lattice step 2/k.
 uv run --with numpy,scipy,matplotlib python fig-aux.py  ->  fig-aux.{pdf,png}
 """
+import csv
+import json
 import math
 import os
 import sys
@@ -17,11 +19,15 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, os.path.join(ROOT, "manuscript", "STD", "figure"))
 from figstyle import INK2, plt  # noqa: E402
 
-K = 3
+PARAM = json.load(open(os.path.join(ROOT, 'sim/results/analytic/aux-parameters.json')))
+K = PARAM['k']
+OUT = os.path.join(ROOT, 'outputs/figures')
+os.makedirs(OUT, exist_ok=True)
+points = []
 STEP = 2 / K
 NEG, POS = "#0072B2", "#E69F00"
 fig, axs = plt.subplots(1, 3, figsize=(6.6, 2.1), gridspec_kw={"wspace": 0.22})
-for ax, c, xl in zip(axs, (0.3, 1, 4), (4, 6, 18)):
+for ax, c, xl in zip(axs, PARAM['c'], PARAM['x_limits']):
     lam = K * K * c * c / 4
     j = np.arange(-int(xl / STEP) - 8, int(xl / STEP) + 9)
     pz = skellam.pmf(j, lam, lam) if lam > 0 else (j == 0).astype(float)
@@ -31,6 +37,7 @@ for ax, c, xl in zip(axs, (0.3, 1, 4), (4, 6, 18)):
     neg = np.array([0.5 * pz[j == g + 3].sum() for g in grid])
     pos = np.array([0.5 * pz[j == g - 3].sum() for g in grid])
     gx = grid * STEP
+    points.extend((c, xx, nn, pp) for xx, nn, pp in zip(gx, neg, pos))
     w = STEP * 0.8
     ax.bar(gx, neg, width=w, color=NEG, lw=0, label=r"$\varepsilon_1\varepsilon_2=-1$")
     ax.bar(gx, pos, width=w, bottom=neg, color=POS, lw=0, label=r"$\varepsilon_1\varepsilon_2=+1$")
@@ -48,3 +55,8 @@ h, l = axs[0].get_legend_handles_labels()
 fig.legend(h, l, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.2), handletextpad=0.3)
 for ext in ("pdf", "png"):
     fig.savefig(os.path.join(HERE, "fig-aux." + ext), bbox_inches="tight", **({"dpi": 200} if ext == "png" else {}))
+
+with open(os.path.join(OUT, 'fig-aux.tsv'), 'w') as f:
+    writer = csv.writer(f, delimiter='\t', lineterminator='\n')
+    writer.writerow(['c', 'tilde_d_minus_d', 'negative_mass', 'positive_mass'])
+    writer.writerows(points)
