@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite the preprint and this artifact when using them. The arXiv identifier and archival DOI will be added upon release."
+message: "Please cite the preprint and this artifact when using them. The arXiv identifier will be added upon release."
 type: software
 title: "Random-sign IBLT research artifact"
 authors:
@@ -7,8 +7,9 @@ authors:
     given-names: Min
     email: wumin@hdu.edu.cn
 repository-code: "https://github.com/whitewum/random-sign-artifact"
-version: 0.1.1
-date-released: 2026-10-27
+doi: 10.5281/zenodo.23754604
+version: 0.1.2
+date-released: 2026-10-29
 license: MIT
 abstract: "Random-sign invertible Bloom lookup tables: manuscript, simulation, sizing rules, and paired protocol experiments."
 preferred-citation:
